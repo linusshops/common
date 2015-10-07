@@ -1,5 +1,8 @@
 # Define symlink path maps for ModMan and magento-composer-installer.
 
 src/app/code/local/Linus/Common  app/code/local/Linus/Common
-
+src/app/design/frontend/base/default/layout/linus_common.xml  app/design/frontend/base/default/layout/linus_common.xml
 src/app/etc/modules/Linus_Common.xml  app/etc/modules/Linus_Common.xml
+
+src/skin/frontend/base/default/css/linus/common.css  skin/frontend/base/default/css/linus/common.css
+src/skin/frontend/base/default/js/linus/common.js  skin/frontend/base/default/js/linus/common.js
