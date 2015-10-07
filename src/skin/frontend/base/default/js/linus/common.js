@@ -50,13 +50,13 @@ linus.common = linus.common || (function($)
     }
 
     /**
-     * Wrapper to get baseUrl from CSP.
+     * Wrapper to get baseUrl from CSP, if set.
      *
      * @returns string
      */
-    function getBaseUrl()
+    function getCspData(cspDataKey)
     {
-        var baseUrl = getCspContent()['baseUrl'];
+        var cspDataPoint = getCspContent()[cspDataKey];
         return (baseUrl)
             ? baseUrl
             : '/';
@@ -69,7 +69,7 @@ linus.common = linus.common || (function($)
      *
      * @returns {*}
      */
-    function getCspContent()
+    function parseCspContent()
     {
         var cspContent = cspContent;
         if (!cspContent) {
