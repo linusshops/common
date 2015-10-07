@@ -13,6 +13,20 @@ linus.common = linus.common || (function($)
     'use strict';
 
     /**
+     * Clear asynchronous feedback message after n milliseconds.
+     *
+     * @type {number}
+     */
+    var clearFeedbackMessage = 5000;
+
+    /**
+     * Store CSP content once it is retrieved and parsed.
+     *
+     * @type {{}}
+     */
+    var cspContent = {};
+
+    /**
      * Constructor
      *
      * @private
@@ -20,6 +34,49 @@ linus.common = linus.common || (function($)
     function __construct()
     {
 
+    }
+
+    /**
+     * Translation method, which relies on CSP.
+     *
+     * @private
+     */
+    function __(textString)
+    {
+        var translation = getCspContent()['__'][textString];
+        return (translation)
+            ? translation
+            : textString;
+    }
+
+    /**
+     * Wrapper to get baseUrl from CSP.
+     *
+     * @returns string
+     */
+    function getBaseUrl()
+    {
+        var baseUrl = getCspContent()['baseUrl'];
+        return (baseUrl)
+            ? baseUrl
+            : '/';
+    }
+
+    /**
+     * Helper for retrieving inline CSP content.
+     *
+     * @param nodeIdSelector
+     *
+     * @returns {*}
+     */
+    function getCspContent()
+    {
+        var cspContent = cspContent;
+        if (!cspContent) {
+            cspContent = JSON.parse(decodeURIComponent($('.csp-inline').val()));
+        }
+
+        return cspContent;
     }
 
     /**
