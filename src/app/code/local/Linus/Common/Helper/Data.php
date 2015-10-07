@@ -19,6 +19,59 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
      */
     private $cspData = array();
 
+
+    /**
+     * Check whether user agent making request is a bot crawler.
+     *
+     * High overhead processes that do not affect general scrape content, but
+     * severely impact server performance can be turned off for bot crawlers.
+     * This was created in response to WEBPERF-52.
+     *
+     * Testing:
+     *
+     *  // Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)
+     *  // Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
+     *  // Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:43.0) Gecko/20100101 Firefox/43.0
+     *
+     *  curl --insecure --user-agent "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" https://develop.vagrant.dev/street-bike/parts.html?XDEBUG_SESSION_START | grep "amshopby-slider-price"
+     *
+     * @param string $userAgent
+     *
+     * @return bool
+     *
+     * @todo Curate more specific list of bot crawlers.
+     */
+    public function isBotCrawler($userAgent = '')
+    {
+        if (!$userAgent) {
+            $userAgent = Mage::helper('core/http')->getHttpUserAgent();
+        }
+
+        $botCrawlers = array(
+            'archive',
+            'baidu',
+            'bing',
+            'BOT',
+            'crawler',
+            'facebook',
+            'google',
+            'httrack',
+            'msn',
+            'slurp',
+            'spider',
+            'yahoo',
+            'yandex'
+        );
+
+        array_walk($botCrawlers, function(&$value) {
+            $value = preg_quote(strtolower($value));
+        });
+
+        $regexBotCrawlers = '(' . implode('|', $botCrawlers) . ')';
+
+        return (bool) preg_match('/' . $regexBotCrawlers . '/', $userAgent);
+    }
+
     /**
      * Provide a translation map.
      *
