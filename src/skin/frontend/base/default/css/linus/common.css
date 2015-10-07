@@ -1,0 +1,9 @@
+/**
+ * common.css - Linus Common
+ *
+ * Provide useful rulesets for styling general features. Note that there
+ * should be as little styling as possible. None is preferable, unless it is
+ * to provide js-* selectors for JavaScript interactions.
+ *
+ * @author Dane MacMillan <work@danemacmillan.com>
+ */
