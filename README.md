@@ -75,7 +75,8 @@ Create a new module. Ensure it depends on `Common` by defining it in `app/etc/mo
 ```
 
 The snippet above is from an internal `Adapter` module that Linus Shops uses
-for adapting third party modules without actually touching their source.
+for adapting third party modules without actually touching their source. Be
+sure to use your own module name.
 
 ## API (ish)
 
