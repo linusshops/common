@@ -20,11 +20,11 @@ linus.common = linus.common || (function($)
     var clearFeedbackMessage = 5000;
 
     /**
-     * Store CSP content once it is retrieved and parsed.
+     * Store CSP data once it is retrieved and parsed.
      *
      * @type {{}}
      */
-    var cspContent = {};
+    var cspData = {};
 
     /**
      * Constructor
@@ -43,40 +43,38 @@ linus.common = linus.common || (function($)
      */
     function __(textString)
     {
-        var translation = getCspContent()['__'][textString];
+        var translation = getCspData('__')[textString];
         return (translation)
             ? translation
             : textString;
     }
 
     /**
-     * Wrapper to get CSP data, if set.
+     * Wrapper to get CSP data.
      *
-     * @returns string
+     * @param string|null cspDataKey Get key value or entire data set.
+     *
+     * @returns string | object
      */
     function getCspData(cspDataKey)
     {
-        var cspData = getCspContent()[cspDataKey];
-        return (cspData)
-            ? cspData
-            : '';
-    }
-
-    /**
-     * Helper for retrieving inline CSP content.
-     *
-     * @param nodeIdSelector
-     *
-     * @returns {*}
-     */
-    function parseCspContent()
-    {
-        var cspContent = cspContent;
-        if (!cspContent) {
-            cspContent = JSON.parse(decodeURIComponent($('.csp-inline').val()));
+        // Populate on the fly.
+        if (!cspData) {
+            cspData = JSON.parse(decodeURIComponent($('.csp-data').val()));
         }
 
-        return cspContent;
+        var cspDataValue = (cspData[cspDataKey])
+            ? cspData[cspDataKey]
+            : '';
+
+        // Passing null will return the whole CSP data set.
+        if (cspDataKey === null
+            && typeof cspDataKey === 'object'
+        ){
+            cspDataValue = cspData;
+        }
+
+        return cspDataValue;
     }
 
     /**
