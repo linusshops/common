@@ -92,8 +92,11 @@ linus.common = linus.common || (function($)
     }());
 
     /**
-     * Return empty object. Reveal methods if necessary.
+     * Public methods.
      */
-    return {};
+    return {
+        '__': __,
+        'getCspData': getCspData
+    };
 
 }(jQuery));
