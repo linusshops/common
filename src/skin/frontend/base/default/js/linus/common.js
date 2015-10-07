@@ -13,16 +13,21 @@ linus.common = linus.common || (function($)
     'use strict';
 
     /**
+     * Publicly expose methods built off this.
+     */
+    var common;
+
+    /**
      * Clear asynchronous feedback message after n milliseconds.
      *
-     * @type {number}
+     * @var int
      */
     var clearFeedbackMessage = 5000;
 
     /**
      * Store CSP data once it is retrieved and parsed.
      *
-     * @type {{}}
+     * @var object
      */
     var cspData = {};
 
@@ -54,7 +59,7 @@ linus.common = linus.common || (function($)
      *
      * @param string|null cspDataKey Get key value or entire data set.
      *
-     * @returns string | object
+     * @return string | object
      */
     function getCspData(cspDataKey)
     {
