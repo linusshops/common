@@ -3,7 +3,7 @@
 [This README is a draft: Oct 6 2015]
 
 This module provides a modern base of Magento helpers, Magento endpoints,
-and frontend goodness to Magento, which in our opinion is sorely lacking if
+and frontend goodness to Magento, which is sorely lacking if
 modern development is a thing--and in particular, *your* thing. This module
 aims to solve very general problems. Its ultimate purpose is to simply exist
 for the benefit of other modules, as a *Magento++*&trade; of sorts, which other
@@ -95,6 +95,10 @@ $Common = Mage::helper('linus_common');
 
 - [Dane MacMillan](https://github.com/danemacmillan)
 - [Samuel Schmidt](https://github.com/dersam)
+
+## Contributing
+
+[TODO] Submit PRs off of `develop`.
 
 ## License
 
