@@ -33,7 +33,7 @@ endpoint for posting its own data to a cart. Instead of having to depend on
 a module made for a specific purpose, this endpoint and the related helpers
 were ported into a common module, which both of them could depend on.
 This is why the common module exists. Internally, Linus Shops defines a hard
-dependency on `Common`, because it provides a tonnes of useful functionality to
+dependency on `Common`, because it provides a tonne of useful functionality to
 improve daily workflows.
 
 ## Who?
