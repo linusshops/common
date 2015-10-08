@@ -14,7 +14,7 @@ modules can build on. Think of it as a superset to Magento's own functionality.
 Magento presents a number of challenges. One of them is having to solve the same
 problems all of the time, especially when dealing with a massive framework.
 Large Magento sites tend to be composed of many different modules. Some of them
-are third-party, but if their is an in-house team, that team will be
+are third-party, but if there is an in-house team, that team will be
 responsible for a number of custom ones as well. In all likelihood, there are
 solutions to similar problems peppered through all of them. This module
 serves as a single point of dependency. Doing this will
