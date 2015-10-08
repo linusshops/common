@@ -102,7 +102,7 @@ This requires knowledge of the backend and frontend `CSP` helpers. The general
 workflow is outlined below. The examples are rudimentary.
 
 Read the source for `Helper/Csp.php` for more information about the methods
-available to the backend. Read the source for `linus/common.js for more
+available to the backend. Read the source for `linus/common.js` for more
 information about the methods available to the frontend.
 
 #### Backend
