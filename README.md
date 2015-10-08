@@ -164,11 +164,10 @@ corresponding `CSP` methods for retrieving the data passed to the frontend.
 
 ```
 jQuery(document).ready(function(e) {
-    if (!jQuery.isEmptyObject(linus.common)) {
-        var Common = linus.common;
-        console.log(Common.__('Add to Cart'));
-        console.log(Common.getCspData('formKey'));
-    }
+    // Verify this exists first. That depends on how dependencies are handled.
+    var Common = linus.common;
+    console.log(Common.__('Add to Cart'));
+    console.log(Common.getCspData('formKey'));
 });
 
 ```
