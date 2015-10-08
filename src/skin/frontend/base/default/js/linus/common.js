@@ -13,11 +13,6 @@ linus.common = linus.common || (function($)
     'use strict';
 
     /**
-     * Publicly expose methods built off this.
-     */
-    var common;
-
-    /**
      * Clear asynchronous feedback message after n milliseconds.
      *
      * @var int
@@ -38,7 +33,8 @@ linus.common = linus.common || (function($)
      */
     function __construct()
     {
-
+        // Store data immediately.
+        getCspData();
     }
 
     /**
@@ -57,25 +53,44 @@ linus.common = linus.common || (function($)
     /**
      * Wrapper to get CSP data.
      *
-     * @param string|null cspDataKey Get key value or entire data set.
+     * Pass the key name to retrieve exact value, or pass nothing to get the
+     * entire data set.
+     *
+     * @param string|optional cspDataKey Get key value or entire data set.
+     * @param string cspSelectorName Optional node target to get data.
      *
      * @return string | object
      */
-    function getCspData(cspDataKey)
+    function getCspData(cspDataKey, cspSelectorName)
     {
-        // Populate on the fly.
-        if (!cspData) {
-            cspData = JSON.parse(decodeURIComponent($('.csp-data').val()));
+        cspSelectorName = (typeof cspSelectorName !== 'undefined')
+            ? cspSelectorName
+            : '.csp-data';
+
+        // Populate on first execution, then remove.
+        if ($.isEmptyObject(cspData)) {
+
+            var mergedCspData = {};
+
+            $(cspSelectorName).each(function() {
+                var newCspData = JSON.parse(decodeURIComponent($(this).val()));
+                // Deep merge all values together.
+                jQuery.extend(true, mergedCspData, newCspData);
+
+                // Remove CSP node from DOM, so origin of data seems mythical.
+                // @TODO When all modules use Common, uncomment below.
+                //$(this).remove();
+            });
+
+            cspData = mergedCspData;
         }
 
         var cspDataValue = (cspData[cspDataKey])
             ? cspData[cspDataKey]
             : '';
 
-        // Passing null will return the whole CSP data set.
-        if (cspDataKey === null
-            && typeof cspDataKey === 'object'
-        ){
+        // Passing nothing will return the whole CSP data set.
+        if (typeof cspDataKey === 'undefined'){
             cspDataValue = cspData;
         }
 
