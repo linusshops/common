@@ -90,21 +90,98 @@ Calling the `Common` helpers are just like any other Magento module:
 $Common = Mage::helper('linus_common');
 ```
 
-### `CSP` methods
+### `Csp.php` helpers
 
-The `CSP` methods are designed to prevent adding JavaScript blocks into a
+The `CSP` helpers are designed to prevent adding JavaScript blocks into a
 document's markup. The reason that should be avoided is so that a site can
-eventually tighten up security by defining a Content Security Policy, in which
+tighten up security by defining a Content Security Policy, in which
 a policy to prevent inline JavaScript from executing can be defined. That is
 a very important concern when money is passing through an online store.
 
-[TODO] EXPLAIN
+This requires knowledge of the backend and frontend `CSP` helpers. The general
+workflow is outlined below. The examples are rudimentary.
 
-`getCspData(cspDataKey)`
+Read the source for `Helper/Csp.php` for more information about the methods
+available to the backend. Read the source for `linus/common.js for more
+information about the methods available to the frontend.
 
-`__(textString)`
+#### Backend
 
-[TODO] MORE OF THIS.
+It is recommended that these methods are used in a Magento `Block`, and then
+called from that block's corresponding template.
+
+**The block:**
+
+```
+/**
+ * Set and generate the CSP data to be used by frontend.
+ *
+ * This depends on Common.
+ *
+ * @return string
+ * @throws Mage_Core_Exception
+ */
+public function insertHiddenCspMarkup()
+{
+    /** @var Linus_Common_Helper_Data $Common */
+    $CommonCsp = Mage::helper('linus_common/csp');
+
+    // Set general CSP data.
+    $CommonCsp->setCspData(array(
+        'baseUrl' => $this->getBaseUrl(),
+        'cartUrlTemplate' => $this->cartUrlTemplateAddItem,
+        'uenc' => Mage::helper('core')->urlEncode(Mage::app()->getStore()->getBaseUrl()),
+        'formKey' => Mage::getSingleton('core/session')->getFormKey()
+    ));
+
+    // Set translation data. Passing a null value will use the key as value
+    // and then pass to Magento's internal translation helper.
+    $CommonCsp->setCspTranslation(array(
+        'Add to Cart' => null,
+        'searching' => Mage::helper('core')->__('Looking'),
+        'Adding item' => null,
+        'Item added' => null,
+        'Error adding' => null,
+        'Out of stock' => null
+    ));
+
+    return $CommonCsp->generateHiddenCspMarkup();
+}
+```
+
+**The template (phtml):**
+```
+<div class="linus-section">
+    <h1 class="linus-head"><i class="fa fa-cube"></i> <?php echo $this->__('Linus Title'); ?></h1>
+    <?php echo $this->insertHiddenCspMarkup(); ?>
+</div>
+```
+
+#### Frontend
+
+Check to see if `linus.common` is available. Once it is available, use the
+corresponding `CSP` methods for retrieving the data passed to the frontend.
+
+```
+jQuery(document).ready(function(e) {
+
+    if (!$.isEmptyObject(linus.common)) {
+        var Common = linus.common;
+        
+        console.log(Common.__('Add to Cart'));
+        console.log(Common.getCspData('formKey'));
+    }
+});
+
+```
+
+### `Data.php` helpers
+
+Fill in.
+
+### `Request.php` helpers
+
+Fill in.
 
 ## Authors
 
