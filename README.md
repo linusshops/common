@@ -90,6 +90,20 @@ Calling the `Common` helpers are just like any other Magento module:
 $Common = Mage::helper('linus_common');
 ```
 
+### `CSP` methods
+
+The `CSP` methods are designed to prevent adding JavaScript blocks into a
+document's markup. The reason that should be avoided is so that a site can
+eventually tighten up security by defining a Content Security Policy, in which
+a policy to prevent inline JavaScript from executing can be defined. That is
+a very important concern when money is passing through an online store.
+
+[TODO] EXPLAIN
+
+`getCspData(cspDataKey)`
+
+`__(textString)`
+
 [TODO] MORE OF THIS.
 
 ## Authors

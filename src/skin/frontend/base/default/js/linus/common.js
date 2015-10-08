@@ -78,8 +78,7 @@ linus.common = linus.common || (function($)
                 jQuery.extend(true, mergedCspData, newCspData);
 
                 // Remove CSP node from DOM, so origin of data seems mythical.
-                // @TODO When all modules use Common, uncomment below.
-                //$(this).remove();
+                $(this).remove();
             });
 
             cspData = mergedCspData;
