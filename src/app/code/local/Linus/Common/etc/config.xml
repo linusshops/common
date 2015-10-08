@@ -13,6 +13,19 @@
                 <class>Linus_Common_Helper</class>
             </linus_common>
         </helpers>
+
+        <events>
+            <!-- CartController->addAction -->
+            <controller_action_predispatch_checkout_cart_add>
+                <observers>
+                    <linus_common>
+                        <type>singleton</type>
+                        <class>Linus_Common_Model_Observer</class>
+                        <method>onControllerActionPredispatchCheckoutCartAdd</method>
+                    </linus_common>
+                </observers>
+            </controller_action_predispatch_checkout_cart_add>
+        </events>
     </global>
 
 </config>
