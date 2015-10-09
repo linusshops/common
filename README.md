@@ -54,9 +54,10 @@ This module follows the module structure guidelines provided by
 which will also make it very easy to submit to the
 [Firegento Composer Repository](https://github.com/magento-hackathon/composer-repository).
 
-## Usage
+### Add dependency to `Common`
 
-Create a new module. Ensure it depends on `Common` by defining it in `app/etc/modules/*.xml`:
+Create a new module. Ensure it depends on `Common` by defining it
+in `app/etc/modules/*.xml`:
 
 ```
 <?xml version="1.0"?>
@@ -74,23 +75,59 @@ Create a new module. Ensure it depends on `Common` by defining it in `app/etc/mo
 </config>
 ```
 
+> :zap: Note that this is optional, but highly recommended.
+
 The snippet above is from an internal `Adapter` module that Linus Shops uses
-for adapting third party modules without actually touching their source. Be
-sure to use your own module name.
+for adapting third party modules without actually touching their source. *Do not
+just copy and paste the above.*
 
-## API (ish)
+### Add frontend assets
 
-This is not really a true API, but these are all of `Common`'s helpers and
-endpoints that will become available to Magento and thus other modules that
-depend on it.
+`Common` links all of its frontend assets to `base/default`. It is properly
+namespaced, so it will never interfere with other code. However, as most Magento
+stores should have their own theme, none of the frontend code, such as
+JavaScript or CSS, will load, because Magento will not look for it there. This
+is deliberate. `Common` does not attempt to assume where themes are stored and
+what are loaded; this is so that anyone can install `Common` and start writing
+code without having to modify this module. Instead, `Common` takes advantage
+of Magento's built-in fallback mechanism, so all that is required is an
+addition to the current theme's, or other module's, `layout/local.xml` file to
+include the location, which then triggers Magento to search for it
+in `base/default`.
 
-Calling the `Common` helpers are just like any other Magento module:
+> :zap: Recommendation: define this in an adapter-like module. An adapter
+module is one that is used for modifying third-party vendor code without
+actually modifying that vendor's source directly.
 
 ```
-$Common = Mage::helper('linus_common');
+<!-- Load Common module assets. They are not a part of Creation,
+but Magento's fallback system will load them from base/default. -->
+<action method="addCss">
+    <stylesheet>css/linus/common.css</stylesheet>
+</action>
+<action method="addItem">
+    <type>skin_js</type>
+    <name>js/linus/common.js</name>
+</action>
 ```
 
-### `Csp.php` helpers
+## Features by use case
+
+### Translations on the frontend
+
+Third-party widgets are sometimes needed on a Web page. In the Magento world
+it is common to use a provider for handling customer feedback, Q&As, and the
+like. These widgets are typically loaded asynchronously and not usually very
+open to modification. In addition, they are usually bad, and offered in one
+language. `Common` allows developers to use Magento's built-in translation
+system on the frontend. This feature is part of the `CSP` helpers provided by
+`Common`. This is all done without the need to include inline JavaScript blocks
+in the markup.
+
+> :zap: In addition to providing translations, the `CSP` helpers let developers
+pass other arbitrary data to the frontend. Essentially, any data JavaScript
+may need from the backend, becomes available to the frontend without messy
+inline JavaScript.
 
 The `CSP` helpers are designed to prevent adding JavaScript blocks into a
 document's markup. The reason that should be avoided is so that a site can
@@ -99,11 +136,7 @@ a policy to prevent inline JavaScript from executing can be defined. That is
 a very important concern when money is passing through an online store.
 
 This requires knowledge of the backend and frontend `CSP` helpers. The general
-workflow is outlined below. The examples are rudimentary.
-
-Read the source for `Helper/Csp.php` for more information about the methods
-available to the backend. Read the source for `linus/common.js`g for more
-information about the methods available to the frontend.
+workflow is outlined below.
 
 #### Backend
 
@@ -217,6 +250,10 @@ var example = example || (function($, Common)
 
 }(jQuery, linus.common || {}));
 ```
+
+Read the source for `Helper/Csp.php` for more information about the
+methods available to the backend. Read the source for `linus/common.js`g for
+more information about the methods available to the frontend.
 
 ### `Data.php` helpers
 
