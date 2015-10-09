@@ -98,6 +98,16 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Cancel dispatch to underlying controller when responses are handled locally.
+     *
+     * @param $controller
+     */
+    public function cancelDispatch($controller)
+    {
+        $controller->setFlag('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+    }
+
+    /**
      * Send JSON response body to client.
      *
      * @param array $payload
