@@ -133,6 +133,12 @@ public function insertHiddenCspMarkup()
         'uenc' => Mage::helper('core')->urlEncode(Mage::app()->getStore()->getBaseUrl()),
         'formKey' => Mage::getSingleton('core/session')->getFormKey()
     ));
+    
+    // Set more data. This merges with previously set data.
+    $CommonCsp->setCspData(array(
+        'baseUrl' => '//example.com/, // Overwrites
+        'newData' => 'abcdefg' // Merges new
+    ));
 
     // Set translation data. Passing a null value will use the key as value
     // and then pass to Magento's internal translation helper.
@@ -143,6 +149,11 @@ public function insertHiddenCspMarkup()
         'Item added' => null,
         'Error adding' => null,
         'Out of stock' => null
+    ));
+    
+    // Redefine a translation string later on.
+    $CommonCsp->setCspTranslation(array(
+        'Out of stock' => Mage::helper('core')->__('Product unavailable')
     ));
 
     return $CommonCsp->generateHiddenCspMarkup();
