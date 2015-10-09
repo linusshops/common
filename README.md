@@ -101,7 +101,7 @@ actually modifying that vendor's source directly.
 
 ```
 <!-- Load Common module assets. Magento's fallback system will load them
-from base/default. -->
+from base/default. -->g
 <action method="addCss">
     <stylesheet>css/linus/common.css</stylesheet>
 </action>
@@ -138,12 +138,10 @@ a very important concern when money is passing through an online store.
 This requires knowledge of the backend and frontend `CSP` helpers. The general
 workflow is outlined below.
 
-#### Backend
+**Backend**
 
 It is recommended that these methods are used in a Magento `Block`, and then
 called from that block's corresponding template.
-
-**The block:**
 
 ```
 /**
@@ -193,7 +191,6 @@ public function insertHiddenCspMarkup()
 }
 ```
 
-**The template (phtml):**
 ```
 <div class="linus-section">
     <h1 class="linus-head"><i class="fa fa-cube"></i> <?php echo $this->__('Linus Title'); ?></h1>
@@ -201,7 +198,7 @@ public function insertHiddenCspMarkup()
 </div>
 ```
 
-#### Frontend
+**Frontend**
 
 Check to see if `linus.common` is available. Once it is available, use the
 corresponding `CSP` methods for retrieving the data passed to the frontend.
@@ -255,13 +252,30 @@ Read the source for `Helper/Csp.php` for more information about the
 methods available to the backend. Read the source for `linus/common.js`g for
 more information about the methods available to the frontend.
 
-### `Data.php` helpers
+### Bot protection
 
-Fill in.
+On very large Magento stores, scraping of its content can become a source of
+backend overhead. The databases get hit, possibly requiring more than
+trivial computations. `Common` provides a rudimentary method for detecting
+bots, which can be used for removing parts of a document that typically
+require burdensome overhead, but does not detract from the SEO, for example.
 
-### `Request.php` helpers
+[TODO]
 
-Fill in.
+### Asynchronously add items to cart (Ajax)
+
+The Magento endpoint for adding an item to the cart is synchronous. In other
+words, the browser will redirect the user at least once, and typically to the
+cart preview, upon successfully adding an item. Often, a store just wants
+clients to quickly add an item to the cart without redirecting them all over
+the place; it can be disorienting. `Common` uses a special `hijax` technique
+for sending asynchronous request to the existing Magento endpoint without
+having to define a new one, or break the regular synchronous one. That means
+that all existing forms on the site will continue to work, but if `Common`
+detects that the request to add an item to the cart is asynchronous, it will
+respond with a `JSON` payload instead of redirect the browser.
+
+[TODO]
 
 ## Authors
 
