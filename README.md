@@ -205,7 +205,6 @@ var example = example || (function($, Common)
             // If textString exists, return translation, else use original.
             $(this).text(__(textString));
         });
-        
     }
 
     (function __init() {
