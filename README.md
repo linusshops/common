@@ -199,10 +199,8 @@ var example = example || (function($, Common)
      * Find text nodes to translate.
      */
     function translateTextNodes()
-    {
-        $('.text-nodes').html(__('Out of stock'));
-        
-        $('.text-nodes').each(function (i, v) {
+    {        
+        $('.text-node').each(function (i, v) {
             var textString = $.trim($(this).text());
             // If textString exists, return translation, else use original.
             $(this).text(__(textString));
