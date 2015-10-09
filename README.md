@@ -1,4 +1,5 @@
-# Common
+Common
+======
 
 This module provides a modern base of Magento helpers, Magento endpoints,
 and frontend goodness to Magento, which is sorely lacking. This module
@@ -21,7 +22,7 @@ solutions to similar problems peppered through all of them. This module
 serves as a single point of dependency. Doing this will
 improve development time and decrease redundancies.
 
-### Impetus
+###### Impetus
 
 As the Linus Shops' codebase grew, resulting in a variety of modules to perform
 different tasks, a pattern of common solutions became apparent. One module
@@ -55,7 +56,7 @@ This module follows the module structure guidelines provided by
 which will also make it very easy to submit to the
 [Firegento Composer Repository](https://github.com/magento-hackathon/composer-repository).
 
-### Add dependency to `Common`
+###### Add dependency to `Common`
 
 Create a new module. Ensure it depends on `Common` by defining it
 in `app/etc/modules/*.xml`:
@@ -82,7 +83,7 @@ The snippet above is from an internal `Adapter` module that Linus Shops uses
 for adapting third party modules without actually touching their source. *Do not
 just copy and paste the above.*
 
-### Add frontend assets
+###### Add frontend assets
 
 `Common` links all of its frontend assets to `base/default`. It is properly
 namespaced, so it will never interfere with other code. However, as most Magento
@@ -139,7 +140,7 @@ a very important concern when money is passing through an online store.
 This requires knowledge of the backend and frontend `CSP` helpers. The general
 workflow is outlined below.
 
-**Backend**
+###### Backend
 
 It is recommended that these methods are used in a Magento `Block`, and then
 called from that block's corresponding template.
@@ -199,7 +200,7 @@ public function insertHiddenCspMarkup()
 </div>
 ```
 
-**Frontend**
+###### Frontend
 
 Check to see if `linus.common` is available. Once it is available, use the
 corresponding `CSP` methods for retrieving the data passed to the frontend.
