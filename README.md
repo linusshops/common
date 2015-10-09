@@ -100,8 +100,8 @@ module is one that is used for modifying third-party vendor code without
 actually modifying that vendor's source directly.
 
 ```
-<!-- Load Common module assets. They are not a part of Creation,
-but Magento's fallback system will load them from base/default. -->
+<!-- Load Common module assets. Magento's fallback system will load them
+from base/default. -->
 <action method="addCss">
     <stylesheet>css/linus/common.css</stylesheet>
 </action>
