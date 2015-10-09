@@ -163,13 +163,32 @@ Check to see if `linus.common` is available. Once it is available, use the
 corresponding `CSP` methods for retrieving the data passed to the frontend.
 
 ```
-jQuery(document).ready(function(e) {
-    // Verify this exists first. That depends on how dependencies are handled.
-    var Common = linus.common;
-    console.log(Common.__('Add to Cart'));
-    console.log(Common.getCspData('formKey'));
-});
+var example = example || (function($, Common)
+{
+    function __construct()
+    {
+        if ($.isEmptyObject(Common)) {
+            throw new Error('`Common` dependency not available.');
+        }
 
+        testCsp();
+    }
+
+    function testCsp()
+    {
+        console.log(Common.__('Add to Cart'));
+        console.log(Common.getCspData('formKey'));
+    }
+
+    (function __init() {
+        $(document).ready(function(e) {
+            __construct();
+        });
+    }());
+
+    return {};
+
+}(jQuery, linus.common || {}));
 ```
 
 ### `Data.php` helpers
