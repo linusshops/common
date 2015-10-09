@@ -252,7 +252,7 @@ Read the source for `Helper/Csp.php` for more information about the
 methods available to the backend. Read the source for `linus/common.js`g for
 more information about the methods available to the frontend.
 
-### Bot protection
+### :wrench: Bot protection
 
 On very large Magento stores, scraping of its content can become a source of
 backend overhead. The databases get hit, possibly requiring more than
@@ -262,7 +262,7 @@ require burdensome overhead, but does not detract from the SEO, for example.
 
 ```
 // If no user agent string passed, will use current request's user agent.
-// isBot() returns bool.
+// gisBot() returns bool.
 if (!Mage::helper('linus_common/request')->isBot()) {
     // - Some massive database operation that should be cached anyway.
 }
