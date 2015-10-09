@@ -182,13 +182,32 @@ var example = example || (function($, Common)
             throw new Error('`Common` dependency not available.');
         }
 
-        testCsp();
+        console.log(Common.getCspData('formKey'));
+        
+        translateTextNodes();
     }
 
-    function testCsp()
+    /**
+     * Simple wrapper for translating strings.
+     */
+    function __(textString)
     {
-        console.log(Common.__('Add to Cart'));
-        console.log(Common.getCspData('formKey'));
+        return Common.__(textString);
+    }
+    
+    /**
+     * Find text nodes to translate.
+     */
+    function translateTextNodes()
+    {
+        $('.text-nodes').html(__('Out of stock'));
+        
+        $('.text-nodes').each(function (i, v) {
+            var textString = $.trim($(this).text());
+            // If textString exists, return translation, else use original.
+            $(this).text(__(textString));
+        });
+        
     }
 
     (function __init() {
