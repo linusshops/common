@@ -253,7 +253,7 @@ Read the source for `Helper/Csp.php` for more information about the
 methods available to the backend. Read the source for `linus/common.js`g for
 more information about the methods available to the frontend.
 
-### :wrench: Bot protection
+### Bot protection
 
 On very large Magento stores, scraping of its content can become a source of
 backend overhead. The databases get hit, possibly requiring more than
