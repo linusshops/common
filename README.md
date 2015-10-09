@@ -102,7 +102,7 @@ actually modifying that vendor's source directly.
 
 ```
 <!-- Load Common module assets. Magento's fallback system will load them
-from base/default. -->g
+from base/default. -->
 <action method="addCss">
     <stylesheet>css/linus/common.css</stylesheet>
 </action>
