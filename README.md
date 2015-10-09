@@ -222,7 +222,7 @@ var example = example || (function($, Common)
         console.log(__('Add to Cart'));
         
         // Translate every text node found within provided DOM reference.
-        Common.translateAllTextIn($('.dropdown-primary');
+        Common.translateAllTextIn($('.dropdown-primary'));
         
         // Or translate every text node on the whole page.
         Common.translateAllTextIn(document.body);
