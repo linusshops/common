@@ -97,6 +97,74 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Iterate over nodes in DOM subtree section to find all text nodes.
+     *
+     * This is multitudes faster than regular DOM traversal techniques. See
+     * https://jsperf.com/createnodeiterator-vs-createtreewalker-vs-getelementsby
+     * for additional benchmarking. There is no jQuery dependency in this
+     * function, but it will only work in IE9+.
+     *
+     * This function skips all empty text nodes, and text nodes who's parents
+     * are script|noscript|iframe elements.
+     *
+     * @param element Section to scan for text nodes
+     *
+     * @return array Array of live nodes to manipulate.
+     *
+     * @todo Search through input nodes as well and get the value of each.
+     */
+    function getAllTextNodesIn(element)
+    {
+        // See https://developer.mozilla.org/en-US/docs/Web/API/NodeIterator
+        var nodeIterator = document.createNodeIterator(element, NodeFilter.SHOW_TEXT, function(node)
+        {
+            // If only whitespace, don't use.
+            var textString = node.textContent.trim();
+            // Do not translate text nodes from these parents, as it's code.
+            var hasBadParent = /(.*?script|iframe)/gi.test(node.parentNode.nodeName);
+
+            if (textString
+                && !hasBadParent
+            ) {
+                return NodeFilter.FILTER_ACCEPT;
+            } else {
+                return NodeFilter.FILTER_SKIP;
+            }
+        }, false);
+
+        var textNodes = [], currentNode;
+        while (currentNode = nodeIterator.nextNode()) {
+            textNodes.push(currentNode);
+        }
+
+        return textNodes;
+    }
+
+    /**
+     * Translate all text nodes found within provided DOM node.
+     *
+     * This will use the found text node values and auto-translate them
+     * against the translations provided by the CSP methods.
+     *
+     * @param element
+     */
+    function translateAllTextIn(element)
+    {
+        // nodeIterator does not recognize jQuery objects, so ensure to get
+        // the original DOM reference.
+        if (element instanceof jQuery) {
+            var element = $(element).get(0);
+        }
+
+        var textNodes = getAllTextNodesIn(element);
+        $(textNodes).each(function () {
+            var textString = $.trim($(this.parentNode).text());
+            // Translate any text found from CSP translations.
+            $(this.parentNode).text(__(textString));
+        });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
