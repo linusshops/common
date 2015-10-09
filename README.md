@@ -213,10 +213,19 @@ var example = example || (function($, Common)
         if ($.isEmptyObject(Common)) {
             throw new Error('`Common` dependency not available.');
         }
-
+        
+        // Print out value of formKey.
         console.log(Common.getCspData('formKey'));
         
-        translateTextNodes();
+        // Print out translated version of Add to Cart. This uses the
+        // wrapper defined below.
+        console.log(__('Add to Cart'));
+        
+        // Translate every text node found within provided DOM reference.
+        Common.translateAllTextIn($('.dropdown-primary');
+        
+        // Or translate every text node on the whole page.
+        Common.translateAllTextIn(document.body);
     }
 
     /**
@@ -225,18 +234,6 @@ var example = example || (function($, Common)
     function __(textString)
     {
         return Common.__(textString);
-    }
-    
-    /**
-     * Find text nodes to translate.
-     */
-    function translateTextNodes()
-    {        
-        $('.text-node').each(function (i, v) {
-            var textString = $.trim($(this).text());
-            // If textString exists, return translation, else use original.
-            $(this).text(__(textString));
-        });
     }
 
     (function __init() {

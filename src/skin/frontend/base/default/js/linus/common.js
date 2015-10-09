@@ -177,8 +177,9 @@ linus.common = linus.common || (function($)
      * Public methods.
      */
     return {
-        '__': __,
-        'getCspData': getCspData
+        __: __,
+        getCspData: getCspData,
+        translateAllTextIn: translateAllTextIn
     };
 
 }(jQuery));
