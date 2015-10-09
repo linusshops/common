@@ -1,13 +1,14 @@
-# Common (AKA Magento Plus Plus)
-
-[This README is a draft: Oct 6 2015]
+# Common
 
 This module provides a modern base of Magento helpers, Magento endpoints,
-and frontend goodness to Magento, which is sorely lacking if
-modern development is a thing--and in particular, *your* thing. This module
+and frontend goodness to Magento, which is sorely lacking. This module
 aims to solve very general problems. Its ultimate purpose is to simply exist
 for the benefit of other modules, as a *Magento++*&trade; of sorts, which other
 modules can build on. Think of it as a superset to Magento's own functionality.
+
+> :zap: Note that as of October 9, 2015 this module is still undergoing a lot
+of change. A number of features from Linus Shops' internal codebase are still
+being ported over.
 
 ## Why?
 
