@@ -251,6 +251,9 @@ Read the source for `Helper/Csp.php` for more information about the
 methods available to the backend. Read the source for `linus/common.js`g for
 more information about the methods available to the frontend.
 
+*No more messy script tags in templates with PHP embedded within inline
+JavaScript.*
+
 ### Bot protection
 
 On very large Magento stores, scraping of its content can become a source of
