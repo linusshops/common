@@ -260,7 +260,13 @@ trivial computations. `Common` provides a rudimentary method for detecting
 bots, which can be used for removing parts of a document that typically
 require burdensome overhead, but does not detract from the SEO, for example.
 
-[TODO]
+```
+// If no user agent string passed, will use current request's user agent.
+// isBot() returns bool.
+if (!Mage::helper('linus_common/request')->isBot()) {
+    // - Some massive database operation that should be cached anyway.
+}
+```
 
 ### Asynchronously add items to cart (Ajax)
 
