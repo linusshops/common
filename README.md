@@ -193,7 +193,7 @@ public function insertHiddenCspMarkup()
 }
 ```
 
-```php+html
+```html+php
 <div class="linus-section">
     <h1 class="linus-head"><i class="fa fa-cube"></i> <?php echo $this->__('Linus Title'); ?></h1>
     <?php echo $this->insertHiddenCspMarkup(); ?>
