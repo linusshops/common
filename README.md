@@ -61,7 +61,7 @@ which will also make it very easy to submit to the
 Create a new module. Ensure it depends on `Common` by defining it
 in `app/etc/modules/*.xml`:
 
-```
+```xml
 <?xml version="1.0"?>
 <config>
     <modules>
@@ -101,7 +101,7 @@ in `base/default`.
 module is one that is used for modifying third-party vendor code without
 actually modifying that vendor's source directly.
 
-```
+```xml
 <!-- Load Common module assets. Magento's fallback system will load them
 from base/default. -->
 <action method="addCss">
@@ -145,7 +145,7 @@ workflow is outlined below.
 It is recommended that these methods are used in a Magento `Block`, and then
 called from that block's corresponding template.
 
-```
+```php
 /**
  * Set and generate the CSP data to be used by frontend.
  *
@@ -193,7 +193,7 @@ public function insertHiddenCspMarkup()
 }
 ```
 
-```
+```php+html
 <div class="linus-section">
     <h1 class="linus-head"><i class="fa fa-cube"></i> <?php echo $this->__('Linus Title'); ?></h1>
     <?php echo $this->insertHiddenCspMarkup(); ?>
@@ -205,7 +205,7 @@ public function insertHiddenCspMarkup()
 Check to see if `linus.common` is available. Once it is available, use the
 corresponding `CSP` methods for retrieving the data passed to the frontend.
 
-```
+```javascript
 var example = example || (function($, Common)
 {
     function __construct()
@@ -262,7 +262,7 @@ trivial computations. `Common` provides a rudimentary method for detecting
 bots, which can be used for removing parts of a document that typically
 require burdensome overhead, but does not detract from the SEO, for example.
 
-```
+```php
 // If no user agent string passed, will use current request's user agent.
 // gisBot() returns bool.
 if (!Mage::helper('linus_common/request')->isBot()) {
