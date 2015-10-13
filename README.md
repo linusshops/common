@@ -169,7 +169,7 @@ public function insertHiddenCspMarkup()
     
     // Set more data. This merges with previously set data.
     $CommonCsp->setCspData(array(
-        'baseUrl' => '//example.com/, // Overwrites
+        'baseUrl' => '//example.com/', // Overwrites
         'newData' => 'abcdefg' // Merges new
     ));
 
