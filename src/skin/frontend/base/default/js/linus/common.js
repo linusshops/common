@@ -209,16 +209,16 @@ linus.common = linus.common || (function($)
      * improvement over the standard jQuery show/hide methods as it does not
      * create any inline css.
      *
-     * @param $selector
+     * @param selector
      */
-    function hide($selector)
+    function hide(selector)
     {
-        if (!$selector instanceof jQuery) {
-            $selector = $($selector);
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
         }
 
-        if (!$selector.hasClass('js-hidden')) {
-            $selector.addClass('js-hidden');
+        if (!selector.hasClass('js-hidden')) {
+            selector.addClass('js-hidden');
         }
     }
 
@@ -229,32 +229,32 @@ linus.common = linus.common || (function($)
      * improvement over the standard jQuery show/hide methods as it does not
      * create any inline css.
      *
-     * @param $selector
+     * @param selector
      */
-    function invisible($selector)
+    function invisible(selector)
     {
-        if (!$selector instanceof jQuery) {
-            $selector = $($selector);
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
         }
 
-        if (!$selector.hasClass('js-invisible')) {
-            $selector.addClass('js-invisible');
+        if (!selector.hasClass('js-invisible')) {
+            selector.addClass('js-invisible');
         }
     }
 
     /**
      * Shows an element that was hidden using the js-hidden or js-invisible classes.
      *
-     * @param $selector
+     * @param selector
      */
-    function show($selector)
+    function show(selector)
     {
-        if (!$selector instanceof jQuery) {
-            $selector = $($selector);
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
         }
 
-        $selector.removeClass('js-hidden');
-        $selector.removeClass('js-invisible');
+        selector.removeClass('js-hidden');
+        selector.removeClass('js-invisible');
     }
 
     /**
