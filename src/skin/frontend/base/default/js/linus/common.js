@@ -213,9 +213,7 @@ linus.common = linus.common || (function($)
      */
     function hide(selector)
     {
-        if (!selector instanceof jQuery) {
-            selector = $(selector);
-        }
+        selector = $(selector);
 
         if (!selector.hasClass('js-hidden')) {
             selector.addClass('js-hidden');
@@ -223,7 +221,7 @@ linus.common = linus.common || (function($)
     }
 
     /**
-     * Hides the selected object, does not remove it from the page flow.
+     * Hides the selected object.
      *
      * This function applies the js-invisible class from common.css. This is an
      * improvement over the standard jQuery show/hide methods as it does not
@@ -233,9 +231,7 @@ linus.common = linus.common || (function($)
      */
     function invisible(selector)
     {
-        if (!selector instanceof jQuery) {
-            selector = $(selector);
-        }
+        selector = $(selector);
 
         if (!selector.hasClass('js-invisible')) {
             selector.addClass('js-invisible');
@@ -249,9 +245,7 @@ linus.common = linus.common || (function($)
      */
     function show(selector)
     {
-        if (!selector instanceof jQuery) {
-            selector = $(selector);
-        }
+        selector = $(selector);
 
         selector.removeClass('js-hidden');
         selector.removeClass('js-invisible');
