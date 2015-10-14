@@ -65,16 +65,18 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * Create shell structure for JSON responses.
      *
      * @param array|bool $payload The main data payload.
+     * @param int $error The error code. A non-zero/not null value indicates an error
      * @param string $feedbackMessage The feedback message.
      * @param array $feedbackDebug The debug dump
-     *
      * @return array
      */
-    public function buildJsonPayload($payload = array(), $feedbackMessage = '', $feedbackDebug = array())
+    public function buildJsonPayload($payload = array(), $feedbackMessage = '', $error = null, $feedbackDebug = array())
     {
-        $error = ($payload || count($payload))
-            ? 0
-            : 1;
+        if ($error == null) {
+            $error = ($payload || count($payload))
+                ? 0
+                : 1;
+        }
 
         if (!strlen($feedbackMessage)) {
             $feedbackMessage = (count($payload))
@@ -111,6 +113,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * Send JSON response body to client.
      *
      * @param array $payload
+     * @param int $error The error code. A non-zero/not null value indicates an error
      * @param string $feedbackMessage
      * @param array $feedbackDebug
      * @param int $httpCode
@@ -118,7 +121,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      *
      * @throws Zend_Controller_Response_Exception
      */
-    public function sendResponseJson($payload = array(), $feedbackMessage = '', $feedbackDebug = array(), $httpCode = 200, $cacheTimeSeconds = 0)
+    public function sendResponseJson($payload = array(), $feedbackMessage = '', $error = null, $feedbackDebug = array(), $httpCode = 200, $cacheTimeSeconds = 0)
     {
         $cacheControlDirectives = (!$cacheTimeSeconds)
             ? "private, no-cache, no-store, no-transform, max-age=0, s-maxage=0"
@@ -138,7 +141,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
             ->setHeader('Cache-Control', $cacheControlDirectives, true)
             ->setHeader('Expires', $expiresHeader, true)
             ->setHeader('Pragma', $pragmaHeader, true)
-            ->setBody($this->buildJsonPayload($payload, $feedbackMessage, $feedbackDebug))
+            ->setBody($this->buildJsonPayload($payload, $feedbackMessage, $error, $feedbackDebug))
             ->setHttpResponseCode($httpCode);
     }
 }
