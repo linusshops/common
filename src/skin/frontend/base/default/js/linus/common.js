@@ -203,6 +203,61 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Hides the selected object, removing it from the page flow.
+     *
+     * This function applies the js-hidden class from common.css. This is an
+     * improvement over the standard jQuery show/hide methods as it does not
+     * create any inline css.
+     *
+     * @param selector
+     */
+    function hide(selector)
+    {
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
+        }
+
+        if (!selector.hasClass('js-hidden')) {
+            selector.addClass('js-hidden');
+        }
+    }
+
+    /**
+     * Hides the selected object, does not remove it from the page flow.
+     *
+     * This function applies the js-invisible class from common.css. This is an
+     * improvement over the standard jQuery show/hide methods as it does not
+     * create any inline css.
+     *
+     * @param selector
+     */
+    function invisible(selector)
+    {
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
+        }
+
+        if (!selector.hasClass('js-invisible')) {
+            selector.addClass('js-invisible');
+        }
+    }
+
+    /**
+     * Shows an element that was hidden using the js-hidden or js-invisible classes.
+     *
+     * @param selector
+     */
+    function show(selector)
+    {
+        if (!selector instanceof jQuery) {
+            selector = $(selector);
+        }
+
+        selector.removeClass('js-hidden');
+        selector.removeClass('js-invisible');
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -217,6 +272,9 @@ linus.common = linus.common || (function($)
     return {
         __: __,
         getCspData: getCspData,
+        hide: hide,
+        invisible: invisible,
+        show: show,
         translateAllTextIn: translateAllTextIn,
         use: use
     };
