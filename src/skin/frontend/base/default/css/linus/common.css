@@ -17,9 +17,10 @@ Hides and removes the element from the flow.
 }
 
 /*
-For use with the common show/hide
-Makes the element invisible, but does not remove from flow.
+For use with the common show/hide.
 */
 .js-invisible {
+    position: absolute;
     visibility: hidden;
+    left: -10000em;
 }
