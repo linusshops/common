@@ -7,3 +7,19 @@
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
+
+/*
+For use with the common show/hide
+Hides and removes the element from the flow.
+*/
+.js-hidden {
+    display: none;
+}
+
+/*
+For use with the common show/hide
+Makes the element invisible, but does not remove from flow.
+*/
+.js-invisible {
+    visibility: hidden;
+}
