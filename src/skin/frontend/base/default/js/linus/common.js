@@ -7,10 +7,9 @@ var linus = linus || {};
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
-
 linus.common = linus.common || (function($)
 {
-    'use strict';
+   'use strict';
 
     /**
      * Clear asynchronous feedback message after n milliseconds.
@@ -48,6 +47,45 @@ linus.common = linus.common || (function($)
         return (translation)
             ? translation
             : textString;
+    }
+
+    /**
+     * Use injected dependencies.
+     *
+     * If a dependencies object has been defined, but is empty, halt execution
+     * of script. Likewise, if a named dependency is empty, halt as well.
+     *
+     * In order to inject dependencies, define them in a literal object passed
+     * to IIFE.
+     *
+     * Instead of directly calling dependencies, it is recommended to first
+     * check if the dependency can be used. This is a safeguard against running
+     * code that might not be available, but is not obligatory. If the
+     * dependency is available, the dependency will be returned.
+     *
+     * Example usage:
+     *  var MyModule = Common.use('MyModule', dependencies);
+     *
+     * @param dependencyName The name of the dependency.
+     * @param dependencies Object of dependencies that use can access.
+     */
+    function use(dependencyName, dependencies)
+    {
+        if (!dependencyName || $.isEmptyObject(dependencies)) {
+            throw new Error('There are no dependencies defined. Ensure they have been injected.');
+        }
+
+        // Ensure the dependencies themselves are defined.
+        for (var dependency in dependencies) {
+            if (dependencyName == dependency
+                && dependencies.hasOwnProperty(dependencyName)
+                && !$.isEmptyObject(dependencies[dependencyName])
+            ) {
+                return dependencies[dependencyName];
+            } else {
+                throw new Error('Dependency `' + dependencyName + '` has not been defined. Script execution halting.');
+            }
+        }
     }
 
     /**
@@ -179,7 +217,8 @@ linus.common = linus.common || (function($)
     return {
         __: __,
         getCspData: getCspData,
-        translateAllTextIn: translateAllTextIn
+        translateAllTextIn: translateAllTextIn,
+        use: use
     };
 
 }(jQuery));
