@@ -245,8 +245,10 @@ linus.common = linus.common || (function($)
      */
     function show($selector)
     {
-        $selector.removeClass('js-hidden');
-        $selector.removeClass('js-invisible');
+        if ($selector instanceof jQuery) {
+            $selector.removeClass('js-hidden');
+            $selector.removeClass('js-invisible');
+        }
     }
 
     /**
