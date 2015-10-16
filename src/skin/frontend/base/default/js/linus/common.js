@@ -82,10 +82,10 @@ linus.common = linus.common || (function($)
                 && !$.isEmptyObject(dependencies[dependencyName])
             ) {
                 return dependencies[dependencyName];
-            } else {
-                throw new Error('Dependency `' + dependencyName + '` has not been defined. Script execution halting.');
             }
         }
+
+        throw new Error('Dependency `' + dependencyName + '` has not been defined. Script execution halting.');
     }
 
     /**
