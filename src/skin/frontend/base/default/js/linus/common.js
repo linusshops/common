@@ -76,13 +76,10 @@ linus.common = linus.common || (function($)
         }
 
         // Ensure the dependencies themselves are defined.
-        for (var dependency in dependencies) {
-            if (dependencyName == dependency
-                && dependencies.hasOwnProperty(dependencyName)
-                && !$.isEmptyObject(dependencies[dependencyName])
-            ) {
-                return dependencies[dependencyName];
-            }
+        if(dependencies.hasOwnProperty(dependencyName)
+            && !$.isEmptyObject(dependencies[dependencyName])
+        ) {
+            return dependencies[dependencyName];
         }
 
         throw new Error('Dependency `' + dependencyName + '` has not been defined. Script execution halting.');
