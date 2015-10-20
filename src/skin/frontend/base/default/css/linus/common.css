@@ -13,7 +13,7 @@ For use with the common show/hide
 Hides and removes the element from the flow.
 */
 .js-hidden {
-    display: none;
+    display: none !important;
 }
 
 /*
