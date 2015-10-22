@@ -249,6 +249,19 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Display an element for X seconds, then hide is
+     * @param selector
+    * @param seconds
+     */
+    function showUntil(selector, seconds)
+    {
+        show(selector);
+        setTimeout(function(){
+            hide(selector);
+        }, seconds * 1000, selector);
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -266,6 +279,7 @@ linus.common = linus.common || (function($)
         hide: hide,
         invisible: invisible,
         show: show,
+        showUntil: showUntil,
         translateAllTextIn: translateAllTextIn,
         use: use
     };
