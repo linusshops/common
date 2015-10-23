@@ -118,22 +118,54 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      *
      * @param array $payload
      * @param int $error The error code. A non-zero/not null value indicates an error
-     * @param string $feedbackMessage
-     * @param array $feedbackDebug
-     * @param int $httpCode
-     * @param int $cacheTimeSeconds
+     * @param array $options A list of additional options for this response
+     *          ['error'] : (int|null) The error code to send in the response.
+     *                                 0 or null indicates no errors.
+     *                                 Default: null
+     *          ['feedbackDebug'] : (array|string) A list or string of debug info
+     *                                  that is only sent if Mage Debug Mode is
+     *                                  active. Default: array()
+     *          ['feedbackTarget'] : (string) Intended css selector destination of the feedback message.
+     *          ['payloadTarget'] : (string) Intended css selector destination of the payload.
+     *          ['httpCode'] : (int) The HTTP code to send. Default: 200
+     *          ['cacheTimeSeconds'] : (int) How long the client should cache the response. Default: 0
      *
      * @throws Zend_Controller_Response_Exception
      */
-    public function sendResponseJson($payload = array(), $feedbackMessage = '', $error = null, $feedbackDebug = array(), $feedbackTarget = '', $payloadTarget = '', $httpCode = 200, $cacheTimeSeconds = 0)
+    public function sendResponseJson($payload = array(), $feedbackMessage = '', $options = array())
     {
-        $cacheControlDirectives = (!$cacheTimeSeconds)
+        //Apply defaults
+        if (!isset($options['error'])) {
+            $options['error'] = null;
+        }
+
+        if (!isset($options['feedbackDebug'])) {
+            $options['feedbackDebug'] = array();
+        }
+
+        if (!isset($options['feedbackTarget'])) {
+            $options['feedbackTarget'] = '';
+        }
+
+        if (!isset($options['payloadTarget'])) {
+            $options['payloadTarget'] = '';
+        }
+
+        if (!isset($options['httpCode'])) {
+            $options['httpCode'] = 200;
+        }
+
+        if (!isset($options['cacheTimeSeconds'])) {
+            $options['cacheTimeSeconds'] = 0;
+        }
+
+        $cacheControlDirectives = (!$options['cacheTimeSeconds'])
             ? "private, no-cache, no-store, no-transform, max-age=0, s-maxage=0"
-            : "public, no-transform, max-age=$cacheTimeSeconds, s-maxage=$cacheTimeSeconds";
+            : "public, no-transform, max-age={$options['cacheTimeSeconds']}, s-maxage={$options['cacheTimeSeconds']}";
 
         // For determining Expires. Magento already defines it, so just work
         // with the deprecated header, even though Cache-Control is superior.
-        $expireTimestamp = time() + $cacheTimeSeconds;
+        $expireTimestamp = time() + $options['cacheTimeSeconds'];
         $expiresHeader = gmdate('D, d M Y H:i:s', $expireTimestamp) . ' GMT';
 
         // This should not be defined at all.
@@ -145,7 +177,12 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
             ->setHeader('Cache-Control', $cacheControlDirectives, true)
             ->setHeader('Expires', $expiresHeader, true)
             ->setHeader('Pragma', $pragmaHeader, true)
-            ->setBody($this->buildJsonPayload($payload, $feedbackMessage, $error, $feedbackDebug, $feedbackTarget, $payloadTarget))
-            ->setHttpResponseCode($httpCode);
+            ->setBody($this->buildJsonPayload($payload, $feedbackMessage,
+                $options['error'],
+                $options['feedbackDebug'],
+                $options['feedbackTarget'],
+                $options['payloadTarget']
+            ))
+            ->setHttpResponseCode($options['httpCode']);
     }
 }
