@@ -117,7 +117,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * Send JSON response body to client.
      *
      * @param array $payload
-     * @param int $error The error code. A non-zero/not null value indicates an error
+     * @param string $feedbackMessage 
      * @param array $options A list of additional options for this response
      *          ['error'] : (int|null) The error code to send in the response.
      *                                 0 or null indicates no errors.
