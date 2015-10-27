@@ -117,7 +117,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * Send JSON response body to client.
      *
      * @param array $payload
-     * @param string $feedbackMessage 
+     * @param string $feedbackMessage
      * @param array $options A list of additional options for this response
      *          ['error'] : (int|null) The error code to send in the response.
      *                                 0 or null indicates no errors.
@@ -134,30 +134,14 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      */
     public function sendResponseJson($payload = array(), $feedbackMessage = '', $options = array())
     {
-        //Apply defaults
-        if (!isset($options['error'])) {
-            $options['error'] = null;
-        }
-
-        if (!isset($options['feedbackDebug'])) {
-            $options['feedbackDebug'] = array();
-        }
-
-        if (!isset($options['feedbackTarget'])) {
-            $options['feedbackTarget'] = '';
-        }
-
-        if (!isset($options['payloadTarget'])) {
-            $options['payloadTarget'] = '';
-        }
-
-        if (!isset($options['httpCode'])) {
-            $options['httpCode'] = 200;
-        }
-
-        if (!isset($options['cacheTimeSeconds'])) {
-            $options['cacheTimeSeconds'] = 0;
-        }
+        $options = Mage::helper('linus_common')->mergeDefaultOptions($options, array(
+            'error' => null,
+            'feedbackDebug' => array(),
+            'feedbackTarget' => '',
+            'payloadTarget' => '',
+            'httpCode' => 200,
+            'cacheTimeSeconds' => 0
+        ));
 
         $cacheControlDirectives = (!$options['cacheTimeSeconds'])
             ? "private, no-cache, no-store, no-transform, max-age=0, s-maxage=0"
