@@ -205,6 +205,9 @@ public function insertHiddenCspMarkup()
 Check to see if `linus.common` is available. Once it is available, use the
 corresponding `CSP` methods for retrieving the data passed to the frontend.
 
+The node containing the CSP data will be removed, as it should only be
+consumed using Common helpers.
+
 ```javascript
 var example = example || (function($, Common)
 {
