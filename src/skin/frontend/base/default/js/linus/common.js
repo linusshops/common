@@ -299,6 +299,7 @@ linus.common = linus.common || (function($)
         invisible: invisible,
         show: show,
         showUntil: showUntil,
+        getAllTextNodesIn: getAllTextNodesIn,
         translateAllTextIn: translateAllTextIn,
         use: use
     };
