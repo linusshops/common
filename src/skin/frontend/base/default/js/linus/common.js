@@ -181,10 +181,22 @@ linus.common = linus.common || (function($)
      * This will use the found text node values and auto-translate them
      * against the translations provided by the CSP methods.
      *
+     * Any string that you want to translate must be wrapped in a parent node.
+     * Otherwise, the risk is run of destroying tags, in the case of a node
+     * that contains another node and unwrapped text.
+     *
+     * An option is provided to disable this aggressive behavior, but
+     * can result in text not being translated.
+     *
      * @param element
+     * @param aggressive
      */
-    function translateAllTextIn(element)
+    function translateAllTextIn(element, aggressive)
     {
+        if (typeof aggressive == 'undefined' || aggressive !== false) {
+            aggressive = true;
+        }
+
         // nodeIterator does not recognize jQuery objects, so ensure to get
         // the original DOM reference.
         if (element instanceof jQuery) {
@@ -197,14 +209,10 @@ linus.common = linus.common || (function($)
             // Translate any text found from CSP translations.
             var translation = __(textString);
 
-            /*
-            Only modify a node if the translation is different from the original string.
 
-            Blindly changing all text nodes can result in certain tags being
-            stripped (such as <strong>). This way, a text node is only ever
-            altered when there is a difference in the two strings.
-            */
-            if (translation != textString) {
+            //Only modify a node if the translation is different from the
+            // original string, and aggressive mode is disabled
+            if (!aggressive && translation != textString) {
                 $(this.parentNode).text(translation);
             }
         });
