@@ -188,7 +188,7 @@ linus.common = linus.common || (function($)
         // nodeIterator does not recognize jQuery objects, so ensure to get
         // the original DOM reference.
         if (element instanceof jQuery) {
-            var element = $(element).get(0);
+            element = $(element).get(0);
         }
 
         var textNodes = getAllTextNodesIn(element);
