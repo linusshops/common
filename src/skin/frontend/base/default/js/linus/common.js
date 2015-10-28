@@ -211,8 +211,8 @@ linus.common = linus.common || (function($)
 
 
             //Only modify a node if the translation is different from the
-            // original string, and aggressive mode is disabled
-            if (!aggressive && translation != textString) {
+            // original string, or aggressive mode is enabled
+            if (aggressive || translation != textString) {
                 $(this.parentNode).text(translation);
             }
         });
