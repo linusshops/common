@@ -195,7 +195,18 @@ linus.common = linus.common || (function($)
         $(textNodes).each(function () {
             var textString = $.trim($(this.parentNode).text());
             // Translate any text found from CSP translations.
-            $(this.parentNode).text(__(textString));
+            var translation = __(textString);
+
+            /*
+            Only modify a node if the translation is different from the original string.
+
+            Blindly changing all text nodes can result in certain tags being
+            stripped (such as <strong>). This way, a text node is only ever
+            altered when there is a difference in the two strings.
+            */
+            if (translation != textString) {
+                $(this.parentNode).text(translation);
+            }
         });
     }
 
