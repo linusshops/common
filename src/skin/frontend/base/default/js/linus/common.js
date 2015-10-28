@@ -281,6 +281,21 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Find and write all text nodes in a given container to the console.
+     *
+     * This is a helper for developers- run in the browser console.  It will
+     * create each line so that it can be easily copied and pasted for use
+     * in the backend setCspTranslation method as an array. Use it so you
+     * don't have to look for every text string manually.
+     */
+    function makeCspArray(selector)
+    {
+        $(getAllTextNodesIn($(selector)[0])).each(function(){
+            console.log("'"+$.trim($(this.parentNode).text())+"'=>null,")
+        });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -297,9 +312,9 @@ linus.common = linus.common || (function($)
         getCspData: getCspData,
         hide: hide,
         invisible: invisible,
+        makeCspArray: makeCspArray,
         show: show,
         showUntil: showUntil,
-        getAllTextNodesIn: getAllTextNodesIn,
         translateAllTextIn: translateAllTextIn,
         use: use
     };
