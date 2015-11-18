@@ -4,11 +4,11 @@
     <default>
         <reference name="head">
             <action method="addCss">
-                <stylesheet>css/linus/common.css</stylesheet>
+                <stylesheet>css/linuscommon/common.css</stylesheet>
             </action>
             <action method="addItem">
                 <type>skin_js</type>
-                <name>js/linus/common.js</name>
+                <name>js/linuscommon/common.js</name>
             </action>
         </reference>
     </default>

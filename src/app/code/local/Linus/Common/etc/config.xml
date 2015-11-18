@@ -28,4 +28,14 @@
         </events>
     </global>
 
+    <frontend>
+        <layout>
+            <updates>
+                <linus_common module="Linus_Common">
+                    <file>linus_common.xml</file>
+                </linus_common>
+            </updates>
+        </layout>
+    </frontend>
+
 </config>
