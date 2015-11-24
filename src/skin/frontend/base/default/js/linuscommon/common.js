@@ -296,6 +296,27 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Get the given key from a urlencoded # url fragment.
+     * Example: www.example.com#param1=test&param2=example
+     * Calling getHashParameter('param1') will return 'test'.
+     * Calling getHashParameter('param3') will return false.
+     * @param key
+     * @returns the value of the key, or false if the key does not exist.
+     */
+    function getHashParameter(key)
+    {
+        var query = window.location.hash.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == key) {
+                return pair[1];
+            }
+        }
+        return false;
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -310,6 +331,7 @@ linus.common = linus.common || (function($)
     return {
         __: __,
         getCspData: getCspData,
+        getHashParameter: getHashParameter,
         hide: hide,
         invisible: invisible,
         makeCspArray: makeCspArray,
