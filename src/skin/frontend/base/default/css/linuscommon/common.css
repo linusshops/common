@@ -24,3 +24,10 @@ For use with the common show/hide.
     visibility: hidden;
     left: -10000em;
 }
+
+/* Make elements disabled. */
+.js-disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
