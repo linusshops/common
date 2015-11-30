@@ -86,32 +86,12 @@ just copy and paste the above.*
 ###### Add frontend assets
 
 `Common` links all of its frontend assets to `base/default`. It is properly
-namespaced, so it will never interfere with other code. However, as most Magento
-stores should have their own theme, none of the frontend code, such as
-JavaScript or CSS, will load, because Magento will not look for it there. This
+namespaced, so it will never interfere with other code. This
 is deliberate. `Common` does not attempt to assume where themes are stored and
 what are loaded; this is so that anyone can install `Common` and start writing
 code without having to modify this module. Instead, `Common` takes advantage
-of Magento's built-in fallback mechanism, so all that is required is an
-addition to the current theme's, or other module's, `layout/local.xml` file to
-include the location, which then triggers Magento to search for it
-in `base/default`.
-
-> :zap: Recommendation: define this in an adapter-like module. An adapter
-module is one that is used for modifying third-party vendor code without
-actually modifying that vendor's source directly.
-
-```xml
-<!-- Load Common module assets. Magento's fallback system will load them
-from base/default. -->
-<action method="addCss">
-    <stylesheet>css/linus/common.css</stylesheet>
-</action>
-<action method="addItem">
-    <type>skin_js</type>
-    <name>js/linus/common.js</name>
-</action>
-```
+of Magento's built-in fallback mechanism, which eventually loads files from
+`base/default`. Assets will be automatically loaded.
 
 ## Features by use case
 
