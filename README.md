@@ -257,6 +257,51 @@ more information about the methods available to the frontend.
 *No more messy script tags in templates with PHP embedded within inline
 JavaScript.*
 
+### Load custom fonts from module, page, etc
+
+Check to see if `linus.common` is available.
+
+No matter how many times a call to `addWebFont` is made, the stack of fonts
+will all be queued and a single request will be made.
+
+```javascript
+var example = example || (function($, Common)
+{
+    function __construct()
+    {
+        if ($.isEmptyObject(Common)) {
+            throw new Error('`Common` dependency not available.');
+        }
+        
+        // Add a Web font from Google.
+        Common.addWebFont({
+            google: {
+                families: ['Roboto:400,400italic:latin']
+            }
+        });
+        
+        // Add another Web font from Google and change the timeout, because
+        // there are a lot of fonts to download. The previous font will be
+        // queued alongside this one before actually requesting the fonts.
+        Common.addWebFont({
+            google: {
+                families: ['Open+Sans:400,400italic,700,700italic:latin']
+            },
+            timeout: 5500
+        });
+    }
+
+    (function __init() {
+        $(document).ready(function(e) {
+            __construct();
+        });
+    }());
+
+    return {};
+
+}(jQuery, linus.common || {}));
+```
+
 ### Bot protection
 
 On very large Magento stores, scraping of its content can become a source of
