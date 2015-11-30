@@ -26,6 +26,19 @@ linus.common = linus.common || (function($)
     var cspData = {};
 
     /**
+     * Implementation of Google's Web Font Loader. These are Common defaults.
+     *
+     * https://github.com/typekit/webfontloader
+     *
+     * @type object
+     */
+    var webFontConfig = {
+        classes: false,
+        events: false,
+        timeout: 2000
+    };
+
+    /**
      * Constructor
      *
      * @private
@@ -34,6 +47,9 @@ linus.common = linus.common || (function($)
     {
         // Store data immediately.
         getCspData();
+
+        // Let all other ready callbacks fire through codebase, then run this.
+        deadLastReady(loadWebFonts);
     }
 
     /**
@@ -317,6 +333,110 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Pass a font object literal and it will be added to the font stack.
+     *
+     * This is an implementation of Google's Web Font Loader:
+     * https://github.com/typekit/webfontloader.
+     *
+     * - Go to https://www.google.com/fonts#QuickUsePlace:quickUse
+     * - Choose styles (1)
+     * - Copy JavaScript font object (3).
+     *
+     * Example usage:
+     *  Common.addWebFont({
+     *      google: {
+     *          families: ['Roboto:400,400italic:latin']
+     *      }
+     *  });
+     *
+     * Should the same provider but different fonts be called by multiple
+     * modules, the provider's fonts will be merged and all of them will be
+     * downloaded in a single payload.
+     *
+     * Note: this can also be used to load custom fonts. See the documentation
+     * for details.
+     *
+     * @param fontObject Object literal of associated webfontloader font.
+     */
+    function addWebFont(fontObject)
+    {
+        $(document).on('Common:loadWebFonts',function(e, WebFontConfig) {
+            $.each(WebFontConfig, function(provider, providerPayload) {
+                if ($.type(providerPayload) === 'object') {
+                    $.each(providerPayload, function(familiesKey, familiesValues) {
+                        if ($.type(familiesValues) === 'array'
+                            && !$.isEmptyObject(fontObject[provider])
+                        ) {
+                            $.merge(
+                                fontObject[provider][familiesKey],
+                                WebFontConfig[provider][familiesKey]
+                            );
+
+                        }
+                    });
+                }
+            });
+
+            $.extend(true, WebFontConfig, fontObject);
+        });
+    }
+
+    /**
+     * Load Google Web Fonts, if any added through event.
+     *
+     * Common calls this internally through the `deadLastReady` method to ensure
+     * that all modules can add their own fonts. They do this by binding to
+     * the `Common:loadWebFonts` event that is thrown in this method. Any
+     * external module can then just call the `addWebFonts` method, and Common
+     * will handle the queuing and loading of fonts. If no calls to
+     * `addWebFont` are made, the Google webfont.js file will not be downloaded.
+     *
+     *  @event Common:loadWebFonts
+     */
+    function loadWebFonts()
+    {
+        window.WebFontConfig = webFontConfig;
+        var lastWebFontConfig = JSON.stringify(window.WebFontConfig);
+
+        $(document).trigger('Common:loadWebFonts', [webFontConfig]);
+
+        if (lastWebFontConfig !== JSON.stringify(webFontConfig)) {
+            $.extend(true, window.WebFontConfig, webFontConfig);
+
+            var wf = document.createElement('script');
+            wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                '://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js';
+            wf.type = 'text/javascript';
+            wf.async = 'true';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf, s);
+        }
+    }
+
+    /**
+     * Methods added by this will be the LAST ready callbacks fired.
+     *
+     * In other words, this hack ensures that despite the number of calls to
+     * $.ready() throughout a codebase, the ones added with this method will be
+     * run after all of them are run. This works because jQuery fires ready
+     * callbacks in order. By scoping a ready callback within another ready
+     * callback, this compels it to run after all the first-level callbacks are
+     * run.
+     *
+     * This is for those use cases when `ready` is too early, and `load` is too
+     * late. One such use case is when throwing custom events: events need to
+     * be bound before the actual event is triggered. Doing this allows all
+     * libraries that use Common to bind to any custom events, then the
+     * actual event is fired last.
+     */
+    function deadLastReady(callback)
+    {
+        $(document).ready(function(e) {
+            callback();
+        });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -338,7 +458,8 @@ linus.common = linus.common || (function($)
         show: show,
         showUntil: showUntil,
         translateAllTextIn: translateAllTextIn,
-        use: use
+        use: use,
+        addWebFont: addWebFont
     };
 
 }(jQuery));
