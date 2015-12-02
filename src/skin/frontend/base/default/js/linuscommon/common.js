@@ -39,6 +39,13 @@ linus.common = linus.common || (function($)
     };
 
     /**
+     * Toggle downloading of Web fonts.
+     *
+     * @type bool
+     */
+    var webFontsEnabled = true;
+
+    /**
      * Constructor
      *
      * @private
@@ -382,6 +389,14 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Prevent Web fonts from downloading.
+     */
+    function disableWebFonts()
+    {
+        webFontsEnabled = false;
+    }
+
+    /**
      * Load Google Web Fonts, if any added through event.
      *
      * Common calls this internally through the `deadLastReady` method to ensure
@@ -395,21 +410,23 @@ linus.common = linus.common || (function($)
      */
     function loadWebFonts()
     {
-        window.WebFontConfig = webFontConfig;
-        var lastWebFontConfig = JSON.stringify(window.WebFontConfig);
+        if (webFontsEnabled) {
+            window.WebFontConfig = webFontConfig;
+            var lastWebFontConfig = JSON.stringify(window.WebFontConfig);
 
-        $(document).trigger('Common:loadWebFonts', [webFontConfig]);
+            $(document).trigger('Common:loadWebFonts', [webFontConfig]);
 
-        if (lastWebFontConfig !== JSON.stringify(webFontConfig)) {
-            $.extend(true, window.WebFontConfig, webFontConfig);
+            if (lastWebFontConfig !== JSON.stringify(webFontConfig)) {
+                $.extend(true, window.WebFontConfig, webFontConfig);
 
-            var wf = document.createElement('script');
-            wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-                '://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js';
-            wf.type = 'text/javascript';
-            wf.async = 'true';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(wf, s);
+                var wf = document.createElement('script');
+                wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                    '://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js';
+                wf.type = 'text/javascript';
+                wf.async = 'true';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(wf, s);
+            }
         }
     }
 
@@ -459,7 +476,8 @@ linus.common = linus.common || (function($)
         showUntil: showUntil,
         translateAllTextIn: translateAllTextIn,
         use: use,
-        addWebFont: addWebFont
+        addWebFont: addWebFont,
+        disableWebFonts: disableWebFonts
     };
 
 }(jQuery));
