@@ -105,4 +105,18 @@ abstract class Linus_Common_Model_HijaxAbstract
     {
         $this->hijaxController->$name = $value;
     }
+
+    /**
+     * Cancel dispatch to underlying controller.
+     *
+     * This must be called to prevent the underlying, base controller from
+     * also executing. The Hijax technique described here essentially moves the
+     * control flow higher up and performs all logic there, so passing back
+     * to the original controller would be harmful, and likely result in a
+     * header redirect.
+     */
+    public function cancelDispatch()
+    {
+        $this->hijaxController->setFlag('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+    }
 }
