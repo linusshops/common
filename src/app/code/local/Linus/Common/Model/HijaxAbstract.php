@@ -5,8 +5,15 @@
  *
  * Observers that make exclusive use of Magento's pre- and post-dispatch
  * controller events should extend this HijaxAbstract class. By doing so,
- * every observer method will have local access to the controller by simply
- * using `$this`.
+ * every observer method will have native access to the controller by simply
+ * using `$this`, which eliminates the need to write all boilerplate
+ * from within every observer method: this essentially renders the observer
+ * class an instance of the currently running controller. For example, there is
+ * no need to do `$currentController = $observer->getControllerAction()` and
+ * then access a limited version of the controller from `$currentController`; by
+ * limited, that means that none of the protected or private methods are
+ * available. Extending this class ensures that all methods are available
+ * to the observer, regardless of the foreign class' method visibility.
  *
  * Hijax is a technique for enhancing standard HTTP form POSTs that typically
  * expect synchronous behaviour, so that instead of the response being a header
