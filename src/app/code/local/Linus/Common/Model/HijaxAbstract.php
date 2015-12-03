@@ -71,6 +71,9 @@ abstract class Linus_Common_Model_HijaxAbstract
      * The majority of the actual methods cannot be verified because they, too,
      * are magical, so just go ahead and pipe it through.
      *
+     * Reflection is necessary so that protected and private methods can still
+     * be called.
+     *
      * @param string $name
      * @param array $arguments
      *
@@ -78,9 +81,18 @@ abstract class Linus_Common_Model_HijaxAbstract
      */
     public function __call($name, $arguments)
     {
-        return (count($arguments))
-            ? $this->hijaxController->$name(implode(',', $arguments))
-            : $this->hijaxController->$name();
+        $arguments = implode(',', $arguments);
+
+        $reflectedMethod = new ReflectionMethod($this->hijaxController, $name);
+        if ($reflectedMethod->isProtected()
+            || $reflectedMethod->isPrivate()
+        ) {
+            $reflectedMethod->setAccessible(true);
+
+            return $reflectedMethod->invoke($this->hijaxController, $arguments);
+        }
+
+        return $this->hijaxController->$name($arguments);
     }
 
     /**
