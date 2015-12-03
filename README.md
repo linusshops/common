@@ -298,7 +298,7 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 }
 ```
 
-### Hijax: hijacking existing form endpoints for asynchronouse (Ajax) responses
+### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
 
 [TODO]
 

@@ -56,11 +56,9 @@ abstract class Linus_Common_Model_HijaxAbstract
     /**
      * Get the current instance controller in memory.
      *
-     * The actual controller instance will be different
-     *
-     * @param $observer
+     * The actual controller instance will be different.
      */
-    public function __construct($observer)
+    public function __construct()
     {
         $this->hijaxController = Mage::app()->getFrontController()->getAction();
     }
