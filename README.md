@@ -298,6 +298,11 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 }
 ```
 
+### Hijax: hijacking existing form endpoints for asynchronouse (Ajax) responses
+
+[TODO]
+
+
 ### Asynchronously add items to cart (Ajax)
 
 The Magento endpoint for adding an item to the cart is synchronous. In other
