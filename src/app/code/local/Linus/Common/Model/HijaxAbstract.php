@@ -61,13 +61,35 @@ abstract class Linus_Common_Model_HijaxAbstract
     public $hijaxController;
 
     /**
+     * @var bool
+     */
+    public $isAjax;
+
+    /**
      * Get the current instance controller in memory.
      *
-     * The actual controller instance will be different.
+     * The actual controller instance will be relative to context, due to
+     * its polymorphic nature.
+     *
+     * Ajax requests are detected and then dispatching cancelled, so that the
+     * observer will not pass its control flow back to the controller that
+     * dispatched the event, because without cancelling, the original controller
+     * will then run its logic, which almost certainly contains a header
+     * redirect at the end. Cancelling the dispatch here means none of the
+     * Hijax methods needs to call it manually.
      */
     public function __construct()
     {
         $this->hijaxController = Mage::app()->getFrontController()->getAction();
+        $this->isAjax = $this->hijaxController->getRequest()->isAjax();
+
+        if ($this->isAjax) {
+            $this->cancelDispatch();
+        } else {
+            // Try and prevent observer methods from running and just pass
+            // control flow back to controller that dispatched event.
+            // For now, every hijax method will need to call runHijax.
+        }
     }
 
     /**
@@ -135,5 +157,17 @@ abstract class Linus_Common_Model_HijaxAbstract
     public function cancelDispatch()
     {
         $this->hijaxController->setFlag('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+    }
+
+    /**
+     * All hijax methods need to call this first, followed by standard code.
+     *
+     * @return bool
+     */
+    public function runHijax()
+    {
+        if (!$this->isAjax) {
+            return false;
+        }
     }
 }
