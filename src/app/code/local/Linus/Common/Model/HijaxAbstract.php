@@ -162,9 +162,9 @@ abstract class Linus_Common_Model_HijaxAbstract
     /**
      * All hijax methods need to call this first, followed by standard code.
      *
-     * @return bool
+     * @return bool|null
      */
-    public function runHijax()
+    public function hijax()
     {
         if (!$this->isAjax) {
             return false;
