@@ -79,7 +79,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
         }
 
         if (!strlen($feedbackMessage)) {
-            $feedbackMessage = (count($payload))
+            $feedbackMessage = (!(bool) $error)
                 ? 'Data retrieved successfully!'
                 : 'Data could not be retrieved.';
         }
@@ -120,7 +120,8 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * @param string $feedbackMessage
      * @param array $options A list of additional options for this response
      *          ['error'] : (int|null) The error code to send in the response.
-     *                                 0 or null indicates no errors.
+     *                                 0 indicates no errors. null informs the
+     *                                 method to determine this from payload.
      *                                 Default: null
      *          ['feedbackDebug'] : (array|string) A list or string of debug info
      *                                  that is only sent if Mage Debug Mode is
