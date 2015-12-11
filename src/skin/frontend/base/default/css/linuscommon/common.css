@@ -31,3 +31,19 @@ For use with the common show/hide.
     cursor: not-allowed;
     opacity: 0.65;
 }
+
+/**
+ * Font Awesome faster spinner speed.
+ */
+.fa-spin-fast {
+    display: inline-block;
+    animation: spin-fast 700ms infinite linear;
+}
+    @keyframes spin-fast {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(359deg);
+        }
+    }
