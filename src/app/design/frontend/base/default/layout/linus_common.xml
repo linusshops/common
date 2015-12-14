@@ -8,6 +8,10 @@
             </action>
             <action method="addItem">
                 <type>skin_js</type>
+                <name>js/linuscommon/accounting.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
                 <name>js/linuscommon/common.js</name>
             </action>
         </reference>

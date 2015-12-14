@@ -7,9 +7,14 @@ var linus = linus || {};
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
-linus.common = linus.common || (function($)
+linus.common = linus.common || (function($, Dependencies)
 {
    'use strict';
+
+    /**
+     * https://github.com/openexchangerates/accounting.js
+     */
+    var Accounting;
 
     /**
      * Clear asynchronous feedback message after n milliseconds.
@@ -52,6 +57,9 @@ linus.common = linus.common || (function($)
      */
     function __construct()
     {
+        Accounting = use('Accounting', Dependencies);
+        setAccountingDefaultSettings();
+
         // Store data immediately.
         getCspData();
 
@@ -472,6 +480,108 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Default settings for the Accounting library wrapper.
+     */
+    function setAccountingDefaultSettings()
+    {
+        Accounting.settings = {
+            currency: {
+                symbol : '$',   // default currency symbol is '$'
+                format: {
+                    pos : '%s%v',
+                    neg : '%s (%v)',
+                    zero: '%s0.00'
+                }, // controls output: %s = symbol, %v = value/number (can be object: see below)
+                decimal : '.',  // decimal point separator
+                thousand: ',',  // thousands separator
+                precision : 2   // decimal places
+            },
+            number: {
+                precision : 2,  // default precision on numbers is 0
+                thousand: ',',
+                decimal : '.'
+            }
+        }
+    }
+
+    /**
+     * Get the formatted price of a string or int.
+     *
+     * Provide '4444.98' or 4444.97777 and get '$4,444.98'.
+     *
+     * @param price String|Int
+     *
+     * @return string
+     */
+    function getFormattedPrice(price)
+    {
+        return Accounting.formatMoney(price);
+    }
+
+    /**
+     * Get the formatted number of a string or int.
+     *
+     * Provide '4444.98' or 4444.97777 and get '4,444.98'.
+     *
+     * @param price String|Int
+     *
+     * return string
+     */
+    function getFormattedNumber(price)
+    {
+        return Accounting.formatNumber(price);
+    }
+
+    /**
+     * Get the int of a number or int in a format ready for calculating.
+     *
+     * Provide '4444.98' or 4444.97777 and get 4444.98.
+     *
+     * @param price String|Int
+     *
+     * @return int
+     */
+    function getPriceAsInt(price)
+    {
+        return parseFloat(Accounting.toFixed(price));
+    }
+
+    /**
+     * Pass array of subtotals, and get total subtotal.
+     *
+     * Example usage:
+     *  calculateSubtotalFromBasePrices([99.87,100.10000]) returns 199.97
+     *
+     * @param basePrices Array
+     *
+     * @return int
+     */
+    function calculateSubtotalFromBasePrices(basePrices)
+    {
+        var subtotal = getPriceAsInt(0.00);
+        for (var i = 0, l = basePrices.length; i < l; ++i) {
+            subtotal =+ getPriceAsInt(basePrices[i]);
+        }
+
+        return subtotal;
+    }
+
+    /**
+     * Pass a string or int in any format, and a quantity, and get the total.
+     *
+     * getSubtotalWithQuantities('$103.271', 3) returns 309.81
+     *
+     * @param unitPrice
+     * @param unitQuantity
+     *
+     * @returns int
+     */
+    function calculateSubtotalFromQuantity(unitPrice, unitQuantity)
+    {
+        return getPriceAsInt(getPriceAsInt(unitPrice) * parseInt(unitQuantity));
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -496,7 +606,14 @@ linus.common = linus.common || (function($)
         use: use,
         addWebFont: addWebFont,
         disableWebFonts: disableWebFonts,
-        getFormData: getFormData
+        getFormData: getFormData,
+        getFormattedNumber: getFormattedNumber,
+        getFormattedPrice: getFormattedPrice,
+        getPriceAsInt: getPriceAsInt,
+        calculateSubtotalFromBasePrices: calculateSubtotalFromBasePrices,
+        calculateSubtotalFromQuantity: calculateSubtotalFromQuantity
     };
 
-}(jQuery));
+}(jQuery, {
+    Accounting: accounting || {}
+}));
