@@ -59,11 +59,11 @@ linus.common = linus.common || (function($, Dependencies)
      */
     function __construct()
     {
-        Accounting = use('Accounting', Dependencies);
-        setAccountingDefaultSettings();
-
         // Store data immediately.
         getCspData();
+
+        Accounting = use('Accounting', Dependencies);
+        setAccountingDefaultSettings();
 
         // Let all other ready callbacks fire through codebase, then run this.
         deadLastReady(loadWebFonts);
@@ -162,6 +162,17 @@ linus.common = linus.common || (function($, Dependencies)
         }
 
         return cspDataValue;
+    }
+
+    /**
+     * If CSP data has the `locale` key, it will be retrieved.
+     *
+     * Note that if a locale has not been passed, this will return an empty
+     * string.
+     */
+    function getLocale()
+    {
+        return getCspData('locale');
     }
 
     /**
@@ -483,6 +494,8 @@ linus.common = linus.common || (function($, Dependencies)
 
     /**
      * Default settings for the Accounting library wrapper.
+     *
+     * This will handle `fr_FR` locale.
      */
     function setAccountingDefaultSettings()
     {
@@ -503,6 +516,19 @@ linus.common = linus.common || (function($, Dependencies)
                 thousand: ',',
                 decimal : '.'
             }
+        };
+
+        if (getLocale() == 'fr_FR') {
+            Accounting.settings.currency.format = {
+                pos : '%v %s',
+                neg : '(%v) %s',
+                zero: '0,00 %s'
+            };
+
+            Accounting.settings.currency.decimal = ',';
+            Accounting.settings.currency.thousand = ' ';
+            Accounting.settings.number.decimal = ',';
+            Accounting.settings.number.thousand = ' ';
         }
     }
 
@@ -545,7 +571,12 @@ linus.common = linus.common || (function($, Dependencies)
      */
     function getPriceAsInt(price)
     {
-        return parseFloat(Accounting.toFixed(price));
+        return parseFloat(Accounting.toFixed(
+            // Note that unformat should just use defaults set, but does not.
+            // Submit issue regarding this, so decimal does not need to be
+            // manually passed.
+            Accounting.unformat(price, Accounting.settings.number.decimal)
+        ));
     }
 
     /**
@@ -598,6 +629,7 @@ linus.common = linus.common || (function($, Dependencies)
     return {
         __: __,
         getCspData: getCspData,
+        getLocale: getLocale,
         getHashParameter: getHashParameter,
         hide: hide,
         invisible: invisible,
