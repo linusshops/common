@@ -12,6 +12,8 @@ linus.common = linus.common || (function($, Dependencies)
    'use strict';
 
     /**
+     * Wrapper for accounting.js library.
+     *
      * https://github.com/openexchangerates/accounting.js
      */
     var Accounting;
