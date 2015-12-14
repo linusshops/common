@@ -454,6 +454,24 @@ linus.common = linus.common || (function($)
     }
 
     /**
+     * Get all data values from a form's input body.
+     *
+     * TODO: eventually provide a hijax helper for creating hijax requests,
+     * which will wrap the standard jQuery ajax method.
+     *
+     * @param target HTML DOM node or jQuery object.
+     *
+     * @returns object
+     */
+    function getFormData(target)
+    {
+        return $(target).serializeArray().reduce(function(formObject, item) {
+            formObject[item.name] = item.value;
+            return formObject;
+        }, {});
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -477,7 +495,8 @@ linus.common = linus.common || (function($)
         translateAllTextIn: translateAllTextIn,
         use: use,
         addWebFont: addWebFont,
-        disableWebFonts: disableWebFonts
+        disableWebFonts: disableWebFonts,
+        getFormData: getFormData
     };
 
 }(jQuery));
