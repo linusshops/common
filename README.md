@@ -298,6 +298,26 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 }
 ```
 
+### New layout handle for category layout XML
+
+This provides the ability to modify all of a category's subcategories
+from the layout XML without having to manually target each one
+specifically with CATEGORY_{ID}. Ultimately, this provides layout XML
+inheritance to subcategories from a parent category, which can normally
+only be achieved through the database by specifying XML in the parent
+category, and enabling "Use Parent Category Settings" in each
+subcategory. This is better.
+
+```xml
+<CATEGORY_PARENT_823>
+    <reference name="root">
+        <action method="setTemplate">
+            <template>page/2columns-left-special-category.phtml</template>
+        </action>
+    </reference>
+</CATEGORY_PARENT_823>
+```
+
 ### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
 
 [TODO]
