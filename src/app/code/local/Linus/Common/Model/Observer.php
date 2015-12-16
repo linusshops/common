@@ -35,6 +35,12 @@ class Linus_Common_Model_Observer
      * This can be used to create handles of any kind, but the most immediate
      * use case that compelled this into existence.
      *
+     * Note for category handles: the CATEGORY_{ID} handle is removed, then
+     * added after the CATEGORY_PARENT_{ID} handle. Order is important. This
+     * ensures that, should an entire parent category be targeted, a
+     * subcategory's specific layout XML will still take precedence over the
+     * general one set with CATEGORY_PARENT_{ID}.
+     *
      * @param Varien_Event_Observer $observer
      */
     public function onControllerActionLayoutLoadBefore(Varien_Event_Observer $observer)
@@ -50,7 +56,12 @@ class Linus_Common_Model_Observer
         if ($controllerName == 'category') {
             /** @var Mage_Catalog_Model_Category $category */
             $category = Mage::registry('current_category');
-            $layoutUpdate->addHandle('CATEGORY_PARENT_' . $category->getParentId());
+            $categoryId = $category->getId();
+            $categoryParentId = $category->getParentId();
+
+            $layoutUpdate->removeHandle('CATEGORY_' . $categoryId);
+            $layoutUpdate->addHandle('CATEGORY_PARENT_' . $categoryParentId);
+            $layoutUpdate->addHandle('CATEGORY_' . $categoryId);
         }
     }
 }

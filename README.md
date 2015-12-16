@@ -308,6 +308,11 @@ only be achieved through the database by specifying XML in the parent
 category, and enabling "Use Parent Category Settings" in each
 subcategory. This is better.
 
+Note that should a subcategory of the parent category be targeted with its own
+layout XML (e.g., `<CATEGORY_1201>`) in addition to the parent category, it
+will take precedence. This ensures that Magento's standard behaviour is not
+changed, as the order of handles is important.
+
 ```xml
 <?xml version="1.0"?>
 <layout version="0.1.0">
