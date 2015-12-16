@@ -302,7 +302,7 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 
 This provides the ability to modify all of a category's subcategories
 from the layout XML without having to manually target each one
-specifically with CATEGORY_{ID}. Ultimately, this provides layout XML
+specifically with `CATEGORY_{ID}`. Ultimately, this provides layout XML
 inheritance to subcategories from a parent category, which can normally
 only be achieved through the database by specifying XML in the parent
 category, and enabling "Use Parent Category Settings" in each
