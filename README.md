@@ -298,7 +298,7 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 }
 ```
 
-### New layout handle for category layout XML
+### New layout handle for category layout XML: `CATEGORY_PARENT_{ID}`
 
 This provides the ability to modify all of a category's subcategories
 from the layout XML without having to manually target each one
