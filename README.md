@@ -292,7 +292,7 @@ require burdensome overhead, but does not detract from the SEO, for example.
 
 ```php
 // If no user agent string passed, will use current request's user agent.
-// gisBot() returns bool.
+// isBot() returns bool.
 if (!Mage::helper('linus_common/request')->isBot()) {
     // - Some massive database operation that should be cached anyway.
 }
@@ -309,13 +309,16 @@ category, and enabling "Use Parent Category Settings" in each
 subcategory. This is better.
 
 ```xml
-<CATEGORY_PARENT_823>
-    <reference name="root">
-        <action method="setTemplate">
-            <template>page/2columns-left-special-category.phtml</template>
-        </action>
-    </reference>
-</CATEGORY_PARENT_823>
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <CATEGORY_PARENT_823>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/2columns-left-special-category.phtml</template>
+            </action>
+        </reference>
+    </CATEGORY_PARENT_823>
+</layout>
 ```
 
 ### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
