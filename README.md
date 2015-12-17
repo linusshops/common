@@ -298,7 +298,9 @@ if (!Mage::helper('linus_common/request')->isBot()) {
 }
 ```
 
-### New layout handle for category layout XML: `CATEGORY_PARENT_{ID}`
+### New layout XML handles
+
+###### `CATEGORY_PARENT_{ID}`
 
 This provides the ability to modify all of a category's subcategories
 from the layout XML without having to manually target each one
@@ -325,6 +327,23 @@ changed, as the order of handles is important.
     </CATEGORY_PARENT_823>
 </layout>
 ```
+
+###### `PRODUCT_CATEGORY_{ID}`
+
+This allows products that belong to a category to be targeted with custom
+layout XML. Products can exist in multiple categories, so every product will
+have all those category handles available, sorted from least specific category
+to most specific category. For example, should a motorcycle helmet be in a
+category such as `Street (ID:159) > Helmets (ID:39) > Full Face (ID:409)`, a
+layout handle of `PRODUCT_CATEGORY_409` will trump the layout handle for
+`PRODUCT_CATEGORY_39`, because it is more specific; this allows all helmets to
+inherit the same layout XML, with an exception for full face helmets, which
+have their even more specific layout XML. Similarly, should a product that
+belongs to category handle `PRODUCT_CATEGORY_409` have its own layout handle
+specified, like `PRODUCT_674238`, it will trump that more general one.
+
+The order of handles is carefully built, so that a more specific handle will
+always trump a parent or less specific handle, which is what Magento expects.
 
 ### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
 
