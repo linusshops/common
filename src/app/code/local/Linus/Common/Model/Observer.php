@@ -86,12 +86,13 @@ class Linus_Common_Model_Observer
                 });
                 $productCategoryIds = array_filter($productCategoryIds);
 
-                if ($productCategoryIds)
-                $layoutUpdate->removeHandle('PRODUCT_' . $productId);
-                foreach ($productCategoryIds as $productCategoryId) {
-                    $layoutUpdate->addHandle('PRODUCT_CATEGORY_' . $productCategoryId);
+                if (count($productCategoryIds)) {
+                    $layoutUpdate->removeHandle('PRODUCT_' . $productId);
+                    foreach ($productCategoryIds as $productCategoryId) {
+                        $layoutUpdate->addHandle('PRODUCT_CATEGORY_' . $productCategoryId);
+                    }
+                    $layoutUpdate->addHandle('PRODUCT_' . $productId);
                 }
-                $layoutUpdate->addHandle('PRODUCT_' . $productId);
             }
         }
     }
