@@ -36,4 +36,13 @@ class LinusCommonTraitCmsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('too much money', $block->cost());
         $this->assertEquals('', $block->nonexistent());
     }
+
+    public function testCsvParseCache()
+    {
+        $block = new CmsCacheTestBlock(array());
+
+        $data = $block->something();
+        $this->assertEquals('written', $data);
+        $this->assertEquals('', $block->nonexistent());
+    }
 }
