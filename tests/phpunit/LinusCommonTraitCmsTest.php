@@ -15,5 +15,25 @@ class LinusCommonTraitCmsTest extends PHPUnit_Framework_TestCase
 
         $data = $block->something();
         $this->assertEquals('written', $data);
+        $this->assertEquals('', $block->nonexistent());
+    }
+
+    public function testCsvMultilineParse()
+    {
+        $block = new CmsMultilineTestBlock(array());
+
+        $this->assertEquals('written', $block->something());
+        $this->assertEquals('the answer is thus', $block->data());
+        $this->assertEquals('too much money', $block->cost());
+        $this->assertEquals('', $block->nonexistent());
+    }
+
+    public function testCsvNonAlphanumericParse()
+    {
+        $block = new CmsNonAlphaTestBlock(array());
+
+        $this->assertEquals('written', $block->something123());
+        $this->assertEquals('too much money', $block->cost());
+        $this->assertEquals('', $block->nonexistent());
     }
 }

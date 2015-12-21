@@ -44,7 +44,7 @@ trait Linus_Common_Trait_Cms
 
     protected function normalizeKey($key)
     {
-        return strtolower($key);
+        return strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $key));
     }
 
     public function __call($name, $arguments)
