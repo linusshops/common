@@ -11,6 +11,9 @@ class LinusCommonTraitCmsTest extends PHPUnit_Framework_TestCase
 {
     public function testCsvParse()
     {
-        $block = new CmsTestBlock();
+        $block = new CmsTestBlock(array());
+
+        $data = $block->something();
+        print_r($data);
     }
 }

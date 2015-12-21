@@ -52,7 +52,7 @@ trait Linus_Common_Trait_Cms
         }
 
         if (empty($this->blockCsvData)) {
-            $this->blockCsvData = $this->parseCsvData($this->getCmsBlockHtml());
+            $this->blockCsvData = $this->parseCsvData($this->toHtml());
         }
 
         $key = $this->normalizeKey($name);

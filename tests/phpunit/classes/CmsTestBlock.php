@@ -21,4 +21,12 @@ class CmsTestBlock extends Mage_Core_Block_Template
     {
         return 1234;
     }
+
+    public function _toHtml()
+    {
+        return <<<CSV
+something,written
+CSV;
+
+    }
 }
