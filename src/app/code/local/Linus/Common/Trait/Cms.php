@@ -28,10 +28,17 @@ trait Linus_Common_Trait_Cms
     protected $CMS_CSV_CACHE_KEY = 'Linus_Common_CMS_Csv_';
     /** @var string Default length that the key data should be stored. */
     protected $CMS_CSV_CACHE_LIFETIME = '86400';
+    /** @var bool If false, will always parse from the database */
     protected $CMS_CSV_CACHE_ENABLED = true;
 
     protected $blockCsvData = array();
 
+    /**
+     * Given data from toHtml of a static block, parses it as a csv of
+     * key-value pairs into an array.
+     * @param $source
+     * @return array|false|mixed
+     */
     protected function parseCsvData($source)
     {
         $cacheKey = $this->CMS_CSV_CACHE_KEY.$this->getBlockId();
@@ -61,11 +68,24 @@ trait Linus_Common_Trait_Cms
         return $data;
     }
 
+    /**
+     * Normalizes the key into an alphanumeric string
+     * @param $key
+     * @return string
+     */
     protected function normalizeKey($key)
     {
         return strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $key));
     }
 
+    /**
+     * Fetch a data key that matches the method name. If csv data is not yet loaded,
+     * loads and parses it.  Returns an empty string if no matching key found.
+     * @param $name
+     * @param $arguments
+     * @return string
+     * @throws Exception
+     */
     public function __call($name, $arguments)
     {
         if (!in_array('Mage_Core_Block_Template', class_parents($this))) {
