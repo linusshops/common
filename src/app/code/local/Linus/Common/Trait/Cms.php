@@ -1,7 +1,22 @@
 <?php
 
 /**
+ * Applying this trait to a child of Mage_Core_Block_Template will enable
+ * parsing of CSV formatted data keys from CMS block content.  This is used
+ * when many cms blocks share the same HTML markup, but different data. Defining
+ * this data as CSV key value pairs allows the reuse of the HTML without having
+ * to paste it across many static blocks.
  *
+ * To access data inserted as csv, the call magic method is used. On the first
+ * call, the csv data will be loaded and cached.  The method call should
+ * be equivalent to the first column (the key).
+ *
+ * Keys will be normalized to be alphanumeric and lowercase. The higher the line
+ * number of a key, the higher priority it has in the case of conflicts. If the
+ * same key appears on lines 5 and 600, the one on line 600 will be used.
+ *
+ * If the composing class is not a child of Mage_Core_Block_Template, it will
+ * throw an exception.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2015-12-21
