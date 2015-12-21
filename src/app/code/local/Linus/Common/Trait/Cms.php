@@ -24,7 +24,9 @@
  */
 trait Linus_Common_Trait_Cms
 {
+    /** @var string Cache key prefix */
     protected $CMS_CSV_CACHE_KEY = 'Linus_Common_CMS_Csv_';
+    /** @var string Default length that the key data should be stored. */
     protected $CMS_CSV_CACHE_LIFETIME = '86400';
     protected $CMS_CSV_CACHE_ENABLED = true;
 
@@ -47,12 +49,14 @@ trait Linus_Common_Trait_Cms
 
             if ($this->CMS_CSV_CACHE_ENABLED) {
                 $cache->save(
-                    $data,
+                    serialize($data),
                     $cacheKey,
                     array('Linus_Common'),
                     $this->CMS_CSV_CACHE_LIFETIME
                 );
             }
+        } else {
+            $data = unserialize($data);
         }
         return $data;
     }
