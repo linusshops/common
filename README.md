@@ -363,6 +363,34 @@ that all existing forms on the site will continue to work, but if `Common`
 detects that the request to add an item to the cart is asynchronous, it will
 respond with a `JSON` payload instead of redirect the browser.
 
+### Generic CMS Templating as CSV
+
+It is common to have many static blocks in Magento. Many of these static blocks
+may share similar html structure, only differing in the actual content. This can
+result in difficulty when the structure needs updating, as EVERY static block
+would have to be modified.
+
+Common's generic templating solves this by allowing static blocks to be treated
+as data containers holding CSV formatted data as key-value pairs.  By using the
+`Linus_Common_Trait_CMS` trait on a block, it gains access to the block csv parser.
+
+There are several examples in the `tests` directory.
+
+For example, assume the content of a static block is set to the following.
+```
+foo,bar
+fizz,buzz
+```
+By applying the trait to your static block, you can now do the following
+```
+//Assume $cmsBlock is a block that has had Linus_Common_Trait_Cms applied
+$foo = $cmsBlock->foo();
+echo $foo; //outputs 'bar'
+$fizz = $cmsBlock->fizz();
+echo $fizz; //outputs 'buzz'
+echo $cmsBlock->nonexistent(); //outputs ''
+```
+
 [TODO]
 
 ## Authors
