@@ -14,6 +14,6 @@ class LinusCommonTraitCmsTest extends PHPUnit_Framework_TestCase
         $block = new CmsTestBlock(array());
 
         $data = $block->something();
-        print_r($data);
+        $this->assertEquals('written', $data);
     }
 }

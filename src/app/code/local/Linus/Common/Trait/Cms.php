@@ -19,13 +19,15 @@ trait Linus_Common_Trait_Cms
     {
         $cacheKey = $this->CMS_CSV_CACHE_KEY.$this->getBlockId();
         $cache = Mage::app()->getCache();
+
         if ( (!$data = $cache->load($cacheKey)) || (!$this->CMS_CSV_CACHE_ENABLED)) {
             $sourceArray = explode(PHP_EOL, $source);
             $data = array();
             foreach ($sourceArray as $sourceItem) {
                 $itemSplit = str_getcsv($sourceItem, ",", '"', "\\");
-                $data[$this->normalizeKey((string)$itemSplit[0])] = (array_key_exists(1,
-                    $itemSplit)) ? $itemSplit[1] : null;
+                $data[$this->normalizeKey((string)$itemSplit[0])] = array_key_exists(1, $itemSplit)
+                    ? $itemSplit[1]
+                    : null;
             }
 
             if ($this->CMS_CSV_CACHE_ENABLED) {
