@@ -88,8 +88,14 @@ trait Linus_Common_Trait_Cms
      */
     public function __call($name, $arguments)
     {
-        if (!in_array('Mage_Core_Block_Template', class_parents($this))) {
-            throw new Exception('Containing class must be a child of Mage_Core_Block_Template');
+        if (!in_array('Mage_Core_Block_Abstract', class_parents($this))) {
+            throw new Exception('Containing class must be a child of Mage_Core_Block_Abstract');
+        }
+
+        //We have to defer to the varien object call where necessary
+        $prefix = substr($name, 0, 3);
+        if (in_array($prefix, array('get','set','uns','has'))) {
+            return parent::__call($name, $arguments);
         }
 
         if (empty($this->blockCsvData)) {

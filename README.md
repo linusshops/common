@@ -391,6 +391,10 @@ echo $fizz; //outputs 'buzz'
 echo $cmsBlock->nonexistent(); //outputs ''
 ```
 
+For any anonymous block you would have created with "cms/block" type, you can
+use "linus_common/cms_csv" instead to gain the csv trait without having to
+define a new block.
+
 [TODO]
 
 ## Authors
