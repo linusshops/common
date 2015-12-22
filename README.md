@@ -378,7 +378,7 @@ contains csv data, that data can be parsed to an array.
 Common also provides a way to do this via layout XML, treating the csv block as
 a data source to be injected into a core/template block with a generic template.
 
-1. Create your static data block in CMS. In our example, our block's name is common_example.
+* Create your static data block in CMS. In our example, our block's name is common_example.
 Our static block content would be as follows:
 ```
 "foo","bar"
@@ -387,13 +387,13 @@ Our static block content would be as follows:
 You will notice that this is the same convention as the translation files. This
 is deliberate, as it allows these static blocks to potentially be used in translations.
 
-2. Define your generic template phtml file. In our example, the path is "page/html/example.phtml".
+* Define your generic template phtml file. In our example, the path is "page/html/example.phtml".
 ```php
 <h1>My foo is <?php echo $this->getFoo() ?></h1>
 <p>My fizz is <?php echo $this->getFizz() ?></p>
 ```
 
-3. In your layout xml, define a `core/template block` with the SAME NAME as your
+* In your layout xml, define a `core/template block` with the SAME NAME as your
 cms block, and the template path of your generic template. Place a call to setData
 as shown. This will flag this block to have the static cms block data injected.
 The data injection is done on the `core_block_abstract_to_html_before` event
@@ -408,7 +408,7 @@ The data injection is done on the `core_block_abstract_to_html_before` event
 </reference>
 ```
 
-4. Finally, in the parent template, if applicable, call getChildHtml as you would normally.
+* Finally, in the parent template, if applicable, call getChildHtml as you would normally.
 ```php
 <?php echo $this->getChildHtml('common_example'); ?>
 ```
