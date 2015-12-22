@@ -378,7 +378,7 @@ contains csv data, that data can be parsed to an array.
 Common also provides a way to do this via layout XML, treating the csv block as
 a data source to be injected into a core/template block with a generic template.
 
-* Create your static data block in CMS. In our example, our block's name is common_example.
+* Create your static data block in CMS. In our example, our block's name is `common_example`.
 Our static block content would be as follows:
 ```
 "foo","bar"
