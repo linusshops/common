@@ -78,33 +78,16 @@ trait Linus_Common_Trait_Cms
         return strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $key));
     }
 
-    /**
-     * Fetch a data key that matches the method name. If csv data is not yet loaded,
-     * loads and parses it.  Returns an empty string if no matching key found.
-     * @param $name
-     * @param $arguments
-     * @return string
-     * @throws Exception
-     */
-    public function __call($name, $arguments)
+    public function fetchCsvData()
     {
         if (!in_array('Mage_Core_Block_Abstract', class_parents($this))) {
             throw new Exception('Containing class must be a child of Mage_Core_Block_Abstract');
-        }
-
-        //We have to defer to the varien object call where necessary
-        $prefix = substr($name, 0, 3);
-        if (in_array($prefix, array('get','set','uns','has'))) {
-            return parent::__call($name, $arguments);
         }
 
         if (empty($this->blockCsvData)) {
             $this->blockCsvData = $this->parseCsvData($this->toHtml());
         }
 
-        $key = $this->normalizeKey($name);
-        return isset($this->blockCsvData[$key])
-            ? $this->blockCsvData[$key]
-            : '';
+        return $this->blockCsvData;
     }
 }

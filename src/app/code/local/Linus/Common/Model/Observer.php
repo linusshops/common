@@ -96,4 +96,23 @@ class Linus_Common_Model_Observer
             }
         }
     }
+
+    public function onCoreBlockAbstractToHtmlBefore(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Cms_Block_Block $block */
+        $block = $observer->getBlock();
+
+        if ($block->hasCsvData() && !$block->getFiredToHtmlBefore()) {
+            //Since we need to call toHtml, detect if this block has already
+            //fired the event so we don't end up in an infinite loop.
+            $block->setFiredToHtmlBefore(true);
+
+            $csvBlock = Mage::helper('linus_common/cms')->getCsvBlock($block->getNameInLayout());
+
+            Mage::helper('linus_common/cms')->loadCsvDataFromCmsBlock(
+                $csvBlock,
+                $block
+            );
+        }
+    }
 }

@@ -381,8 +381,8 @@ For example, assume the content of a static block is set to the following.
 foo,bar
 fizz,buzz
 ```
-By applying the trait to your static block, you can now do the following
-```
+By applying the trait to your static block, you can now do the following within a template.
+```php
 //Assume $cmsBlock is a block that has had Linus_Common_Trait_Cms applied
 $foo = $cmsBlock->foo();
 echo $foo; //outputs 'bar'
