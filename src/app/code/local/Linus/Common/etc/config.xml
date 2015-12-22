@@ -8,12 +8,6 @@
     </modules>
 
     <global>
-        <blocks>
-            <linus_common>
-                <class>Linus_Common_Block</class>
-            </linus_common>
-        </blocks>
-
         <helpers>
             <linus_common>
                 <class>Linus_Common_Helper</class>

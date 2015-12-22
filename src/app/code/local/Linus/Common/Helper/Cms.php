@@ -15,7 +15,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      */
     public function getCsvBlock($blockId)
     {
-        return Mage::app()->getLayout()->createBlock('linus_common/cms_csv')
+        return Mage::app()->getLayout()->createBlock('cms/block')
             ->setBlockId($blockId)
             ->setStoreId(Mage::app()->getStore()->getId())
         ;
@@ -31,7 +31,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
     /**
      * Given data from toHtml of a static block, parses it as a csv of
      * key-value pairs into an array.
-     * @param $source
+     * @param Mage_Cms_Block_Block $cmsBlock
      * @return array|false|mixed
      */
     protected function parseCsvData($cmsBlock)
@@ -40,7 +40,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
         $cacheKey = $this->CMS_CSV_CACHE_KEY.$cmsBlock->getBlockId();
         $cache = Mage::app()->getCache();
 
-        //if ( (!$data = $cache->load($cacheKey)) || (!$this->CMS_CSV_CACHE_ENABLED)) {
+        if ( (!$data = $cache->load($cacheKey)) || (!$this->CMS_CSV_CACHE_ENABLED)) {
             $sourceArray = explode(PHP_EOL, $source);
             $data = array();
             foreach ($sourceArray as $sourceItem) {
@@ -50,17 +50,17 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
                     : null;
             }
 
-//            if ($this->CMS_CSV_CACHE_ENABLED) {
-//                $cache->save(
-//                    serialize($data),
-//                    $cacheKey,
-//                    array('Linus_Common'),
-//                    $this->CMS_CSV_CACHE_LIFETIME
-//                );
-//            }
-//        } else {
-//            $data = unserialize($data);
-//        }
+            if ($this->CMS_CSV_CACHE_ENABLED) {
+                $cache->save(
+                    serialize($data),
+                    $cacheKey,
+                    array('Linus_Common'),
+                    $this->CMS_CSV_CACHE_LIFETIME
+                );
+            }
+        } else {
+            $data = unserialize($data);
+        }
         return $data;
     }
 
@@ -77,7 +77,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
     public function loadCsvDataFromCmsBlock($cmsBlock, $destinationBlock)
     {
         if (!in_array('Mage_Core_Block_Abstract', class_parents($cmsBlock))) {
-            throw new Exception('Containing class must be a child of Mage_Core_Block_Abstract');
+            throw new Exception('Data class must be a child of Mage_Core_Block_Abstract');
         }
 
         $data = $this->parseCsvData($cmsBlock);
