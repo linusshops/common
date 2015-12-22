@@ -1,7 +1,8 @@
 <?php
 
 /**
- *
+ * Provides helper methods for fetching csv formatted key value pairs
+ * out of static blocks and dumping it into other blocks.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2015-12-22
