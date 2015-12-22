@@ -33,7 +33,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      * Given a cms block, parses it as a csv of
      * key-value pairs into an array.
      * @param Mage_Cms_Block_Block $cmsBlock
-     * @return array|false|mixed
+     * @return array
      */
     public function parseCsvData($cmsBlock)
     {
