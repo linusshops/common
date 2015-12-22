@@ -128,9 +128,4 @@ class Linus_Common_Model_Observer
             );
         }
     }
-
-    public function testEvent($observer)
-    {
-        $observer->getRenderData()->setCmsBlockName('hello');
-    }
 }
