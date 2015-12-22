@@ -10,9 +10,16 @@
  */
 class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
 {
+    /** @var string Cache key prefix */
+    protected $CMS_CSV_CACHE_KEY = 'Linus_Common_CMS_Csv_';
+    /** @var string Default length that the key data should be stored. */
+    protected $CMS_CSV_CACHE_LIFETIME = '86400';
+    /** @var bool If false, will always parse from the database */
+    protected $CMS_CSV_CACHE_ENABLED = false;
+
     /**
      * @param $blockId
-     * @return Linus_Common_Block_Cms_Csv
+     * @return Mage_Cms_Block_Block
      */
     public function getCsvBlock($blockId)
     {
@@ -22,15 +29,8 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
         ;
     }
 
-    /** @var string Cache key prefix */
-    protected $CMS_CSV_CACHE_KEY = 'Linus_Common_CMS_Csv_';
-    /** @var string Default length that the key data should be stored. */
-    protected $CMS_CSV_CACHE_LIFETIME = '86400';
-    /** @var bool If false, will always parse from the database */
-    protected $CMS_CSV_CACHE_ENABLED = false;
-
     /**
-     * Given data from toHtml of a static block, parses it as a csv of
+     * Given a cms block, parses it as a csv of
      * key-value pairs into an array.
      * @param Mage_Cms_Block_Block $cmsBlock
      * @return array|false|mixed
@@ -75,6 +75,14 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
         return strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $key));
     }
 
+    /**
+     * Fetch the csv key-value pairs from a cms static block, and inject
+     * them into the provided destination block.
+     * @param Mage_Cms_Block_Block $cmsBlock
+     * @param Mage_Core_Block_Abstract $destinationBlock
+     * @return mixed
+     * @throws Exception
+     */
     public function loadCsvDataFromCmsBlock($cmsBlock, $destinationBlock)
     {
         if (!in_array('Mage_Core_Block_Abstract', class_parents($cmsBlock))) {
