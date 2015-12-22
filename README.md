@@ -419,6 +419,22 @@ Your generic template will be filled with the data from the data template.
 <p>My fizz is buzz</p>
 ```
 
+Should you have dynamic content that would be prohibitive to specify specific
+handles for, the `common_cms_csv_block_load_before` event can be listened to,
+which allows modification of the cms block id to use. By default, it is the name
+ of the block in the layout xml.
+ 
+```php
+//In an observer
+public function onCommonCmsCsvBlockLoadBefore($observer)
+{
+    //Change the block name
+    $observer->getRenderData()->setCmsBlockName('different_cms_block');
+    //Get the source block object that is currently being rendered.
+    $observer->getRenderData()->getLayoutBlockObject();
+}
+```
+
 ## Authors
 
 - [Dane MacMillan](https://github.com/danemacmillan)
