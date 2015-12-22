@@ -35,7 +35,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      * @param Mage_Cms_Block_Block $cmsBlock
      * @return array|false|mixed
      */
-    protected function parseCsvData($cmsBlock)
+    public function parseCsvData($cmsBlock)
     {
         $source = $cmsBlock->toHtml();
         $cacheKey = $this->CMS_CSV_CACHE_KEY.$cmsBlock->getBlockId();
