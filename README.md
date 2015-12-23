@@ -394,7 +394,7 @@ is deliberate, as it allows these static blocks to potentially be used in transl
 ```
 
 * In your layout xml, define a `core/template block` with the SAME NAME as your
-cms block, and the template path of your generic template. Place a call to setData
+cms static block identifier, and the template path of your generic template. Place a call to setData
 as shown. This will flag this block to have the static cms block data injected.
 The data injection is done on the `core_block_abstract_to_html_before` event
 ```xml

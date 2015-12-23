@@ -119,7 +119,6 @@ class Linus_Common_Model_Observer
                 'render_data' => $eventContainer,
             ));
 
-
             $cmsBlockIdOrIdentifier = $eventContainer->getCmsBlockId() != null
                 ? $eventContainer->getCmsBlockId()
                 : $eventContainer->getCmsBlockIdentifier();
