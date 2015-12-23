@@ -26,7 +26,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
         return Mage::app()->getLayout()->createBlock('cms/block')
             //Consistency is the enemy in magento. This can be a static block
             //identifier string or an integer id. Because.
-            ->setBlockId('street_primary_dropdown')
+            ->setBlockId($cmsBlockIdOrIdentifier)
             ->setStoreId(Mage::app()->getStore()->getId())
         ;
     }
