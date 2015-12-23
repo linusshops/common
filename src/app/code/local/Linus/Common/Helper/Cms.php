@@ -18,13 +18,15 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
     protected $CMS_CSV_CACHE_ENABLED = false;
 
     /**
-     * @param $blockId
+     * @param $cmsBlockIdOrIdentifier
      * @return Mage_Cms_Block_Block
      */
-    public function getCsvBlock($blockId)
+    public function getCsvBlock($cmsBlockIdOrIdentifier)
     {
         return Mage::app()->getLayout()->createBlock('cms/block')
-            ->setBlockId($blockId)
+            //Consistency is the enemy in magento. This can be a static block
+            //identifier string or an integer id. Because.
+            ->setBlockId('street_primary_dropdown')
             ->setStoreId(Mage::app()->getStore()->getId())
         ;
     }
@@ -72,7 +74,26 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      */
     protected function normalizeKey($key)
     {
-        return strtolower(preg_replace("/[^A-Za-z0-9_ ]/", '', $key));
+        //Strip non-alphanumeric and non-underscore characters
+        $clean = preg_replace("/[^A-Za-z0-9_ ]/", '', $key);
+
+        if (strPos($clean, '_') !== false) {
+            //If there are underscores present, treat it as a magento formatted variable.
+            //We don't have to do anything here.
+        } else {
+            //If no underscores, assume camelcase, and translate to magento string format.
+            $split = preg_split('/([A-Z])/', $clean, null, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
+            $translated = '';
+            foreach ($split as $word) {
+                $word = strtolower($word);
+                if (strlen($word) == 1) {
+                    $word = "_{$word}";
+                }
+                $translated .= $word;
+            }
+            $clean = $translated;
+        }
+        return $clean;
     }
 
     /**
