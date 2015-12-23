@@ -79,7 +79,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
 
         if (strPos($clean, '_') !== false) {
             //If there are underscores present, treat it as a magento formatted variable.
-            //We don't have to do anything here.
+            $clean = strtolower($clean);
         } else {
             //If no underscores, assume camelcase, and translate to magento string format.
             $split = preg_split('/([A-Z])/', $clean, null, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
