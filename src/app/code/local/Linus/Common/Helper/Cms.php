@@ -72,7 +72,7 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      */
     protected function normalizeKey($key)
     {
-        return strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $key));
+        return strtolower(preg_replace("/[^A-Za-z0-9_ ]/", '', $key));
     }
 
     /**
@@ -91,12 +91,17 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
 
         $data = $this->parseCsvData($cmsBlock);
 
+        $keys = array();
+
         foreach ($data as $key => $value) {
             if (empty($key)) {
                 continue;
             }
             $destinationBlock->setData($key, $value);
+            $keys[] = $key;
         }
+
+        $destinationBlock->setData('csv_keys', $keys);
 
         return $destinationBlock;
     }
