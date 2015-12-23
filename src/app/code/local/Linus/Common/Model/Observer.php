@@ -107,10 +107,11 @@ class Linus_Common_Model_Observer
             //fired the event so we don't end up in an infinite loop.
             $block->setFiredToHtmlBefore(true);
 
-            $blockName = $block->getNameInLayout();
+            $blockIdentifier = $block->getBlockAlias();
 
             $eventContainer = new Varien_Object(array(
-                'cms_block_name' => $blockName,
+                'cms_block_identifier' => $blockIdentifier,
+                'cms_block_id' => null,
                 'layout_block_object' => $block
             ));
 
@@ -118,11 +119,16 @@ class Linus_Common_Model_Observer
                 'render_data' => $eventContainer,
             ));
 
-            $blockName = $eventContainer->getCmsBlockName();
 
-            $csvBlock = Mage::helper('linus_common/cms')->getCsvBlock($blockName);
+            $cmsBlockIdOrIdentifier = $eventContainer->getCmsBlockId() != null
+                ? $eventContainer->getCmsBlockId()
+                : $eventContainer->getCmsBlockIdentifier();
 
-            Mage::helper('linus_common/cms')->loadCsvDataFromCmsBlock(
+            /** @var Linus_Common_Helper_Cms $cmsHelper */
+            $cmsHelper = Mage::helper('linus_common/cms');
+            $csvBlock = $cmsHelper->getCsvBlock($cmsBlockIdOrIdentifier);
+
+            $cmsHelper->loadCsvDataFromCmsBlock(
                 $csvBlock,
                 $block
             );
