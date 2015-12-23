@@ -107,11 +107,11 @@ class Linus_Common_Model_Observer
             //fired the event so we don't end up in an infinite loop.
             $block->setFiredToHtmlBefore(true);
 
-            $blockIdentifier = $block->getBlockAlias();
+            $blockIdentifier = $block->getNameInLayout();
 
             $eventContainer = new Varien_Object(array(
-                'cms_block_identifier' => $blockIdentifier,
-                'cms_block_id' => null,
+                'cms_static_block_identifier' => $blockIdentifier,
+                'cms_static_block_id' => null,
                 'layout_block_object' => $block
             ));
 
@@ -119,9 +119,9 @@ class Linus_Common_Model_Observer
                 'render_data' => $eventContainer,
             ));
 
-            $cmsBlockIdOrIdentifier = $eventContainer->getCmsBlockId() != null
-                ? $eventContainer->getCmsBlockId()
-                : $eventContainer->getCmsBlockIdentifier();
+            $cmsBlockIdOrIdentifier = $eventContainer->getCmsStaticBlockId() != null
+                ? $eventContainer->getCmsStaticBlockId()
+                : $eventContainer->getCmsStaticBlockIdentifier();
 
             /** @var Linus_Common_Helper_Cms $cmsHelper */
             $cmsHelper = Mage::helper('linus_common/cms');
