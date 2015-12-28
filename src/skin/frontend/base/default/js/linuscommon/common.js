@@ -53,6 +53,42 @@ linus.common = linus.common || (function($, Dependencies)
     var webFontsEnabled = true;
 
     /**
+     * Validate emails per the spec.
+     *
+     * From https://html.spec.whatwg.org/multipage/forms.html#valid-e-mail-address
+     *
+     * Note that this will evaluate dane@localhost as valid, per the spec.
+     *
+     * @type {RegExp}
+     */
+    var emailLoosest = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+    /**
+     * Validate emails with traditional restrictions, such as TLD.
+     *
+     * See blame from: https://github.com/jzaefferer/jquery-validation/commit/dd162ae360639f73edd2dcf7a256710b2f5a4e64
+     *
+     * @type {RegExp}
+     */
+    var emailLoose = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i;
+
+    /**
+     * This will deny valid, RFC 2822 emails, but most people do not use them.
+     *
+     * Most users do not use unusual characters in their emails. Even companies
+     * like Google set limitations on what is allowed and do not follow the
+     * RFC perfectly. Most people would look at a RFC-valid email with unusual
+     * characters and think it illegal when in fact it is not.
+     *
+     * This is best regex to use for most people with emails.
+     *
+     * From: http://stackoverflow.com/a/46181/2973534
+     *
+     * @type {RegExp}
+     */
+    var emailStrict = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+
+    /**
      * Constructor
      *
      * @private
@@ -615,6 +651,55 @@ linus.common = linus.common || (function($, Dependencies)
     }
 
     /**
+     * Validate email according to different rules.
+     *
+     * @param email
+     * @param strictness
+     *
+     * @return bool
+     */
+    function validateEmail(email, strictness)
+    {
+        var emailRegex = '';
+        switch (strictness) {
+            case 'loosest':
+                emailRegex = emailLoosest;
+                break;
+            case 'loose':
+                emailRegex = emailLoose;
+                break;
+            case 'strict':
+            default:
+                emailRegex = emailStrict;
+                break;
+        }
+
+        return emailRegex.test(email);
+    }
+
+    /**
+     * Validate Canadian Postal Codes.
+     *
+     * This will validate `a1b2c3` and `a1b 2c3`.
+     *
+     * @param postalCode
+     * @returns {boolean}
+     */
+    function validatePostalCode(postalCode)
+    {
+        var validPostalCode = false;
+        if (postalCode) {
+            var postalCode = postalCode.toLowerCase().replace(/[\W_]+/g, '');
+            var patternPostalCode = /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i;
+            if (patternPostalCode.test(postalCode)) {
+                validPostalCode = postalCode;
+            }
+        }
+
+        return validPostalCode;
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -645,7 +730,9 @@ linus.common = linus.common || (function($, Dependencies)
         getFormattedPrice: getFormattedPrice,
         getPriceAsInt: getPriceAsInt,
         calculateSubtotalFromBasePrices: calculateSubtotalFromBasePrices,
-        calculateSubtotalFromQuantity: calculateSubtotalFromQuantity
+        calculateSubtotalFromQuantity: calculateSubtotalFromQuantity,
+        validateEmail: validateEmail,
+        validatePostalCode: validatePostalCode
     };
 
 }(jQuery, {
