@@ -179,7 +179,7 @@ linus.common = linus.common || (function($, Dependencies)
             $(cspSelectorName).each(function() {
                 var newCspData = JSON.parse(decodeURIComponent($(this).val()));
                 // Deep merge all values together.
-                jQuery.extend(true, mergedCspData, newCspData);
+                $.extend(true, mergedCspData, newCspData);
 
                 // Remove CSP node from DOM, so origin of data seems mythical.
                 $(this).remove();
@@ -700,6 +700,109 @@ linus.common = linus.common || (function($, Dependencies)
     }
 
     /**
+     * Asynchronous POST helper that conforms to Linus Shops' payload structure.
+     *
+     * The data returned is always in JSON format. Every callback, except
+     * `error`, receives the payload content directly. The `error` callback
+     * receives the entire entire Ajax object with properties like `readyState`,
+     * `status`, `statusText`, and `responseText`.
+     *
+     * This is the frontend counterpart to
+     * Linus_Common_Helper_Request->sendResponseJson.
+     *
+     * All callbacks are automatically passed just the `payload`. Target
+     * selectors will automatically be injected with HTML content, should that
+     * corresponding data exist. Debug data will automatically output to the
+     * console if provided.
+     *
+     * @param callbacks.limbo State while waiting for response / show progress.
+     * @param callbacks.valid Response is valid AND reports no `error`.
+     * @param callbacks.invalid Response is valid BUT reports `error`.
+     * @param callbacks.cleanup This will always run after request is complete.
+     * @param callbacks.error This will run when an 4xx/5xx error occurs.
+     */
+    function post(endpoint, requestData, callbacks)
+    {
+        var callbacks = $.extend({}, {
+            limbo: function(){},
+            valid: function(){},
+            invalid: function(){},
+            cleanup: function(){},
+            error: function(){}
+        }, callbacks);
+
+        callbacks.limbo(requestData);
+        $.post(endpoint, requestData, 'json')
+            .done(function(responseData) {
+                if (typeof responseData === 'object'
+                    && typeof responseData.error === 'number'
+                    && typeof responseData.payload !== 'undefined'
+                    && typeof responseData.target !== 'undefined'
+                ) {
+                    var payload = responseData.payload;
+                    var target = responseData.target;
+
+                    var targetPayloadSelector;
+                    if (typeof target.payload === 'string'
+                        && target.payload.length >= 2
+                    ) {
+                        targetPayloadSelector = target.payload;
+                    }
+
+                    if (typeof payload[targetPayloadSelector] === 'string') {
+                        $(targetPayloadSelector)
+                            .html(payload[targetPayloadSelector]);
+                    }
+
+                    if (parseInt(responseData.error) === 0) {
+                        callbacks.valid(payload);
+                    } else if (parseInt(responseData.error) >= 1) {
+                        callbacks.invalid(payload);
+                    }
+                }
+            })
+            .fail(function(responseData) {
+                var ajaxObject = responseData;
+                if (typeof ajaxObject.responseJSON !== 'undefined'
+                    && typeof ajaxObject.responseJSON.payload !== 'undefined'
+                ) {
+                    callbacks.invalid(ajaxObject.responseJSON.payload);
+                }
+
+                callbacks.error(ajaxObject);
+            })
+            .always(function (responseData) {
+                var standardResponse = responseData;
+                if (typeof responseData.responseJSON !== 'undefined'
+                    && typeof responseData.responseJSON.payload !== 'undefined'
+                ) {
+                    standardResponse = responseData.responseJSON;
+                }
+
+                if (typeof standardResponse.target !== 'undefined'
+                    && typeof standardResponse.target.feedback !== 'undefined'
+                    && standardResponse.target.feedback.length
+                    && typeof standardResponse.feedback !== 'undefined'
+                    && typeof standardResponse.feedback.message !== 'undefined'
+                    && standardResponse.feedback.message.length
+                ) {
+                    $(standardResponse.target.feedback)
+                        .html(standardResponse.feedback.message);
+                }
+
+                callbacks.cleanup(standardResponse.payload);
+
+                if (typeof standardResponse.feedback !== 'undefined'
+                    && typeof standardResponse.feedback.debug !== 'undefined'
+                    && standardResponse.feedback.debug.length
+                ) {
+                    console.log('Debug data:');
+                    console.log(standardResponse);
+                }
+            });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -732,7 +835,8 @@ linus.common = linus.common || (function($, Dependencies)
         calculateSubtotalFromBasePrices: calculateSubtotalFromBasePrices,
         calculateSubtotalFromQuantity: calculateSubtotalFromQuantity,
         validateEmail: validateEmail,
-        validatePostalCode: validatePostalCode
+        validatePostalCode: validatePostalCode,
+        post: post
     };
 
 }(jQuery, {
