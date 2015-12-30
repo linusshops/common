@@ -7,9 +7,26 @@ var linus = linus || {};
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
-linus.common = linus.common || (function($, Dependencies)
+linus.common = linus.common || (function($, _, Dependencies)
 {
    'use strict';
+
+    /**
+     * Store jQuery noConflict on window as `$j`.
+     *
+     * The `$j` is a legacy name still being used by `theme.js` in Linus
+     * Shops' theme repo. When that is removed, store it as `jQuery`.
+     *
+     * @type {*|jQuery|HTMLElement}
+     */
+    window.$j = $;
+
+    /**
+     * Store lodash noConflict on window as `lodash`.
+     *
+     * Other modules can then include it their IIFEs.
+     */
+    window.lodash = _;
 
     /**
      * Wrapper for accounting.js library.
@@ -838,7 +855,6 @@ linus.common = linus.common || (function($, Dependencies)
         validatePostalCode: validatePostalCode,
         post: post
     };
-
-}(jQuery, {
+}(jQuery.noConflict(), _.noConflict(), {
     Accounting: accounting || {}
 }));

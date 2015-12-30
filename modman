@@ -4,5 +4,5 @@ src/app/code/local/Linus/Common  app/code/local/Linus/Common
 src/app/design/frontend/base/default/layout/linus_common.xml  app/design/frontend/base/default/layout/linus_common.xml
 src/app/etc/modules/Linus_Common.xml  app/etc/modules/Linus_Common.xml
 
+src/js/linuscommon js/linuscommon
 src/skin/frontend/base/default/css/linuscommon  skin/frontend/base/default/css/linuscommon
-src/skin/frontend/base/default/js/linuscommon  skin/frontend/base/default/js/linuscommon

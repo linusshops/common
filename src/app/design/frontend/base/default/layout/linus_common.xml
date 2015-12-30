@@ -1,18 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout version="0.1.0">
 
+    <linus_common_head_js_jquery>
+        <reference name="root">
+            <reference name="head">
+                <action method="addItem">
+                    <type>js</type>
+                    <name>linuscommon/jquery-1.11.3.min.js</name>
+                </action>
+            </reference>
+        </reference>
+    </linus_common_head_js_jquery>
+
+    <linus_common_head_js_lodash>
+        <reference name="root">
+            <reference name="head">
+                <action method="addItem">
+                    <type>js</type>
+                    <name>linuscommon/lodash.custom.min.js</name>
+                </action>
+            </reference>
+        </reference>
+    </linus_common_head_js_lodash>
+
+    <linus_common_head_js_accounting>
+        <reference name="root">
+            <reference name="head">
+                <action method="addItem">
+                    <type>js</type>
+                    <name>linuscommon/accounting.min.js</name>
+                </action>
+            </reference>
+        </reference>
+    </linus_common_head_js_accounting>
+
     <default>
+        <update handle="linus_common_head_js_jquery"/>
+        <update handle="linus_common_head_js_lodash"/>
+        <update handle="linus_common_head_js_accounting"/>
+
         <reference name="head">
             <action method="addCss">
                 <stylesheet>css/linuscommon/common.css</stylesheet>
             </action>
+
             <action method="addItem">
-                <type>skin_js</type>
-                <name>js/linuscommon/accounting.min.js</name>
-            </action>
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/linuscommon/common.js</name>
+                <type>js</type>
+                <name>linuscommon/common.js</name>
             </action>
         </reference>
     </default>

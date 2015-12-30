@@ -93,6 +93,8 @@ code without having to modify this module. Instead, `Common` takes advantage
 of Magento's built-in fallback mechanism, which eventually loads files from
 `base/default`. Assets will be automatically loaded.
 
+## TODO MAKE NOTE ABOUT LODASH AND JQUERY
+
 ## Features by use case
 
 ### Translations on the frontend
@@ -434,6 +436,18 @@ public function onCommonCmsCsvBlockLoadBefore($observer)
     $observer->getRenderData()->getLayoutBlockObject();
 }
 ```
+
+### Reorder head assets like `CSS` and `JS`
+
+`Linus_Common` dispatches a new `linus_common_block_before_head_getCssJsHtml`
+event with an instance of the `Mage_Page_Block_Html_Head` block passed. This
+allows other modules to reorder the assets loaded in the head of a document.
+`Linus_Common` itself uses this method so that its assets can be loaded even
+before Magento's own assets: for example, this is used for loading `jQuery`,
+`lodash` and other `Linus_Common` assets. [todo more]
+
+
+
 
 ## Authors
 

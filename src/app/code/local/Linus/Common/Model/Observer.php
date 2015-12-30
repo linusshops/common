@@ -97,10 +97,46 @@ class Linus_Common_Model_Observer
         }
     }
 
+    /**
+     * Add some Block manipulations, and dispatch custom events.
+     *
+     * This method enhances regular CMS static blocks so they can also contain
+     * raw CSV data. That CSV data is formatted exactly like Magento's locale
+     * handling for translation files. Paste content like that into a CMS
+     * static block, and any template that has been defined to have CSV data
+     * in the layout XML will be able to access all those properties
+     * using standard `$this->getYourCsvKey()` syntax, common to all templates
+     * that have blocks defined. It also dispatches an event to manipulate this
+     * behaviour further.
+     *
+     * Additionally, it dispatches an event for the `Mage_Page_Block_Html_Head`
+     * class so that the head assets created in `getCssJsHtml` can be reordered.
+     * For example, if jQuery should load before Magento's prototype.js library,
+     * this can now be done.
+     *
+     * Events created:
+     *
+     *  - linus_common_block_before_head_getCssJsHtml:
+     *  This event allows the head assets to be reordered. Linus_Common uses
+     *  this event to place its JavaScript assets before everything else; this
+     *  is due to the fact that Linus_Common loads essential libraries that
+     *  many other modules depend upon.
+     *
+     *  - common_cms_csv_block_load_before:
+     *  Linus_Common allows CMS static blocks to contain raw CSV data instead
+     *  of just HTML. If a layout block has been defined to have CSV data,
+     *  the corresponding CMS static block will be parsed for CSV content.
+     *
+     * @param Varien_Event_Observer $observer
+     */
     public function onCoreBlockAbstractToHtmlBefore(Varien_Event_Observer $observer)
     {
         /** @var Mage_Cms_Block_Block $block */
         $block = $observer->getBlock();
+
+        if ($block instanceof Mage_Page_Block_Html_Head) {
+            Mage::dispatchEvent('linus_common_block_before_head_getCssJsHtml', array('block' => $block));
+        }
 
         if ($block->hasCsvData() && !$block->getFiredToHtmlBefore()) {
             //Since we need to call toHtml, detect if this block has already
@@ -132,5 +168,35 @@ class Linus_Common_Model_Observer
                 $block
             );
         }
+    }
+
+    /**
+     * Use this custom event for re-ordering JS/CSS assets.
+     *
+     * This will load all `js` `linuscommon` assets before everything else.
+     *
+     * Note that it will continue to respect Magento's default load order for
+     * asset types. For example, `js` assets will always load before `skin_js`
+     * assets. Common places its JavaScript files in the root `/js` directory,
+     * because they are library-level code, used universally, so they take
+     * precedence over regular module assets in `skin_js`.
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function onLinusCommonBlockBeforeHeadGetCssJsHtml(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Page_Block_Html_Head $block */
+        $block = $observer->getBlock();
+        $assets = $block->getItems();
+
+        $commonAssets = array();
+        foreach ($assets as $assetKey => $assetValue) {
+            if (strpos($assetKey, '/linuscommon/') !== false) {
+                $commonAssets[$assetKey] = $assetValue;
+                unset($assets[$assetKey]);
+            }
+        }
+
+        $block->setData('items', $commonAssets + $assets);
     }
 }
