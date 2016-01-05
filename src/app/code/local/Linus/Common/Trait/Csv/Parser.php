@@ -80,4 +80,50 @@ trait Linus_Common_Trait_Csv_Parser
 
         $register = $value;
     }
+
+    /**
+     * Provide magic methods for looking up data in the nested structure
+     * @param $method
+     * @param $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        //If this trait is composed into a Varien_Object, we must defer
+        //to the special starting method strings if present
+        if (is_subclass_of($this, 'Varien_Object')) {
+            if (in_array(substr($method, 0, 3),
+                array('get', 'set', 'uns', 'has'))) {
+                return parent::__call($method, $args);
+            }
+        }
+
+        $path = '';
+
+        if (count($args) > 0) {
+            $path = '.' . implode('.', $args);
+        }
+
+        return $this->getCsvData($method.$path);
+    }
+
+    protected function getCsvData($path)
+    {
+        $pathspec = explode('.',$path);
+        $register = $this->parsedCsvData;
+
+        //Descend into the data array
+        foreach ($pathspec as $p) {
+            if (is_array($register) && isset($register[$p])) {
+                //Standard array descent
+                $register = $register[$p];
+            } else {
+                //Once a path element is invalid, the rest of the path is worthless.
+                $register = null;
+                break;
+            }
+        }
+
+        return $register;
+    }
 }
