@@ -475,11 +475,11 @@ requests will be retrieved from memory.
 should corresponding data exist, either in the payload as a CSS selector
 key name, or the feedback `message`. `Common:afterTargetPayloadInsert`
 and `Common:afterTargetFeedbackInsert` events are fired after this
-HTML content has been auto-inserted, which will provide access to the
+HTML content has been auto-inserted, which provide access to the
 live node for further manipulation by other modules.
 - `Common:beforePost` and `Common:afterPost` events are fired
 before and after the asynchronous POST, which can be used by other
-modules for modifying a request before its sent out, or after it has
+modules for modifying a request before it is sent out, or after it has
 completed.
 - Debug data will automatically output to the console, if
 provided.
