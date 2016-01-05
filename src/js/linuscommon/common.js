@@ -17,14 +17,16 @@ linus.common = linus.common || (function($, _, Dependencies)
      * The `$j` is a legacy name still being used by `theme.js` in Linus
      * Shops' theme repo. When that is removed, store it as `jQuery`.
      *
-     * @type {*|jQuery|HTMLElement}
+     * @type {jQuery}
      */
-    //window.$j = $;
+    window.$j = $;
 
     /**
      * Store lodash noConflict on window as `lodash`.
      *
      * Other modules can then include it their IIFEs.
+     *
+     * @type {lodash}
      */
     window.lodash = _;
 
