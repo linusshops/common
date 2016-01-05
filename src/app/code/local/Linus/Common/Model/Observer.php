@@ -108,6 +108,8 @@ class Linus_Common_Model_Observer
             $block->setFiredToHtmlBefore(true);
 
             $blockIdentifier = $block->getNameInLayout();
+            $block->setCacheKey('static_csv_'.$blockIdentifier);
+            $block->setCacheLifetime(302400);
 
             $eventContainer = new Varien_Object(array(
                 'cms_static_block_identifier' => $blockIdentifier,
