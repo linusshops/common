@@ -85,15 +85,26 @@ just copy and paste the above.*
 
 ###### Add frontend assets
 
-`Common` links all of its frontend assets to `base/default`. It is properly
-namespaced, so it will never interfere with other code. This
-is deliberate. `Common` does not attempt to assume where themes are stored and
-what are loaded; this is so that anyone can install `Common` and start writing
-code without having to modify this module. Instead, `Common` takes advantage
-of Magento's built-in fallback mechanism, which eventually loads files from
-`base/default`. Assets will be automatically loaded.
+`Common` links all of its frontend assets to `base/default`. It is
+properly namespaced, so it will never
+interfere with other code. This is deliberate. `Common` does not attempt to
+assume where themes are stored and what are loaded; this is so that anyone can
+install `Common` and start writing code without having to modify this module.
+Instead, `Common` takes advantage of Magento's built-in fallback mechanism,
+which eventually loads files from `base/default`. JavaScript is  included from
+the root `js` directory, as this code is library-level and should be loaded
+before `skin_js`. Assets will be automatically loaded.
 
-## TODO MAKE NOTE ABOUT LODASH AND JQUERY
+## External dependencies
+
+`Common` includes the following external dependencies:
+ - `jQuery 1.11.3`
+ - `lodash 3.10.1` custom build: `lodash strict include=noConflict,has,get,size,memoize,defaultsDeep`
+ 
+Additionally, `Common` has modified Magento in such a way that it can reorder
+the loading of frontend assets. This is described below. Subsequently, this
+means that all of `Common`s JavaScript is loaded before anything else&mdasheven
+Magento's own assets, like `prototype.js`.
 
 ## Features by use case
 
@@ -446,8 +457,76 @@ allows other modules to reorder the assets loaded in the head of a document.
 before Magento's own assets: for example, this is used for loading `jQuery`,
 `lodash` and other `Linus_Common` assets. [todo more]
 
+### `linus.common.post` method
 
+Asynchronous POST helper that conforms to Linus Shops' payload structure. This
+is the frontend counterpart to `Linus_Common_Helper_Request->sendResponseJson`.
+If using that PHP method, then this should be used, as it handles all the 
+boilerplate logic for errors.
 
+Highlights of this method:
+
+- The data returned to every callback is always in JSON format. Every
+callback, except `error`, receives the payload content directly. The
+`error` callback receives a `jqXHR` object.
+- All requests are auto-cached based on endpoint and request data, so identical
+requests will be retrieved from memory. 
+- Target selectors will automatically be injected with HTML content,
+should corresponding data exist, either in the payload as a CSS selector
+key name, or the feedback `message`. `Common:afterTargetPayloadInsert`
+and `Common:afterTargetFeedbackInsert` events are fired after this
+HTML content has been auto-inserted, which will provide access to the
+live node for further manipulation by other modules.
+- `Common:beforePost` and `Common:afterPost` events are fired
+before and after the asynchronous POST, which can be used by other
+modules for modifying a request before its sent out, or after it has
+completed.
+- Debug data will automatically output to the console, if
+provided.
+
+###### Using the method
+
+```JavaScript
+Common.post(endpoint, requestData, {
+    limbo: function(requestData) {
+        setFormFieldState($fieldset, 'limbo');
+    },
+    valid: function(payload) {
+        if (payload.deliverable) {
+            setFormFieldState($fieldset, 'valid');
+            revealNextDependentFieldset($fieldset);
+        } else {
+            setFormFieldState($fieldset, 'invalid');
+        }
+    },
+    invalid: function(payload) {
+        setFormFieldState($fieldset, 'invalid');
+    },
+    cleanup: function(payload) {
+    },
+    error: function(jqXHR) {
+    }
+});
+```
+
+###### Binding to a custom event fired by the `post` method to change the entire
+request and behaviour before it's sent
+
+```JavaScript
+$(document).on('Common:beforePost', function(e, eventData) {
+    // Change endpoint.
+    eventData.endpoint = '/new-url/endpoint';
+    // Add new request data.
+    eventData.requestData['user[name]'] = 'foobar';
+    // Save parent limbo method.
+    var parentLimboMethod = eventData.callbacks.limbo;
+    // Create new limbo method, and call parent.
+    eventData.callbacks.limbo = function(requestData) {
+        parentLimboMethod(eventData.requestData);
+        console.log('limbo!', requestData);
+    };
+});
+```
 
 ## Authors
 

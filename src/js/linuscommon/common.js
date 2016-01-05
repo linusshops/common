@@ -19,7 +19,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @type {*|jQuery|HTMLElement}
      */
-    window.$j = $;
+    //window.$j = $;
 
     /**
      * Store lodash noConflict on window as `lodash`.
@@ -48,6 +48,13 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @var object
      */
     var cspData = {};
+
+    /**
+     * Object store for memoized functions using lodash.
+     *
+     * @type Object
+     */
+    var mem = {};
 
     /**
      * Implementation of Google's Web Font Loader. These are Common defaults.
@@ -673,10 +680,16 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param email
      * @param strictness
      *
-     * @return bool
      */
     function validateEmail(email, strictness)
     {
+        return mem.validateEmail(email, strictness);
+    }
+
+    mem.validateEmail = _.memoize(function(email, strictness)
+    {
+        console.log(email);
+
         var emailRegex = '';
         switch (strictness) {
             case 'loosest':
@@ -692,7 +705,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         return emailRegex.test(email);
-    }
+    });
 
     /**
      * Validate Canadian Postal Codes.
@@ -719,59 +732,89 @@ linus.common = linus.common || (function($, _, Dependencies)
     /**
      * Asynchronous POST helper that conforms to Linus Shops' payload structure.
      *
-     * The data returned is always in JSON format. Every callback, except
-     * `error`, receives the payload content directly. The `error` callback
-     * receives the entire entire Ajax object with properties like `readyState`,
-     * `status`, `statusText`, and `responseText`.
+     * This is the frontend counterpart to Linus_Common_Helper_Request
+     * ->sendResponseJson.
      *
-     * This is the frontend counterpart to
-     * Linus_Common_Helper_Request->sendResponseJson.
+     * Highlights of this method:
      *
-     * All callbacks are automatically passed just the `payload`. Target
-     * selectors will automatically be injected with HTML content, should that
-     * corresponding data exist. Debug data will automatically output to the
-     * console if provided.
+     * - The data returned to every callback is always in JSON format. Every
+     * callback, except `error`, receives the payload content directly. The
+     * `error` callback receives a `jqXHR` object.
      *
-     * @param callbacks.limbo State while waiting for response / show progress.
-     * @param callbacks.valid Response is valid AND reports no `error`.
-     * @param callbacks.invalid Response is valid BUT reports `error`.
-     * @param callbacks.cleanup This will always run after request is complete.
-     * @param callbacks.error This will run when an 4xx/5xx error occurs.
+     * - All requests are auto-cached based on endpoint and request data, so
+     * identical requests will be retrieved from memory.
+     *
+     * - Target selectors will automatically be injected with HTML content,
+     * should corresponding data exist, either in the payload as a CSS selector
+     * key name, or the feedback `message`. `Common:afterTargetPayloadInsert`
+     * and `Common:afterTargetFeedbackInsert` events are fired after this
+     * HTML content has been auto-inserted, which will provide access to the
+     * live node for further manipulation by other modules.
+     *
+     * - `Common:beforePost` and `Common:afterPost` events are fired
+     * before and after the asynchronous POST, which can be used by other
+     * modules for modifying a request before its sent out, or after it has
+     * completed.
+     *
+     * - Debug data will automatically output to the console, if
+     * provided.
+     *
+     * @param {string} endpoint - The URL endpoint to send request.
+     * @param {Object} requestData - The object literal to send.
+     * @param {Object} callbacks - Callback object for named functions.
+     * @param {function} callbacks.limbo - State while waiting for response /
+     * show progress. Passes `requestData`.
+     * @param {function} callbacks.valid - Response is valid AND reports no
+     * `error`. Passes `responseData.payload`.
+     * @param {function} callbacks.invalid - Response is valid BUT reports
+     * `error`. Passes `responseData.payload`.
+     * @param {function} callbacks.cleanup - This will always run after request
+     * is complete. Passes `responseData.payload`.
+     * @param {function} callbacks.error - This will run when an 4xx/5xx error
+     * occurs. Passes `jqXHR`.
      */
     function post(endpoint, requestData, callbacks)
     {
-        var callbacks = $.extend({}, {
-            limbo: function(){},
-            valid: function(){},
-            invalid: function(){},
-            cleanup: function(){},
-            error: function(){}
-        }, callbacks);
+        var eventData = {
+            endpoint: endpoint,
+            requestData: requestData,
+            callbacks: _.defaultsDeep(callbacks, {
+                limbo: function(){},
+                valid: function(){},
+                invalid: function(){},
+                cleanup: function(){},
+                error: function(){}
+            })
+        };
+        $(document).trigger('Common:beforePost', eventData);
+        endpoint = eventData.endpoint;
+        requestData = eventData.requestData;
+        callbacks = eventData.callbacks;
 
         callbacks.limbo(requestData);
-        $.post(endpoint, requestData, 'json')
+
+        mem.post(endpoint, requestData)
             .done(function(responseData) {
-                if (typeof responseData === 'object'
-                    && typeof responseData.error === 'number'
-                    && typeof responseData.payload !== 'undefined'
-                    && typeof responseData.target !== 'undefined'
-                ) {
-                    var payload = responseData.payload;
-                    var target = responseData.target;
-
-                    var targetPayloadSelector;
-                    if (typeof target.payload === 'string'
-                        && target.payload.length >= 2
-                    ) {
-                        targetPayloadSelector = target.payload;
+                var error = _.get(responseData, 'error');
+                var payload = _.get(responseData, 'payload');
+                var targetPayloadSelectors = _.get(responseData, 'target.payload', '');
+                if (_.isNumber(error) && _.size(payload)) {
+                    if (!_.isArray(targetPayloadSelectors)) {
+                        targetPayloadSelectors = [targetPayloadSelectors];
                     }
 
-                    if (typeof payload[targetPayloadSelector] === 'string') {
-                        $(targetPayloadSelector)
-                            .html(payload[targetPayloadSelector]);
-                    }
+                    _.each(targetPayloadSelectors, function(targetPayloadSelector) {
+                        if (_.isString(payload[targetPayloadSelector])
+                            && $(targetPayloadSelector).length
+                        ) {
+                            $(targetPayloadSelector)
+                                .addClass('payload-target-container')
+                                .html(payload[targetPayloadSelector])
+                                .trigger('Common:afterTargetPayloadInsert');
+                        }
+                    });
 
-                    if (parseInt(responseData.error) === 0) {
+                    if (error === 0) {
                         callbacks.valid(payload);
                     } else if (parseInt(responseData.error) >= 1) {
                         callbacks.invalid(payload);
@@ -779,44 +822,71 @@ linus.common = linus.common || (function($, _, Dependencies)
                 }
             })
             .fail(function(responseData) {
-                var ajaxObject = responseData;
-                if (typeof ajaxObject.responseJSON !== 'undefined'
-                    && typeof ajaxObject.responseJSON.payload !== 'undefined'
-                ) {
-                    callbacks.invalid(ajaxObject.responseJSON.payload);
+                mem.post.cache.delete(generateHash(endpoint, requestData));
+
+                var jqXHR = responseData;
+                if (_.has(jqXHR, 'responseJSON.payload')) {
+                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'));
                 }
 
-                callbacks.error(ajaxObject);
+                callbacks.error(jqXHR);
             })
             .always(function (responseData) {
                 var standardResponse = responseData;
-                if (typeof responseData.responseJSON !== 'undefined'
-                    && typeof responseData.responseJSON.payload !== 'undefined'
-                ) {
-                    standardResponse = responseData.responseJSON;
+                if (_.has(responseData, 'responseJSON.payload')) {
+                    standardResponse = _.get(responseData, 'responseJSON');
                 }
 
-                if (typeof standardResponse.target !== 'undefined'
-                    && typeof standardResponse.target.feedback !== 'undefined'
-                    && standardResponse.target.feedback.length
-                    && typeof standardResponse.feedback !== 'undefined'
-                    && typeof standardResponse.feedback.message !== 'undefined'
-                    && standardResponse.feedback.message.length
+                var targetFeedbackSelector = _.get(standardResponse, 'target.feedback');
+                var feedbackMessage = _.get(standardResponse, 'feedback.message');
+
+                if (_.isString(targetFeedbackSelector)
+                    && $(targetFeedbackSelector).length
+                    && _.isString(feedbackMessage)
                 ) {
-                    $(standardResponse.target.feedback)
-                        .html(standardResponse.feedback.message);
+                    $(targetFeedbackSelector)
+                        .addClass('feedback-target-container feedback-error-' + standardResponse.error)
+                        .html(feedbackMessage)
+                        .trigger('Common:afterTargetFeedbackInsert');
                 }
 
                 callbacks.cleanup(standardResponse.payload);
 
-                if (typeof standardResponse.feedback !== 'undefined'
-                    && typeof standardResponse.feedback.debug !== 'undefined'
-                    && standardResponse.feedback.debug.length
-                ) {
+                $(document).trigger('Common:afterPost', {
+                    endpoint: endpoint,
+                    requestData: requestData,
+                    responseData: responseData
+                });
+
+                if (_.size(_.get(standardResponse, 'feedback.debug'))) {
                     console.log('Debug data:');
                     console.log(standardResponse);
                 }
             });
+    }
+
+    /**
+     * Memoized function for jQuery's `post` method.
+     *
+     * This will allow any asynchronous responses to be cached. The promise
+     * returned by jQuery's post method is actually cached.
+     *
+     * @return {promise}
+     */
+    mem.post = _.memoize(function(endpoint, requestData) {
+        return $.post(endpoint, requestData, null, 'json');
+    }, function(endpoint, requestData) {
+        return generateHash(endpoint, requestData);
+    });
+
+    /**
+     * Generate string hash from arbitrary number of arguments.
+     *
+     * @return String
+     */
+    function generateHash()
+    {
+        return JSON.stringify(arguments);
     }
 
     /**
@@ -855,6 +925,6 @@ linus.common = linus.common || (function($, _, Dependencies)
         validatePostalCode: validatePostalCode,
         post: post
     };
-}(jQuery.noConflict(), _.noConflict(), {
+}(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
 }));
