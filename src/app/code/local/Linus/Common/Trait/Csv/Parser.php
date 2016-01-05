@@ -28,6 +28,9 @@
  * When this is composed on a block, prepare() must always be called at the
  * start of the template, as it takes care of parsing the nested structure.
  *
+ * Linus_Common_Block_Csv can be used if you do not already have a block, and
+ * are composing your blocks via layout xml.
+ *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-05
  * @company Linus Shops
