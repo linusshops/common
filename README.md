@@ -516,7 +516,7 @@ Common.post(endpoint, requestData, {
 
 ###### Binding to a custom event fired by the `post` method
 This demonstrates how to bind to the `Common:beforePost` event to change the
-entire request and behaviour before it's sent.
+entire request and behaviour before it is sent.
 
 ```JavaScript
 $(document).on('Common:beforePost', function(e, eventData) {
