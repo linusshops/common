@@ -486,6 +486,11 @@ provided.
 
 ###### Using the method
 
+Note that `error` and `cleanup` are empty but included. They do not need to
+be included at all if there is no necessity to define them. The `post` method
+will handle callbacks that are not defined. Read the source of the method
+to understand when each callback gets executed.
+
 ```JavaScript
 Common.post(endpoint, requestData, {
     limbo: function(requestData) {
