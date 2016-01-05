@@ -448,6 +448,51 @@ public function onCommonCmsCsvBlockLoadBefore($observer)
 }
 ```
 
+#### Nested CSV data
+The major limitation of using CSV as a data format is that it is flat. There is
+no native way to create nested data structures in CSV. Common provides a way to
+do this.
+
+The `Linus_Common_Trait_Csv_Parser` can be applied to any class that has had
+CSV data injected.  By calling `prepare()`, the csv data will be parsed into a
+nested structure based on the following rules.
+
+The expected format for a csv row is an arbitrary-length underscore-delimited
+path that ends in a key name, with the second column being the value of that key.
+
+There are no special names, with the exception that is it not recommended to
+start your key names with `get`, `set`, `uns`, or `has`, as these may conflict
+with the standard Varien_Object magic methods.
+
+Given the following CSV:
+```
+"column_1_section_helmets_title","Motorcycle Helmets"
+"column_1_section_helmets_icon","motorcycle-helmets"
+```
+
+Will yield:
+```
+'column' => [
+    1 => [
+        'section' => [
+            'helmets' => [
+                'title' => "Motorcycle Helmets",
+                'icon'  => "motorcycle-helmets"
+            ]
+        ]
+    ]
+]]
+```
+
+This data can be accessed via magic methods.
+```php
+$this->column(1, 'section', 'helmets', 'title'); //"Motorcycle Helmets"
+$this->column(1) //yields the column 1 array.
+```
+
+Linus_Common_Block_Csv can be used if you do not already have a block, and are
+composing your blocks via layout xml.
+
 ### Reorder head assets like `CSS` and `JS`
 
 `Linus_Common` dispatches a new `linus_common_block_before_head_getCssJsHtml`
