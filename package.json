@@ -1,0 +1,13 @@
+{
+  "name": "linus_common",
+  "version": "1.0.0",
+  "description": "Linus Common Module",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sam Schmidt <samuel@dersam.net>",
+  "devDependencies": {
+    "lodash-cli": "^3.10.1"
+  }
+}
