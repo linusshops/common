@@ -14,7 +14,7 @@
  *
  * will yield
  *
- * [
+ * 'column' => [
     1 => [
         'section' => [
             'helmets' => [
