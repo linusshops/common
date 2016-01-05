@@ -103,7 +103,7 @@ class Linus_Common_Model_Observer
      * This method enhances regular CMS static blocks so they can also contain
      * raw CSV data. That CSV data is formatted exactly like Magento's locale
      * handling for translation files. Paste content like that into a CMS
-     * static block, and any template that has been defined to have CSV data
+     * static block, and any block that has been defined to have CSV data
      * in the layout XML will be able to access all those properties
      * using standard `$this->getYourCsvKey()` syntax, common to all templates
      * that have blocks defined. It also dispatches an event to manipulate this
@@ -169,6 +169,10 @@ class Linus_Common_Model_Observer
                 $csvBlock,
                 $block
             );
+
+            if ($block->getCsvData() == 'nested') {
+                $block->prepare();
+            }
         }
     }
 

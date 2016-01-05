@@ -126,4 +126,9 @@ trait Linus_Common_Trait_Csv_Parser
 
         return $register;
     }
+
+    public function getParsedDataArray()
+    {
+        return $this->parsedCsvData;
+    }
 }

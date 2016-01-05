@@ -14,6 +14,12 @@
             </linus_common>
         </helpers>
 
+        <blocks>
+            <linus_common>
+                <class>Linus_Common_Block</class>
+            </linus_common>
+        </blocks>
+
         <events>
             <!-- CartController->addAction -->
             <controller_action_predispatch_checkout_cart_add>
