@@ -60,11 +60,12 @@ class Linus_Common_Model_Observer
         $action = $event->getAction();
         /** @var Mage_Core_Model_Layout_Update $layoutUpdate */
         $layoutUpdate = $event->getLayout()->getUpdate();
-
         $controllerName = $action->getRequest()->getControllerName();
-        if ($controllerName == 'category') {
+
+        if ($controllerName == 'category'
+            && !is_null($category = Mage::registry('current_category'))
+        ) {
             /** @var Mage_Catalog_Model_Category $category */
-            $category = Mage::registry('current_category');
             $categoryId = $category->getId();
             $categoryParentId = $category->getParentId();
 
@@ -73,7 +74,9 @@ class Linus_Common_Model_Observer
             $layoutUpdate->addHandle('CATEGORY_' . $categoryId);
         }
 
-        if ($controllerName == 'product') {
+        if ($controllerName == 'product'
+            && !is_null($category = Mage::registry('current_product'))
+        ) {
             /** @var Mage_Catalog_Model_Product $category */
             $product = $category = Mage::registry('current_product');
             $productId = $product->getId();
