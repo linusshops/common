@@ -409,13 +409,13 @@ is deliberate, as it allows these static blocks to potentially be used in transl
 * In your layout xml, define a `core/template block` with the SAME NAME as your
 cms static block identifier, and the template path of your generic template. Place a call to setData
 as shown. This will flag this block to have the static cms block data injected.
-The data injection is done on the `core_block_abstract_to_html_before` event
+The data injection is done on the `core_block_abstract_to_html_before` event.
 ```xml
 <reference name="header">
     <block type="core/template" name="common_example" template="page/html/example.phtml">
         <action method="setData">
             <name>csv_data</name>
-            <value>true</value>
+            <value>simple</value>
         </action>
     </block>
 </reference>
@@ -454,8 +454,20 @@ no native way to create nested data structures in CSV. Common provides a way to
 do this.
 
 The `Linus_Common_Trait_Csv_Parser` can be applied to any class that has had
-CSV data injected.  By calling `prepare()`, the csv data will be parsed into a
-nested structure based on the following rules.
+CSV data injected.  By setting `csv_data` to `nested` instead of `simple` in the
+layout.xml, Common will automatically parse the static block csv into a
+multidimensional array.
+
+```xml
+<reference name="header">
+    <block type="linus_common/csv" name="common_example" template="page/html/example.phtml">
+        <action method="setData">
+            <name>csv_data</name>
+            <value>nested</value>
+        </action>
+    </block>
+</reference>
+```
 
 The expected format for a csv row is an arbitrary-length underscore-delimited
 path that ends in a key name, with the second column being the value of that key.
