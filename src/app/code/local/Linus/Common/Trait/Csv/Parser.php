@@ -119,7 +119,8 @@ trait Linus_Common_Trait_Csv_Parser
                 $register = $register[$p];
             } else {
                 //Once a path element is invalid, the rest of the path is worthless.
-                $register = null;
+                //Use an empty array, as results are generally iterable.
+                $register = array();
                 break;
             }
         }
