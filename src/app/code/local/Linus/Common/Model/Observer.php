@@ -170,12 +170,13 @@ class Linus_Common_Model_Observer
             //as the html is cached and pre-rendered.  There is a possible, though
             //unlikely, race condition if the cache is somehow cleared between
             //this check and the html lookup.
-            if(Mage::app()->getCacheInstance()->load($key) !== false) {
-                return;
-            }
 
             $block->setCacheKey($key);
             $block->setCacheLifetime(302400);
+
+            if(Mage::app()->getCacheInstance()->load($key) !== false) {
+                return;
+            }
 
             /** @var Linus_Common_Helper_Cms $cmsHelper */
             $cmsHelper = Mage::helper('linus_common/cms');
