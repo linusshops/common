@@ -147,7 +147,8 @@ class Linus_Common_Model_Observer
             $block->setFiredToHtmlBefore(true);
 
             $blockIdentifier = $block->getNameInLayout();
-            $block->setCacheKey('static_csv_'.$blockIdentifier);
+            $key = 'static_data_block_'.$blockIdentifier;
+            $block->setCacheKey($key);
             $block->setCacheLifetime(302400);
 
             $eventContainer = new Varien_Object(array(
@@ -207,5 +208,15 @@ class Linus_Common_Model_Observer
         }
 
         $block->setData('items', $commonAssets + $assets);
+    }
+
+    public function onAdminModelSaveAfter(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Cms_Model_Block $block */
+        $block = $observer->getObject();
+        if ($block->getResourceName() == 'cms/block') {
+            $key = 'static_data_block_'.$block->getIdentifier();
+            Mage::app()->getCacheInstance()->remove($key);
+        }
     }
 }

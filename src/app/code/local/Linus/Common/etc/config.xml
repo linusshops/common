@@ -77,4 +77,18 @@
         </layout>
     </frontend>
 
+    <adminhtml>
+        <events>
+            <model_save_after>
+                <observers>
+                    <linus_common>
+                        <type>singleton</type>
+                        <class>Linus_Common_Model_Observer</class>
+                        <method>onAdminModelSaveAfter</method>
+                    </linus_common>
+                </observers>
+            </model_save_after>
+        </events>
+    </adminhtml>
+
 </config>
