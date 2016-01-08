@@ -1,0 +1,14 @@
+<?php
+/**
+ * Base CSP data that will be available to JavaScript.
+ *
+ * This is inserted directly in the `after_body_start` reference, so other
+ * modules can override the default values set here, because JavaScript will
+ * deep merge them when parsing through all the CSP nodes in the document.
+ *
+ * @author Dane MacMillan <work@danemacmillan.com>
+ */
+?>
+
+<?php /** @var Linus_Common_Block_Csp $this */?>
+<?php echo $this->outputBaseCspData(); ?>
