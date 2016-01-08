@@ -7,6 +7,8 @@
  */
 class Linus_Common_Model_Observer
 {
+    const STATIC_DATA_BLOCK_CACHE_KEY = "static_data_block_%s";
+
     /**
      * Observe adding item to cart event.
      *
@@ -147,9 +149,6 @@ class Linus_Common_Model_Observer
             $block->setFiredToHtmlBefore(true);
 
             $blockIdentifier = $block->getNameInLayout();
-            $key = 'static_data_block_'.$blockIdentifier;
-            $block->setCacheKey($key);
-            $block->setCacheLifetime(302400);
 
             $eventContainer = new Varien_Object(array(
                 'cms_static_block_identifier' => $blockIdentifier,
@@ -164,6 +163,19 @@ class Linus_Common_Model_Observer
             $cmsBlockIdOrIdentifier = $eventContainer->getCmsStaticBlockId() != null
                 ? $eventContainer->getCmsStaticBlockId()
                 : $eventContainer->getCmsStaticBlockIdentifier();
+
+            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $cmsBlockIdOrIdentifier);
+
+            //Check if the cache key exists. If it does, skip the parsing
+            //as the html is cached and pre-rendered.  There is a possible, though
+            //unlikely, race condition if the cache is somehow cleared between
+            //this check and the html lookup.
+            if(Mage::app()->getCacheInstance()->load($key) !== false) {
+                return;
+            }
+
+            $block->setCacheKey($key);
+            $block->setCacheLifetime(302400);
 
             /** @var Linus_Common_Helper_Cms $cmsHelper */
             $cmsHelper = Mage::helper('linus_common/cms');
@@ -215,7 +227,7 @@ class Linus_Common_Model_Observer
         /** @var Mage_Cms_Model_Block $block */
         $block = $observer->getObject();
         if ($block->getResourceName() == 'cms/block') {
-            $key = 'static_data_block_'.$block->getIdentifier();
+            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $block->getIdentifier());
             Mage::app()->getCacheInstance()->remove($key);
         }
     }
