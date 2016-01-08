@@ -228,7 +228,22 @@ class Linus_Common_Model_Observer
         /** @var Mage_Cms_Model_Block $block */
         $block = $observer->getObject();
         if ($block->getResourceName() == 'cms/block') {
-            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $block->getIdentifier());
+            $blockIdentifier = $block->getIdentifier();
+            $eventContainer = new Varien_Object(array(
+                'cms_static_block_identifier' => $blockIdentifier,
+                'cms_static_block_id' => null,
+                'layout_block_object' => $block
+            ));
+
+            Mage::dispatchEvent('common_cms_csv_block_load_before', array(
+                'render_data' => $eventContainer,
+            ));
+
+            $cmsBlockIdOrIdentifier = $eventContainer->getCmsStaticBlockId() != null
+                ? $eventContainer->getCmsStaticBlockId()
+                : $eventContainer->getCmsStaticBlockIdentifier();
+
+            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $cmsBlockIdOrIdentifier);
             Mage::app()->getCacheInstance()->remove($key);
         }
     }
