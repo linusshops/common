@@ -2,6 +2,7 @@
 
 src/app/code/local/Linus/Common  app/code/local/Linus/Common
 src/app/design/frontend/base/default/layout/linus_common.xml  app/design/frontend/base/default/layout/linus_common.xml
+src/app/design/frontend/base/default/template/linuscommon  app/design/frontend/base/default/template/linuscommon
 src/app/etc/modules/Linus_Common.xml  app/etc/modules/Linus_Common.xml
 
 src/js/linuscommon js/linuscommon

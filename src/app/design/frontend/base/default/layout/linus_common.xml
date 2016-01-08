@@ -34,10 +34,20 @@
         </reference>
     </linus_common_head_js_accounting>
 
+    <!-- Inject basic CSP data onto page for JavaScript to auto-parse.
+    Placing it very early, in `after_body_start`, means that any other modules
+    that define CSP data can override the default content set here. -->
+    <linus_common_csp_block>
+        <reference name="after_body_start">
+            <block type="linus_common/csp" name="linus_common_csp" template="linuscommon/csp.phtml"/>
+        </reference>
+    </linus_common_csp_block>
+
     <default>
         <update handle="linus_common_head_js_jquery"/>
         <update handle="linus_common_head_js_lodash"/>
         <update handle="linus_common_head_js_accounting"/>
+        <update handle="linus_common_csp_block"/>
 
         <reference name="head">
             <action method="addCss">

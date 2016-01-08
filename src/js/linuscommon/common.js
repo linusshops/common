@@ -181,6 +181,86 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get `baseUrl` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getBaseUrl()
+    {
+        return getCspData('baseUrl');
+    }
+
+    /**
+     * Get `jsUrl` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getJsUrl()
+    {
+        return getCspData('jsUrl');
+    }
+
+    /**
+     * Get `formKey` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getFormKey()
+    {
+        return getCspData('formKey');
+    }
+
+    /**
+     * Get `locale` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getLocale()
+    {
+        return getCspData('locale');
+    }
+
+    /**
+     * Get `mediaUrl` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getMediaUrl()
+    {
+        return getCspData('mediaUrl');
+    }
+
+    /**
+     * Get `skinUrl` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getSkinUrl()
+    {
+        return getCspData('skinUrl');
+    }
+
+    /**
+     * Get `skinUrl` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getStoreUrl()
+    {
+        return getCspData('skinUrl');
+    }
+
+    /**
+     * Get `uenc` set by CSP data.
+     *
+     * @returns {string}
+     */
+    function getUenc()
+    {
+        return getCspData('uenc');
+    }
+
+    /**
      * Wrapper to get CSP data.
      *
      * Pass the key name to retrieve exact value, or pass nothing to get the
@@ -224,17 +304,6 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         return cspDataValue;
-    }
-
-    /**
-     * If CSP data has the `locale` key, it will be retrieved.
-     *
-     * Note that if a locale has not been passed, this will return an empty
-     * string.
-     */
-    function getLocale()
-    {
-        return getCspData('locale');
     }
 
     /**
@@ -690,8 +759,6 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     mem.validateEmail = _.memoize(function(email, strictness)
     {
-        console.log(email);
-
         var emailRegex = '';
         switch (strictness) {
             case 'loosest':
@@ -905,8 +972,15 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     return {
         __: __,
-        getCspData: getCspData,
+        getBaseUrl: getBaseUrl,
+        getJsUrl: getJsUrl,
+        getFormKey: getFormKey,
+        getMediaUrl: getMediaUrl,
         getLocale: getLocale,
+        getSkinUrl: getSkinUrl,
+        getStoreUrl: getStoreUrl,
+        getUenc: getUenc,
+        getCspData: getCspData,
         getHashParameter: getHashParameter,
         hide: hide,
         invisible: invisible,
