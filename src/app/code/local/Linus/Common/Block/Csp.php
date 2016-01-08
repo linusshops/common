@@ -17,7 +17,9 @@ class Linus_Common_Block_Csp extends Mage_Core_Block_Template
      */
     public function outputBaseCspData()
     {
+        /** @var Linus_Common_Helper_Data $Common */
         $CommonCsp = Mage::helper('linus_common/csp');
+
         $CommonCsp->setCspData(array(
             'baseUrl' => $this->getBaseUrl(),
             'formKey' => Mage::getSingleton('core/session')->getFormKey(),
