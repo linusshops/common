@@ -7,6 +7,8 @@
  */
 class Linus_Common_Model_Observer
 {
+    const STATIC_DATA_BLOCK_CACHE_KEY = "static_data_block_%s";
+
     /**
      * Observe adding item to cart event.
      *
@@ -147,8 +149,6 @@ class Linus_Common_Model_Observer
             $block->setFiredToHtmlBefore(true);
 
             $blockIdentifier = $block->getNameInLayout();
-            $block->setCacheKey('static_csv_'.$blockIdentifier);
-            $block->setCacheLifetime(302400);
 
             $eventContainer = new Varien_Object(array(
                 'cms_static_block_identifier' => $blockIdentifier,
@@ -163,6 +163,20 @@ class Linus_Common_Model_Observer
             $cmsBlockIdOrIdentifier = $eventContainer->getCmsStaticBlockId() != null
                 ? $eventContainer->getCmsStaticBlockId()
                 : $eventContainer->getCmsStaticBlockIdentifier();
+
+            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $cmsBlockIdOrIdentifier);
+
+            //Check if the cache key exists. If it does, skip the parsing
+            //as the html is cached and pre-rendered.  There is a possible, though
+            //unlikely, race condition if the cache is somehow cleared between
+            //this check and the html lookup.
+
+            $block->setCacheKey($key);
+            $block->setCacheLifetime(302400);
+
+            if(Mage::app()->getCacheInstance()->load($key) !== false) {
+                return;
+            }
 
             /** @var Linus_Common_Helper_Cms $cmsHelper */
             $cmsHelper = Mage::helper('linus_common/cms');
@@ -207,5 +221,30 @@ class Linus_Common_Model_Observer
         }
 
         $block->setData('items', $commonAssets + $assets);
+    }
+
+    public function onAdminModelSaveAfter(Varien_Event_Observer $observer)
+    {
+        /** @var Mage_Cms_Model_Block $block */
+        $block = $observer->getObject();
+        if ($block->getResourceName() == 'cms/block') {
+            $blockIdentifier = $block->getIdentifier();
+            $eventContainer = new Varien_Object(array(
+                'cms_static_block_identifier' => $blockIdentifier,
+                'cms_static_block_id' => null,
+                'layout_block_object' => $block
+            ));
+
+            Mage::dispatchEvent('common_cms_csv_block_load_before', array(
+                'render_data' => $eventContainer,
+            ));
+
+            $cmsBlockIdOrIdentifier = $eventContainer->getCmsStaticBlockId() != null
+                ? $eventContainer->getCmsStaticBlockId()
+                : $eventContainer->getCmsStaticBlockIdentifier();
+
+            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $cmsBlockIdOrIdentifier);
+            Mage::app()->getCacheInstance()->remove($key);
+        }
     }
 }
