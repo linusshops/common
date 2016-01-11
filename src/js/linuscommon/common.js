@@ -949,6 +949,64 @@ linus.common = linus.common || (function($, _, Dependencies)
     });
 
     /**
+     * Focus on the first empty, visible, unfocused input within a node.
+     *
+     * The first child input that is found within a parent that is empty,
+     * visible, and unfocused will be focused upon. Note that this will not
+     * set focus on submit buttons by default, as a preventative measure for
+     * accidental submissions.
+     *
+     * @param {HTMLElement|string} node - Pass a selector string, or node, of
+     * either the specific input to focus on, or the parent that contains
+     * several of them. This is optional; if nothing is passed, the entire DOM
+     * will be searched for the first relevant input. If an input node with
+     * only a single match is found, it will take focus regardless of its
+     * value or type, and the focused cursor will be placed at the end of the
+     * text, instead of the beginning, as is the default.
+     *
+     * @param {bool} allowSubmissionFocus - Allow buttons and submit inputs to
+     * grab focus if it is most relevant. Note that if the button is passed
+     * explicitly, then it will take focus, regardless of this setting.
+     */
+    function focusFirstRelevantInput(node, allowSubmissionFocus)
+    {
+        var $currentFocus = $(document.activeElement);
+        var focusSelectors = 'input, textarea, button';
+
+        if (!$currentFocus.is(focusSelectors)) {
+            var selector = (_.size(node))
+                ? node
+                : focusSelectors;
+
+            if (!$(selector).is(focusSelectors)) {
+                selector = $(selector).find(focusSelectors);
+            }
+
+            if ($(selector).length == 1
+                && $(selector).is(':visible')
+            ) {
+                if (!$(selector).is(":focus")) {
+                    $(selector).focus();
+                }
+                var originalText = $(selector).val();
+                $(selector).val('').val(originalText);
+            } else {
+                $(selector).each(function() {
+                    var $node = $(this);
+                    if ($node.is(':visible')
+                        && !$node.val()
+                        && !$node.is(":focus")
+                        && (!$node.is('input[type=submit], button') || allowSubmissionFocus)
+                    ) {
+                        $node.focus();
+                        return false;
+                    }
+                });
+            }
+        }
+    }
+
+    /**
      * Generate string hash from arbitrary number of arguments.
      *
      * @return String
@@ -999,7 +1057,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         calculateSubtotalFromQuantity: calculateSubtotalFromQuantity,
         validateEmail: validateEmail,
         validatePostalCode: validatePostalCode,
-        post: post
+        post: post,
+        focusFirstRelevantInput: focusFirstRelevantInput
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
