@@ -985,11 +985,10 @@ linus.common = linus.common || (function($, _, Dependencies)
             if ($(selector).length == 1
                 && $(selector).is(':visible')
             ) {
+                $(selector)[0].selectionStart = $(selector)[0].selectionEnd = $(selector).val().length;
                 if (!$(selector).is(":focus")) {
                     $(selector).focus();
                 }
-                var originalText = $(selector).val();
-                $(selector).val('').val(originalText);
             } else {
                 $(selector).each(function() {
                     var $node = $(this);
