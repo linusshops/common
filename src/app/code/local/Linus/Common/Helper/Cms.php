@@ -119,9 +119,9 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
      * If transform returns an empty value ('' or null), the identifier will
      * not be changed.
      *
-     * @param Varien_Event_Observer $observer
-     * @param $blockNameRegex
-     * @param callable $transform
+     * @param Varien_Event_Observer $observer the event observer from on_common_cms_csv_block_load_before
+     * @param string $blockNameRegex a regular expression to identify if the transform function should be run
+     * @param callable $transform a transformation function that returns the new identifier to use
      */
     public function transformIdentifier(Varien_Event_Observer $observer, $blockNameRegex, callable $transform)
     {
