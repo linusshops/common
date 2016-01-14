@@ -435,16 +435,22 @@ Your generic template will be filled with the data from the data template.
 Should you have dynamic content that would be prohibitive to specify specific
 handles for, the `common_cms_csv_block_load_before` event can be listened to,
 which allows modification of the cms block id to use. By default, it is the name
- of the block in the layout xml.
+ of the block in the layout xml. A helper is provided to eliminate the need
+ for boilerplate code in the event.
  
 ```php
 //In an observer
 public function onCommonCmsCsvBlockLoadBefore($observer)
 {
-    //Change the block name
-    $observer->getRenderData()->setCmsBlockName('different_cms_block');
-    //Get the source block object that is currently being rendered.
-    $observer->getRenderData()->getLayoutBlockObject();
+    Mage::helper('linus_common/cms')->transformIdentifier(
+        $observer,
+        //The regex to identify block names that should have the identifier transformed
+        "/^current_block_name$/",
+        //The transformation to apply.
+        function ($block){
+            return "new_block_name"
+        }
+    );
 }
 ```
 

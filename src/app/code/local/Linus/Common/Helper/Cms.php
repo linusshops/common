@@ -105,4 +105,42 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
 
         return $destinationBlock;
     }
+
+    /**
+     * Automatically apply a transformation to the block identifier, based
+     * on whether it matches the provided regular expression.
+     *
+     * Reduces the required boilerplate code to use the
+     * on_common_cms_csv_block_load_before event for csv static block data.
+     *
+     * The transform function should expect the following signature:
+     * transform($block)
+     * and must return a string representing the new identifier to use.
+     * If transform returns an empty value ('' or null), the identifier will
+     * not be changed.
+     *
+     * @param Varien_Event_Observer $observer
+     * @param $blockNameRegex
+     * @param callable $transform
+     */
+    public function transformIdentifier(Varien_Event_Observer $observer, $blockNameRegex, callable $transform)
+    {
+        /** @var Varien_Object $renderData */
+        $renderData = $observer->getRenderData();
+        /** @var Mage_Core_Block_Abstract $block */
+        $block = $renderData->getLayoutBlockObject();
+        /** @var string $blockName */
+        $blockName = $block->getNameInLayout();
+
+        if ($blockName == null) {
+            $blockName = $block->getIdentifier();
+        }
+
+        if (preg_match($blockNameRegex, $blockName) === 1) {
+            $identifier = $transform($block);
+            if (!empty($identifier)) {
+                $renderData->setCmsStaticBlockId($identifier);
+            }
+        }
+    }
 }
