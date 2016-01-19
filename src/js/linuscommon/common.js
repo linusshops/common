@@ -799,7 +799,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
-     * Asynchronous POST helper that conforms to Linus Shops' payload structure.
+     * AJAX helper that conforms to Linus Shops' payload structure.
      *
      * This is the frontend counterpart to Linus_Common_Helper_Request
      * ->sendResponseJson.
@@ -820,15 +820,17 @@ linus.common = linus.common || (function($, _, Dependencies)
      * HTML content has been auto-inserted, which provide access to the
      * live node for further manipulation by other modules.
      *
-     * - `Common:beforePost` and `Common:afterPost` events are fired
-     * before and after the asynchronous POST, which can be used by other
+     * - `Common:beforeMETHOD` and `Common:afterMETHOD` events are fired
+     * before and after the asynchronous call, which can be used by other
      * modules for modifying a request before it is sent out, or after it has
-     * completed.
+     * completed. The event name is based on the method of the request (for
+     * example, a POST will trigger `Common:beforePost` and `Common:afterPost`).
      *
      * - Debug data will automatically output to the console, if
      * provided.
      *
      * @param {string} endpoint - The URL endpoint to send request.
+     * @param {string} method - The HTTP method to use.
      * @param {Object} requestData - The object literal to send.
      * @param {Object} callbacks - Callback object for named functions.
      * @param {function} callbacks.limbo - State while waiting for response /
@@ -842,8 +844,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {function} callbacks.error - This will run when an 4xx/5xx error
      * occurs. Passes `jqXHR`.
      */
-    function post(endpoint, requestData, callbacks)
+    function ajax(endpoint, method, requestData, callbacks)
     {
+        method = _.capitalize(method);
         var eventData = {
             endpoint: endpoint,
             requestData: requestData,
@@ -855,14 +858,14 @@ linus.common = linus.common || (function($, _, Dependencies)
                 error: function(){}
             })
         };
-        $(document).trigger('Common:beforePost', eventData);
+        $(document).trigger('Common:before'+method, eventData);
         endpoint = eventData.endpoint;
         requestData = eventData.requestData;
         callbacks = eventData.callbacks;
 
         callbacks.limbo(requestData);
 
-        mem.post(endpoint, requestData)
+        mem.ajax(endpoint, method, requestData)
             .done(function(responseData) {
                 var error = _.get(responseData, 'error');
                 var payload = _.get(responseData, 'payload');
@@ -891,7 +894,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 }
             })
             .fail(function(responseData) {
-                mem.post.cache.delete(generateHash(endpoint, requestData));
+                mem.post.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
                 if (_.has(jqXHR, 'responseJSON.payload')) {
@@ -921,7 +924,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                 callbacks.cleanup(standardResponse.payload);
 
-                $(document).trigger('Common:afterPost', {
+                $(document).trigger('Common:after'+method, {
                     endpoint: endpoint,
                     requestData: requestData,
                     responseData: responseData
@@ -935,18 +938,43 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
-     * Memoized function for jQuery's `post` method.
+     * Memoized function for jQuery's `ajax` method.
      *
      * This will allow any asynchronous responses to be cached. The promise
-     * returned by jQuery's post method is actually cached.
+     * returned by jQuery's ajax method is actually cached.
      *
      * @return {promise}
      */
-    mem.post = _.memoize(function(endpoint, requestData) {
-        return $.post(endpoint, requestData, null, 'json');
-    }, function(endpoint, requestData) {
-        return generateHash(endpoint, requestData);
+    mem.ajax = _.memoize(function(endpoint, method, requestData) {
+        return $.ajax(endpoint, {
+            method: method,
+            content: requestData,
+            dataType: 'json'
+        });
+    }, function(endpoint, method, requestData) {
+        return generateHash(endpoint, method, requestData);
     });
+
+    /**
+     * Alias for Common.ajax with the GET http method
+     * @param endpoint
+     * @param callbacks
+     */
+    function get(endpoint, callbacks)
+    {
+        ajax(endpoint, 'GET', null, callbacks);
+    }
+
+    /**
+     * Alias for Common.ajax with the POST http method
+     * @param endpoint
+     * @param requestData
+     * @param callbacks
+     */
+    function post(endpoint, requestData, callbacks)
+    {
+        ajax(endpoint, 'POST', requestData, callbacks);
+    }
 
     /**
      * Focus on the first empty, visible, unfocused input within a node.
@@ -1063,6 +1091,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         calculateSubtotalFromQuantity: calculateSubtotalFromQuantity,
         validateEmail: validateEmail,
         validatePostalCode: validatePostalCode,
+        ajax: ajax,
+        get: get,
         post: post,
         focusFirstRelevantInput: focusFirstRelevantInput
     };
