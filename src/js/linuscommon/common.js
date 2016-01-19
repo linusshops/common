@@ -948,7 +948,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     mem.ajax = _.memoize(function(endpoint, method, requestData) {
         return $.ajax(endpoint, {
             method: method,
-            content: requestData,
+            data: requestData,
             dataType: 'json'
         });
     }, function(endpoint, method, requestData) {
