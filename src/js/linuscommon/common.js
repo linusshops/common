@@ -247,7 +247,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getStoreUrl()
     {
-        return getCspData('skinUrl');
+        return getCspData('storeUrl');
     }
 
     /**
