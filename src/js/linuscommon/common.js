@@ -973,21 +973,27 @@ linus.common = linus.common || (function($, _, Dependencies)
         var $currentFocus = $(document.activeElement);
         var focusSelectors = 'input, textarea, button';
 
-        if (!$currentFocus.is(focusSelectors)) {
-            var selector = (_.size(node))
-                ? node
-                : focusSelectors;
+        var selector = (_.size(node))
+            ? node
+            : focusSelectors;
 
+        if (selector || !$currentFocus.is(focusSelectors)) {
             if (!$(selector).is(focusSelectors)) {
                 selector = $(selector).find(focusSelectors);
             }
 
-            if ($(selector).length == 1
-                && $(selector).is(':visible')
+            var $selector = $(selector);
+
+            if ($selector.length == 1
+                && $selector.is(':visible')
             ) {
-                $(selector)[0].selectionStart = $(selector)[0].selectionEnd = $(selector).val().length;
-                if (!$(selector).is(":focus")) {
-                    $(selector).focus();
+                $selector[0].selectionStart = $selector[0].selectionEnd = $selector.val().length;
+                if (!$selector.is(":focus")) {
+                    $selector.focus();
+
+                    if ($selector.is('input[type=radio]')) {
+                        $selector.prop("checked", true);
+                    }
                 }
             } else {
                 $(selector).each(function() {
@@ -997,6 +1003,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                         && !$node.is(":focus")
                         && (!$node.is('input[type=submit], button') || allowSubmissionFocus)
                     ) {
+                        $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         $node.focus();
                         return false;
                     }
