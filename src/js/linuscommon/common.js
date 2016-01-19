@@ -980,56 +980,101 @@ linus.common = linus.common || (function($, _, Dependencies)
      * Focus on the first empty, visible, unfocused input within a node.
      *
      * The first child input that is found within a parent that is empty,
-     * visible, and unfocused will be focused upon. Note that this will not
-     * set focus on submit buttons by default, as a preventative measure for
-     * accidental submissions.
+     * visible, and unfocused will be focused upon.
      *
      * @param {HTMLElement|string} node - Pass a selector string, or node, of
      * either the specific input to focus on, or the parent that contains
      * several of them. This is optional; if nothing is passed, the entire DOM
-     * will be searched for the first relevant input. If an input node with
+     * will be searched for the most relevant input. If an input node with
      * only a single match is found, it will take focus regardless of its
      * value or type, and the focused cursor will be placed at the end of the
      * text, instead of the beginning, as is the default.
      *
-     * @param {bool} allowSubmissionFocus - Allow buttons and submit inputs to
-     * grab focus if it is most relevant. Note that if the button is passed
-     * explicitly, then it will take focus, regardless of this setting.
+     * @param {number} delay - Time in milliseconds to wait until focus is
+     * placed on an input. Default: 400.
      */
-    function focusFirstRelevantInput(node, allowSubmissionFocus)
+    function focusMostRelevantInput(node, delay)
     {
-        var $currentFocus = $(document.activeElement);
-        var focusSelectors = 'input, textarea, button';
+        delay = (_.isNumber(delay) && delay > 0)
+            ? delay
+            : 300;
 
-        var selector = (_.size(node))
-            ? node
-            : focusSelectors;
+        setTimeout(function() {
+            var $currentFocus = $(document.activeElement);
+            var focusSelectors = 'input, textarea, button';
 
-        if (selector || !$currentFocus.is(focusSelectors)) {
-            if (!$(selector).is(focusSelectors)) {
-                selector = $(selector).find(focusSelectors);
-            }
+            var selector = (node)
+                ? node
+                : focusSelectors;
 
-            var $selector = $(selector);
-
-            if ($selector.length == 1
-                && $selector.is(':visible')
-            ) {
-                $selector[0].selectionStart = $selector[0].selectionEnd = $selector.val().length;
-                if (!$selector.is(":focus")) {
-                    $selector.focus();
-
-                    if ($selector.is('input[type=radio]')) {
-                        $selector.prop("checked", true);
-                    }
+            if (selector || !$currentFocus.is(focusSelectors)) {
+                if (!$(selector).is(focusSelectors)) {
+                    selector = $(selector).find(focusSelectors);
                 }
-            } else {
-                $(selector).each(function() {
-                    var $node = $(this);
-                    if ($node.is(':visible')
-                        && !$node.val()
+
+                var $selector = $(selector);
+                var originalMatches = $selector.length;
+
+                $selector = $(selector).filter(function(index, node) {
+                    var hasHiddenClass = false;
+                    var hasDisplay = true;
+                    var hasVisibility = true;
+                    var hasOpacity = true;
+
+                    $(node).parents().addBack().each(function(i, el) {
+                        if ($(el).is('[class*=hidden]')) {
+                            hasHiddenClass = true;
+                        }
+
+                        if ($(el).css('display') == 'none') {
+                            hasDisplay = false;
+                        }
+                        if ($(el).css('visibility') == 'hidden') {
+                            hasVisibility = false;
+                        }
+
+                        if ($(el).css('opacity') < 1) {
+                            hasOpacity = false;
+                        }
+                    });
+
+                    if ((!hasHiddenClass || hasOpacity)
+                        && hasDisplay
+                        && hasVisibility
+                        && $(node).is(':visible')
+                    ) {
+                        return true;
+                    }
+                });
+
+                var workingMatches = $selector.length;
+
+                $selector.each(function(i, el) {
+                    var $node = $(el);
+                    var $submit = $node.is('input[type=submit], button');
+                    var $radio = $node.is('input[type=radio]');
+
+                    // Select only empty inputs or buttons, or if a
+                    if (($submit || $radio || !$node.val())
+                        && (originalMatches == 1 || !$radio)
                         && !$node.is(":focus")
-                        && (!$node.is('input[type=submit], button') || allowSubmissionFocus)
+                    ) {
+                        if (!$submit && !$radio) {
+                            $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
+                        }
+
+                        if ($radio) {
+                            $node.prop("checked", true);
+                        }
+
+                        $node.focus();
+                        return false;
+                    }
+
+                    // Last ditch effort, to select input even with text.
+                    if (workingMatches == i+1
+                        && !$submit
+                        && !$radio
                     ) {
                         $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         $node.focus();
@@ -1037,7 +1082,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     }
                 });
             }
-        }
+        }, delay);
     }
 
     /**
@@ -1094,7 +1139,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         ajax: ajax,
         get: get,
         post: post,
-        focusFirstRelevantInput: focusFirstRelevantInput
+        focusMostRelevantInput: focusMostRelevantInput
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
