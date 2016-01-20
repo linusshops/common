@@ -1010,7 +1010,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             node: null,
             delay: 300,
             allowButtons: false,
-            allowRadios: true
+            allowRadios: false
         });
 
         setTimeout(function() {
