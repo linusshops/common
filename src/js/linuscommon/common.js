@@ -1025,10 +1025,13 @@ linus.common = linus.common || (function($, _, Dependencies)
                     selector = $(selector).find(focusSelectors);
                 }
 
-                var $selector = $(selector);
-                var originalMatches = $selector.length;
+                var $selector = $(selector).filter(function(index, filteredNode) {
+                    if ((!options.allowButtons && $(filteredNode).is('input[type=submit], button'))
+                        || (!options.allowRadios && $(filteredNode).is('input[type=radio]'))
+                    ) {
+                        return false
+                    }
 
-                $selector = $(selector).filter(function(index, filteredNode) {
                     var hasHiddenClass = false;
                     var hasDisplay = true;
                     var hasVisibility = true;
@@ -1042,6 +1045,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                         if ($(el).css('display') == 'none') {
                             hasDisplay = false;
                         }
+
                         if ($(el).css('visibility') == 'hidden') {
                             hasVisibility = false;
                         }
@@ -1069,16 +1073,14 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                     // Select only empty inputs or buttons, or if a
                     if (($submit || $radio || !$node.val())
-                        //&& (originalMatches == 1 || !$radio)
-                        && !$node.is(":focus")
-                        && (($submit && options.allowButtons) || ($radio && options.allowRadios))
+                        && !$node.is(':focus')
                     ) {
                         if (!$submit && !$radio) {
                             $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         }
 
                         if ($radio) {
-                            $node.prop("checked", true);
+                            $node.prop('checked', true);
                         }
 
                         $node.focus();
