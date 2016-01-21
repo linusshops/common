@@ -617,7 +617,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getFormData(target)
     {
-        return $(target).serializeArray().reduce(function(formObject, item) {
+        return $(target).closest('form').serializeArray().reduce(function(formObject, item) {
             formObject[item.name] = item.value;
             return formObject;
         }, {});
@@ -894,7 +894,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 }
             })
             .fail(function(responseData) {
-                mem.post.cache.delete(generateHash(endpoint, method, requestData));
+                mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
                 if (_.has(jqXHR, 'responseJSON.payload')) {
@@ -948,8 +948,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     mem.ajax = _.memoize(function(endpoint, method, requestData) {
         return $.ajax(endpoint, {
             method: method,
-            data: requestData,
-            dataType: 'json'
+            data: requestData
         });
     }, function(endpoint, method, requestData) {
         return generateHash(endpoint, method, requestData);
@@ -984,27 +983,41 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @param {HTMLElement|string} node - Pass a selector string, or node, of
      * either the specific input to focus on, or the parent that contains
-     * several of them. This is optional; if nothing is passed, the entire DOM
-     * will be searched for the most relevant input. If an input node with
-     * only a single match is found, it will take focus regardless of its
-     * value or type, and the focused cursor will be placed at the end of the
-     * text, instead of the beginning, as is the default.
+     * several of them.
      *
-     * @param {number} delay - Time in milliseconds to wait until focus is
-     * placed on an input. Default: 400.
+     * @param {Object} userOptions - User options available.
+     * @param {HTMLElement|string} userOptions.node - Node or container node to
+     * target. If only one relevant match found, it will be targeted directly,
+     * regardless of its contents. If multiple are found, the one that is least
+     * complete will be targeted. This is optional; if nothing is passed, the
+     * entire DOM will be searched for the most relevant input. If an input
+     * node with only a single match is found, it will take focus regardless of
+     * its value or type, and the focused cursor will be placed at the end of
+     * the text, instead of the beginning, as is the default.
+     * @param {number} userOptions.delay - Time in milliseconds to wait until
+     * focus is placed on an input. Default: 300.
+     * @param {bool} userOptions.allowButtons - Decide whether buttons should
+     * also take focus if they are most relevant. By default this is off
+     * because users can mistakenly submit forms by pressing certain keys.
+     * @param {bool} userOptions.allowRadios - Radios typically require a
+     * selection from a pool, so by default this is off, because this method
+     * does not make any assumption about the most relevant radio selection.
      */
-    function focusMostRelevantInput(node, delay)
+    function focusMostRelevantInput(userOptions)
     {
-        delay = (_.isNumber(delay) && delay > 0)
-            ? delay
-            : 300;
+        var options = _.defaultsDeep(userOptions||{}, {
+            node: null,
+            delay: 300,
+            allowButtons: false,
+            allowRadios: false
+        });
 
         setTimeout(function() {
             var $currentFocus = $(document.activeElement);
             var focusSelectors = 'input, textarea, button';
 
-            var selector = (node)
-                ? node
+            var selector = (options.node)
+                ? options.node
                 : focusSelectors;
 
             if (selector || !$currentFocus.is(focusSelectors)) {
@@ -1012,16 +1025,19 @@ linus.common = linus.common || (function($, _, Dependencies)
                     selector = $(selector).find(focusSelectors);
                 }
 
-                var $selector = $(selector);
-                var originalMatches = $selector.length;
+                var $selector = $(selector).filter(function(index, filteredNode) {
+                    if ((!options.allowButtons && $(filteredNode).is('input[type=submit], button'))
+                        || (!options.allowRadios && $(filteredNode).is('input[type=radio]'))
+                    ) {
+                        return false
+                    }
 
-                $selector = $(selector).filter(function(index, node) {
                     var hasHiddenClass = false;
                     var hasDisplay = true;
                     var hasVisibility = true;
                     var hasOpacity = true;
 
-                    $(node).parents().addBack().each(function(i, el) {
+                    $(filteredNode).parents().addBack().each(function(i, el) {
                         if ($(el).is('[class*=hidden]')) {
                             hasHiddenClass = true;
                         }
@@ -1029,6 +1045,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                         if ($(el).css('display') == 'none') {
                             hasDisplay = false;
                         }
+
                         if ($(el).css('visibility') == 'hidden') {
                             hasVisibility = false;
                         }
@@ -1041,7 +1058,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     if ((!hasHiddenClass || hasOpacity)
                         && hasDisplay
                         && hasVisibility
-                        && $(node).is(':visible')
+                        && $(filteredNode).is(':visible')
                     ) {
                         return true;
                     }
@@ -1056,15 +1073,14 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                     // Select only empty inputs or buttons, or if a
                     if (($submit || $radio || !$node.val())
-                        && (originalMatches == 1 || !$radio)
-                        && !$node.is(":focus")
+                        && !$node.is(':focus')
                     ) {
                         if (!$submit && !$radio) {
                             $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         }
 
                         if ($radio) {
-                            $node.prop("checked", true);
+                            $node.prop('checked', true);
                         }
 
                         $node.focus();
@@ -1082,7 +1098,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     }
                 });
             }
-        }, delay);
+        }, options.delay);
     }
 
     /**
