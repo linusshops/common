@@ -894,7 +894,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 }
             })
             .fail(function(responseData) {
-                mem.post.cache.delete(generateHash(endpoint, method, requestData));
+                mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
                 if (_.has(jqXHR, 'responseJSON.payload')) {
@@ -948,8 +948,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     mem.ajax = _.memoize(function(endpoint, method, requestData) {
         return $.ajax(endpoint, {
             method: method,
-            data: requestData,
-            dataType: 'json'
+            data: requestData
         });
     }, function(endpoint, method, requestData) {
         return generateHash(endpoint, method, requestData);
