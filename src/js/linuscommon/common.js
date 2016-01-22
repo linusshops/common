@@ -404,10 +404,14 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function hide(selector)
     {
-        selector = $(selector);
+        if (_.isArray(selector)) {
+            _.map(selector, hide);
+        } else {
+            selector = $(selector);
 
-        if (!selector.hasClass('js-hidden')) {
-            selector.addClass('js-hidden');
+            if (!selector.hasClass('js-hidden')) {
+                selector.addClass('js-hidden');
+            }
         }
     }
 
@@ -422,24 +426,32 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function invisible(selector)
     {
-        selector = $(selector);
+        if (_.isArray(selector)) {
+            _.map(selector, invisible);
+        } else {
+            selector = $(selector);
 
-        if (!selector.hasClass('js-invisible')) {
-            selector.addClass('js-invisible');
+            if (!selector.hasClass('js-invisible')) {
+                selector.addClass('js-invisible');
+            }
         }
     }
 
     /**
      * Shows an element that was hidden using the js-hidden or js-invisible classes.
      *
-     * @param selector
+     * @param selector a single selector string, or a jquery object,
+     *                 or an array containing a mixture of either
      */
     function show(selector)
     {
-        selector = $(selector);
-
-        selector.removeClass('js-hidden');
-        selector.removeClass('js-invisible');
+        if (_.isArray(selector)) {
+            _.map(selector, show);
+        } else {
+            selector = $(selector);
+            selector.removeClass('js-hidden');
+            selector.removeClass('js-invisible');
+        }
     }
 
     /**
@@ -449,10 +461,14 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function showUntil(selector, seconds)
     {
-        show(selector);
-        setTimeout(function(){
-            hide(selector);
-        }, seconds * 1000, selector);
+        if (_.isArray(selector)) {
+            _.map(selector, showUntil);
+        } else {
+            show(selector);
+            setTimeout(function () {
+                hide(selector);
+            }, seconds * 1000, selector);
+        }
     }
 
     /**
