@@ -58,6 +58,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     var mem = {};
 
+    var compiledTemplateFunctions = {};
+
     /**
      * Implementation of Google's Web Font Loader. These are Common defaults.
      *
@@ -992,6 +994,27 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Handles the compile and rendering of templates via lodash templating.
+     *
+     * Templates will be cached to localstorage, and the template function
+     * will be cached on the page in the compiledTemplateFunctions store.
+     *
+     * @param {array|string} templateKeys
+     * @param {Object} data - The data to apply to the template. If null or empty,
+     * returns the compiled template function.
+     * @param {boolean} bustCache - Invalidate the cache entries for the provided
+     * template keys, and replace with the new template.
+     * @return {string|function} - Returns either the rendered template, or the
+     * compiled template function.
+     */
+    function tpl(templateKeys, data, bustCache)
+    {
+        if (!_.isArray(templateKeys)) {
+            templateKeys = [templateKeys];
+        }
+    }
+
+    /**
      * Focus on the first empty, visible, unfocused input within a node.
      *
      * The first child input that is found within a parent that is empty,
@@ -1171,7 +1194,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         ajax: ajax,
         get: get,
         post: post,
-        focusMostRelevantInput: focusMostRelevantInput
+        focusMostRelevantInput: focusMostRelevantInput,
+        tpl: tpl
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
