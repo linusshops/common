@@ -19,6 +19,6 @@ map,\
 template,\
 partial,\
 isUndefined,\
-partialRight, \
-split
+partialRight,\
+words
 
