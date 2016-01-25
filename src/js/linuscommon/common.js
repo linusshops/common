@@ -1033,7 +1033,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             templateKeys = [templateKeys];
         }
 
-
+        post(getStoreUrl()+'common/template', JSON.stringify(templateKeys), {});
 
     }
 

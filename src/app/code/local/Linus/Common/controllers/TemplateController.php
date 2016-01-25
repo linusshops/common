@@ -29,8 +29,8 @@ class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
         $this->loadLayout();
 
         Mage::helper('linus_common/request')->sendResponseJson(
-            Mage::getModel('linus_common/template_lodash')
-                ->getAllLodashBlocksByName(
+            Mage::getModel('linus_common/tpl')
+                ->getTplBlocksByName(
                     $this->getLayout(),
                     $templateKeys
                 )
