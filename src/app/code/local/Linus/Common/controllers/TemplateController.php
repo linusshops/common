@@ -11,18 +11,23 @@ class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
     public function indexAction()
     {
         //Get keys to look up from request
+        $templateKeys = json_decode($this->getRequest()->getRawBody(), true);
+        if (empty($templateKeys)) {
+            return Mage::helper('linus_common/request')->sendResponseJson(
+                array(),
+                'No template keys provided'
+            );
+        }
 
-        $templateContainer = new Varien_Object(array(
-            'templates' => array()
-        ));
-
-        Mage::dispatchEvent('common_template_lookup', array(
-            'templates' => new Varien_Object(),
-            'requested_keys' => array()
-        ));
+        //Load requested blocks by name
+        $this->loadLayout();
 
         Mage::helper('linus_common/request')->sendResponseJson(
-            $templateContainer->getTemplates()
+            Mage::getModel('linus_common/template_lodash')
+                ->getAllLodashBlocksByName(
+                    $this->getLayout(),
+                    $templateKeys
+                )
         );
     }
 }
