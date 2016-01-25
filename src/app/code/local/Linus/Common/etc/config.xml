@@ -75,6 +75,16 @@
                 </linus_common>
             </updates>
         </layout>
+
+        <routers>
+            <linus_common>
+                <use>standard</use>
+                <args>
+                    <module>Linus_Common</module>
+                    <frontName>common</frontName>
+                </args>
+            </linus_common>
+        </routers>
     </frontend>
 
     <adminhtml>
