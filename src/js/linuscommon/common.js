@@ -129,6 +129,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         Accounting = use('Accounting', Dependencies);
         setAccountingDefaultSettings();
 
+        setLodashDefaultSettings();
+
         // Let all other ready callbacks fire through codebase, then run this.
         deadLastReady(loadWebFonts);
     }
@@ -679,6 +681,24 @@ linus.common = linus.common || (function($, _, Dependencies)
             Accounting.settings.number.decimal = ',';
             Accounting.settings.number.thousand = ' ';
         }
+    }
+
+    /**
+     * Default settings for Lodash.
+     *
+     * Template
+     * interpolate = {{}}
+     * escape = {{-}}
+     * evaluate = {{%}}
+     *
+     * Will convert default template delimiters to mustache-inspired delimiters.
+     * The usual templating for lodash uses ERB (embedded ruby) style templating.
+     */
+    function setLodashDefaultSettings()
+    {
+        _.templateSettings.interpolate = /{{([\s\S]+?)}}/g; //{{}}
+        _.templateSettings.escape = /{{-([\s\S]+?)}}/g; //{{-}}
+        _.templateSettings.evaluate = /{{%([\s\S]+?)}}/g; //{{%}}
     }
 
     /**
