@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provide endpoints to manage and retrieve Lodash frontend templates.
+ * Provide endpoints to manage and retrieve tpl frontend templates.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-22
@@ -9,7 +9,7 @@
 class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
 {
     /**
-     * Fetch lodash templates by block name.  These should be defined in
+     * Fetch tpl templates by block name.  These should be defined in
      * layout xml as blocks, and fetched by block name.
      */
     public function indexAction()

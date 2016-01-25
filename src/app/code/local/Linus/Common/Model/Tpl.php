@@ -16,16 +16,16 @@ class Linus_Common_Model_Tpl extends Mage_Core_Block_Template
      */
     public function getTplBlocksByName(Mage_Core_Model_Layout $layout, array $blockNames)
     {
-        $lodashTemplates = array();
+        $tplCollection = array();
 
         foreach ($blockNames as $templateKey) {
             //Strip id and class indicators from the key to get the block identifier.
             $identifier = preg_replace('/^([\.\#])/', '', $templateKey);
             if ($block = $layout->getBlock($identifier)) {
-                $lodashTemplates[$templateKey] = $block->toHtml();
+                $tplCollection[$templateKey] = $block->toHtml();
             }
         }
 
-        return $lodashTemplates;
+        return $tplCollection;
     }
 }
