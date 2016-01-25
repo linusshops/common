@@ -1,7 +1,8 @@
 <?php
 
 /**
- *
+ * Provide methods for finding and manipulating lodash templates
+ * before returning them to the frontend.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-25
@@ -9,6 +10,7 @@
 class Linus_Common_Model_Template_Lodash extends Mage_Core_Block_Template
 {
     /**
+     * Fetch an array of the templates matching the provided block names.
      * @param array $blockNames
      * @return array
      */
@@ -16,9 +18,11 @@ class Linus_Common_Model_Template_Lodash extends Mage_Core_Block_Template
     {
         $lodashTemplates = array();
 
-        foreach ($blockNames as $name) {
-            if ($block = $layout->getBlock($name)) {
-                $lodashTemplates[$name] = $block->toHtml();
+        foreach ($blockNames as $templateKey) {
+            //Strip id and class indicators from the key to get the block identifier.
+            $identifier = preg_replace('/[\.\#](.+)/', '', $templateKey);
+            if ($block = $layout->getBlock($identifier)) {
+                $lodashTemplates[$templateKey] = $block->toHtml();
             }
         }
 
