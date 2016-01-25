@@ -19,6 +19,11 @@ class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
             );
         }
 
+        //Strip id and class indicators from the key to get the block identifier.
+        array_walk($templateKeys, function(&$value, $index) {
+            $value = preg_replace('/[\.\#](.+)/', '', $value);
+        });
+
         //Load requested blocks by name
         $this->loadLayout();
 
