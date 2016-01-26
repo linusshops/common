@@ -20,6 +20,12 @@
             </linus_common>
         </blocks>
 
+        <models>
+            <linus_common>
+                <class>Linus_Common_Model</class>
+            </linus_common>
+        </models>
+
         <events>
             <!-- CartController->addAction -->
             <controller_action_predispatch_checkout_cart_add>
@@ -75,6 +81,16 @@
                 </linus_common>
             </updates>
         </layout>
+
+        <routers>
+            <linus_common>
+                <use>standard</use>
+                <args>
+                    <module>Linus_Common</module>
+                    <frontName>common</frontName>
+                </args>
+            </linus_common>
+        </routers>
     </frontend>
 
     <adminhtml>

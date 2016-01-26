@@ -58,6 +58,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     var mem = {};
 
+    var compiledTemplateFunctions = {};
+
     /**
      * Implementation of Google's Web Font Loader. These are Common defaults.
      *
@@ -126,6 +128,8 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         Accounting = use('Accounting', Dependencies);
         setAccountingDefaultSettings();
+
+        setLodashDefaultSettings();
 
         // Let all other ready callbacks fire through codebase, then run this.
         deadLastReady(loadWebFonts);
@@ -680,6 +684,24 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Default settings for Lodash.
+     *
+     * Template
+     * interpolate = {{}}
+     * escape = {{-}}
+     * evaluate = {{%}}
+     *
+     * Will convert default template delimiters to mustache-inspired delimiters.
+     * The usual templating for lodash uses ERB (embedded ruby) style templating.
+     */
+    function setLodashDefaultSettings()
+    {
+        _.templateSettings.interpolate = /{{([\s\S]+?)}}/g; //{{}}
+        _.templateSettings.escape = /{{-([\s\S]+?)}}/g; //{{-}}
+        _.templateSettings.evaluate = /{{%([\s\S]+?)}}/g; //{{%}}
+    }
+
+    /**
      * Get the formatted price of a string or int.
      *
      * Provide '4444.98' or 4444.97777 and get '$4,444.98'.
@@ -992,6 +1014,64 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Handles the compile and rendering of templates via lodash templating.
+     *
+     * Templates will be cached to localstorage, and the template function
+     * will be cached on the page in the compiledTemplateFunctions store.
+     *
+     * @param {array|string} templateKeys
+     * @param {Object} data - The data to apply to the template. If false, tpl
+     * will not render any data, but will download and parse the template if it
+     * is not already available from the cache.
+     * @param {boolean} bustCache - Invalidate the cache entries for the provided
+     * template keys, and replace with the new template.
+     */
+    function tpl(templateKeys, data, bustCache)
+    {
+        //Normalize inputs
+        if (_.isUndefined(data) || data === false) {
+            data = null;
+        }
+
+        if (!_.isArray(templateKeys)) {
+            templateKeys = [templateKeys];
+        }
+
+        var valid = function(data, templates) {
+            //Apply the render method to each template received from the server.
+            _.map(
+                templates,
+                _.partial(tplRender, data)
+            );
+        };
+
+        post(getStoreUrl()+'common/template', JSON.stringify(templateKeys), {
+            valid: _.partial(valid, data)
+        });
+    }
+
+    /**
+     * Render a template to the target locations on the page
+     * @param data
+     * @param template
+     * @param selector
+     */
+    function tplRender(data, template, selector)
+    {
+        var $target = $(selector);
+
+        //Target doesn't exist, skip render.
+        if ($target.length == 0) {
+            return;
+        }
+
+        $target.html(
+            _.template(template)(data)
+        );
+    }
+
+
+    /**
      * Focus on the first empty, visible, unfocused input within a node.
      *
      * The first child input that is found within a parent that is empty,
@@ -1171,7 +1251,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         ajax: ajax,
         get: get,
         post: post,
-        focusMostRelevantInput: focusMostRelevantInput
+        focusMostRelevantInput: focusMostRelevantInput,
+        tpl: tpl
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}

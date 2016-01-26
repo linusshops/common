@@ -21,4 +21,3 @@ partial,\
 isUndefined,\
 partialRight,\
 words
-
