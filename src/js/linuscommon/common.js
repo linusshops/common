@@ -858,6 +858,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      * HTML content has been auto-inserted, which provide access to the
      * live node for further manipulation by other modules.
      *
+     * - If a target selector exists, but does not have a corresponding data
+     * node in the response data, Common will attempt automatic templating,
+     * using the payload as the template data, and the target as the template
+     * key. The tpl method is used for this functionality.
+     *
      * - `Common:beforeMETHOD` and `Common:afterMETHOD` events are fired
      * before and after the asynchronous call, which can be used by other
      * modules for modifying a request before it is sent out, or after it has
@@ -926,6 +931,9 @@ linus.common = linus.common || (function($, _, Dependencies)
                         } else if (_.isUndefined(payload[targetPayloadSelector])
                                 && $target.length
                         ) {
+                            //If there is no matching target identifier in
+                            //the payload, but the selector is valid, attempt
+                            //to use templating to inject data.
                             tpl(targetPayloadSelector, payload);
                         }
                     });
@@ -1024,6 +1032,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * Templates will be cached to localstorage, and the template function
      * will be cached on the page in the compiledTemplateFunctions store.
+     *
+     * The template key should be the css selector that indicates the target
+     * for the template content.
      *
      * @param {array|string} templateKeys
      * @param {Object} data - The data to apply to the template. If false, tpl
