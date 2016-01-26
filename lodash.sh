@@ -3,7 +3,8 @@
 lodash strict -o ./src/js/linuscommon/lodash-3.10.1.custom.min.js -p include=\
 noConflict,\
 has,\
-get,\size,\
+get,\
+size,\
 memoize,\
 defaultsDeep,\
 isNumber,\
@@ -19,4 +20,3 @@ template,\
 partial,\
 isUndefined,\
 partialRight,\
-split

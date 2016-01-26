@@ -1020,22 +1020,56 @@ linus.common = linus.common || (function($, _, Dependencies)
      * will be cached on the page in the compiledTemplateFunctions store.
      *
      * @param {array|string} templateKeys
-     * @param {Object} data - The data to apply to the template. If null or empty,
-     * returns the compiled template function.
+     * @param {Object} data - The data to apply to the template. If false, tpl
+     * will not render any data, but will download and parse the template if it
+     * is not already available from the cache.
      * @param {boolean} bustCache - Invalidate the cache entries for the provided
      * template keys, and replace with the new template.
-     * @return {string|function} - Returns either the rendered template, or the
-     * compiled template function.
      */
     function tpl(templateKeys, data, bustCache)
     {
+        //Normalize inputs
+        if (_.isUndefined(data) || data === false) {
+            data = null;
+        }
+
         if (!_.isArray(templateKeys)) {
             templateKeys = [templateKeys];
         }
 
-        post(getStoreUrl()+'common/template', JSON.stringify(templateKeys), {});
+        var valid = function(data, templates) {
+            //Apply the render method to each template received from the server.
+            _.map(
+                templates,
+                _.partial(tplRender, data)
+            );
+        };
 
+        post(getStoreUrl()+'common/template', JSON.stringify(templateKeys), {
+            valid: _.partial(valid, data)
+        });
     }
+
+    /**
+     * Render a template to the target locations on the page
+     * @param data
+     * @param template
+     * @param selector
+     */
+    function tplRender(data, template, selector)
+    {
+        var $target = $(selector);
+
+        //Target doesn't exist, skip render.
+        if ($target.length == 0) {
+            return;
+        }
+
+        $target.html(
+            _.template(template)(data)
+        );
+    }
+
 
     /**
      * Focus on the first empty, visible, unfocused input within a node.
