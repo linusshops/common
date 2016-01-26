@@ -914,13 +914,19 @@ linus.common = linus.common || (function($, _, Dependencies)
                     }
 
                     _.each(targetPayloadSelectors, function(targetPayloadSelector) {
+                        var $target = $(targetPayloadSelector);
+
                         if (_.isString(payload[targetPayloadSelector])
-                            && $(targetPayloadSelector).length
+                            && $target.length
                         ) {
-                            $(targetPayloadSelector)
+                            $target
                                 .addClass('payload-target-container')
                                 .html(payload[targetPayloadSelector])
                                 .trigger('Common:afterTargetPayloadInsert');
+                        } else if (_.isUndefined(payload[targetPayloadSelector])
+                                && $target.length
+                        ) {
+                            tpl(targetPayloadSelector, payload);
                         }
                     });
 
@@ -1061,7 +1067,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         var $target = $(selector);
 
         //Target doesn't exist, skip render.
-        if ($target.length == 0) {
+        if (!$target.length) {
             return;
         }
 
