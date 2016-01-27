@@ -27,6 +27,16 @@
         </models>
 
         <events>
+            <controller_action_layout_render_before>
+                <observers>
+                    <linus_common>
+                        <type>singleton</type>
+                        <class>Linus_Common_Model_Observer</class>
+                        <method>onControllerActionLayoutRenderBefore</method>
+                    </linus_common>
+                </observers>
+            </controller_action_layout_render_before>
+
             <!-- CartController->addAction -->
             <controller_action_predispatch_checkout_cart_add>
                 <observers>

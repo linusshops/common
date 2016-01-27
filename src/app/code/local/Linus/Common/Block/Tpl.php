@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * Contains frontend templates for use by the JS automatic templating system.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-25

@@ -20,4 +20,10 @@ template,\
 partial,\
 isUndefined,\
 partialRight,\
-words
+words,\
+isNull,\
+groupBy,\
+isEmpty,\
+wrap,\
+isFunction,\
+reduce

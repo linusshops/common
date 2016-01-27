@@ -931,9 +931,6 @@ linus.common = linus.common || (function($, _, Dependencies)
                         } else if (_.isUndefined(payload[targetPayloadSelector])
                                 && $target.length
                         ) {
-                            //If there is no matching target identifier in
-                            //the payload, but the selector is valid, attempt
-                            //to use templating to inject data.
                             tpl(targetPayloadSelector, payload);
                         }
                     });
@@ -1054,26 +1051,81 @@ linus.common = linus.common || (function($, _, Dependencies)
             templateKeys = [templateKeys];
         }
 
-        var valid = function(data, templates) {
-            //Apply the render method to each template received from the server.
-            _.map(
-                templates,
-                _.partial(tplRender, data)
-            );
-        };
+        //Divide into cached and uncached templates. We will dispatch the fetch
+        //of uncached templates, and then render from the cache list.
+        var groupedTemplates = _.reduce(templateKeys, function(container, templateKey){
+            //We want to get the local compiled template immediately, instead
+            //of just noting the key, since there is the slim chance that if
+            //local storage were cleared the template would not be available.
+            var localTemplate = getLocalTpl(templateKey);
 
-        post(getStoreUrl()+'common/template', JSON.stringify(templateKeys), {
-            valid: _.partial(valid, data)
+            if (localTemplate === false || !_.isFunction(localTemplate)) {
+                container.fetch.push(templateKey);
+            } else {
+                container.local.push({selector: templateKey, template: localTemplate});
+            }
+
+            return container;
+        }, {local:[], fetch:[]});
+
+        var localTemplates = _.get(groupedTemplates, 'local', []);
+        var fetchTemplateKeys = _.get(groupedTemplates, 'fetch', []);
+
+        tplFetch(fetchTemplateKeys, data);
+
+        _.forEach(localTemplates, function(localTemplate){
+            tplRender(
+                data,
+                _.get(localTemplate, 'template'),
+                _.get(localTemplate, 'selector')
+            );
         });
+    }
+
+    function onValidTplFetch(data, templates) {
+        _.forEach(templates, function(template, key){
+            var compiled = _.template(_.get(template, 'content'));
+            var checksum = _.get(template, 'checksum');
+            tplRender(
+                data,
+                compiled,
+                key
+            );
+        });
+    }
+
+    /**
+     *
+     * @param {array} templateKeys
+     * @param {object} data
+     */
+    function tplFetch(templateKeys, data)
+    {
+        if (!_.isEmpty(templateKeys)) {
+            post(getStoreUrl() + 'common/template', JSON.stringify(templateKeys), {
+                valid: _.partial(onValidTplFetch, data)
+            });
+        }
+    }
+
+    /**
+     * Retrieves the compiled tpl if it is stored locally, or false if it is
+     * not available.
+     * @param templateKey
+     * @returns {function|boolean}
+     */
+    function getLocalTpl(templateKey)
+    {
+        return false;
     }
 
     /**
      * Render a template to the target locations on the page
      * @param data
-     * @param template
+     * @param compiledTemplate
      * @param selector
      */
-    function tplRender(data, template, selector)
+    function tplRender(data, compiledTemplate, selector)
     {
         var $target = $(selector);
 
@@ -1083,10 +1135,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         $target.html(
-            _.template(template)(data)
+            compiledTemplate(data)
         );
     }
-
 
     /**
      * Focus on the first empty, visible, unfocused input within a node.

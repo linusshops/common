@@ -21,10 +21,15 @@ class Linus_Common_Model_Tpl extends Mage_Core_Block_Template
         foreach ($blockNames as $templateKey) {
             //Strip id and class indicators from the key to get the block identifier.
             $identifier = preg_replace('/^([\.\#])/', '', $templateKey);
-            //Convert dashes to underscores to conform to naming convention
+            //Convert dashes to underscores to conform to block naming convention.
+            //CSS selectors use dashes, but blocks use underscores in the same way.
             $identifier = preg_replace('/([-])/', '_', $identifier);
             if ($block = $layout->getBlock($identifier)) {
-                $tplCollection[$templateKey] = $block->toHtml();
+                $content = $block->toHtml();
+                $tplCollection[$templateKey] = array(
+                    'content' => $content,
+                    'checksum' => md5($content)
+                );
             }
         }
 
