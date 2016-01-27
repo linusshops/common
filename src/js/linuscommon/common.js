@@ -1276,6 +1276,66 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Lazy load a resource from the given url. If no type is provided, will
+     * attempt to detect if the resource is a stylesheet or script, and handle
+     * it appropriately.
+     *
+     * @param {string} url
+     * @param {string} type (optional) the data type of the resource, if any
+     * @return {Promise} A promise, to which functions can be attached to take
+     * actions once the load is completed.
+     */
+    function lazy(url, type)
+    {
+        var promise;
+
+        if (_.isUndefined(type)) {
+            if (_.includes(url, '.js')) {
+                type = 'script';
+            } else if (_.includes(url, '.css')) {
+                type = 'css';
+            }
+        }
+
+        if (type == 'css') {
+            promise = $.when(injectStylesheet(url));
+        } else {
+            promise = lazyLoad(url, type);
+        }
+
+        return promise;
+    }
+
+    /**
+     * Dynamically load a resource lazily.
+     * @param {string} url
+     * @param {string} type - optional, if specified will be set as the dataType of the ajax request.
+     * @returns {jqXHR}
+     */
+    function lazyLoad(url, type) {
+        var options = {
+            url: url,
+            cache: true,
+            crossDomain: true
+        };
+
+        if (!_.isUndefined(type)) {
+            options.dataType = type;
+        }
+
+        return $.ajax(options);
+    }
+
+    /**
+     * Dynamically load a stylesheet by injecting a new link element.
+     * @param url
+     */
+    function injectStylesheet(url)
+    {
+        $('body').append('<link rel="stylesheet" type="text/css" href="'+url+'"/>');
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -1320,7 +1380,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         get: get,
         post: post,
         focusMostRelevantInput: focusMostRelevantInput,
-        tpl: tpl
+        tpl: tpl,
+        lazy: lazy
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}

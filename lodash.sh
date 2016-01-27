@@ -26,4 +26,5 @@ groupBy,\
 isEmpty,\
 wrap,\
 isFunction,\
-reduce
+reduce,\
+includes
