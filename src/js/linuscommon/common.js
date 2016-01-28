@@ -58,6 +58,10 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     var mem = {};
 
+    /**
+     * Store for compiled templates
+     * @type Object
+     */
     var compiledTemplateFunctions = {};
 
     /**
@@ -1037,10 +1041,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} data - The data to apply to the template. If false, tpl
      * will not render any data, but will download and parse the template if it
      * is not already available from the cache.
-     * @param {boolean} bustCache - Invalidate the cache entries for the provided
-     * template keys, and replace with the new template.
      */
-    function tpl(templateKeys, data, bustCache)
+    function tpl(templateKeys, data)
     {
         //Normalize inputs
         if (_.isUndefined(data) || data === false) {
@@ -1121,9 +1123,15 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getLocalTpl(templateKey)
     {
-        //Check if it exists in memory
+        //Check if it exists in memory- don't bother with localstorage if it
+        //does, as this only persists on one request
 
         //Check local storage (if available), then check hashes
+        //Invalidate and delete as necessary
+
+        //Otherwise, load into memory and make it a memoized function
+
+        //If a storage quota exception is thrown, invalidate the oldest template
 
         return false;
     }
@@ -1131,8 +1139,9 @@ linus.common = linus.common || (function($, _, Dependencies)
     function setLocalTpl(templateKey, templateHash, compiledTemplate)
     {
         //Write to local storage (if available)
+        //Update the template storage registry (for LRU cache invalidation strategy)
 
-        //Write to memory
+        //Write to memory as a memoized function!
     }
 
     /**
