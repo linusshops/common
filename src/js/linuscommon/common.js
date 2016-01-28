@@ -60,9 +60,15 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     /**
      * Store for compiled templates
+     * We store templates by their hash, so that different targets that share
+     * the same template benefit from a single memoized function.
+     *
      * @type Object
      */
-    var compiledTemplateFunctions = {};
+    var compiledTemplateFunctions = {
+        mappings: {},
+        templates: {}
+    };
 
     /**
      * Implementation of Google's Web Font Loader. These are Common defaults.
@@ -1125,10 +1131,16 @@ linus.common = linus.common || (function($, _, Dependencies)
     function getLocalTpl(templateKey)
     {
         //Check if it exists in memory- don't bother with localstorage if it
-        //does, as this only persists on one request
-        var local = _.get(compiledTemplateFunctions, templateKey, false);
-        if (local !== false) {
-            return local;
+        //does, as this only persists on one request.
+        //We store compiled templates by checksum, as they are memoized once
+        //compiled. This way, multiple templates pointing to the same hash
+        //all benefit from sharing the memoized fn.
+        var checksum = _.get(compiledTemplateFunctions, 'mappings.'+templateKey, false);
+        if (checksum) {
+            var local = _.get(compiledTemplateFunctions, 'templates.' + checksum, false);
+            if (local !== false) {
+                return local;
+            }
         }
 
         //Check local storage (if available), then check hashes
@@ -1184,10 +1196,16 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         var compiled = _.template(templateContent);
 
-        compiledTemplateFunctions[templateKey] = _.memoize(
-            _.template(templateContent),
-            _.partial(generateHash, templateKey)
-        );
+        compiledTemplateFunctions.mappings[templateKey] = checksum;
+
+        //The compiled function doesn't need to be updated if it already
+        //exists in memory.
+        if (_.get('templates.'+checksum, false)) {
+            compiledTemplateFunctions.templates[checksum] = _.memoize(
+                _.template(templateContent),
+                _.partial(generateHash, templateKey)
+            );
+        }
 
         //storeLocalTpl(templateKey, checksum, compiled);
 
