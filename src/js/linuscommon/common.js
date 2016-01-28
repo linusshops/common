@@ -1189,6 +1189,12 @@ linus.common = linus.common || (function($, _, Dependencies)
                     selector = $(selector).find(focusSelectors);
                 }
 
+                var originalMatches = $(selector).length;
+                if (originalMatches === 1) {
+                    options.allowButtons = true;
+                    options.allowRadios = true;
+                }
+
                 var $selector = $(selector).filter(function(index, filteredNode) {
                     if ((!options.allowButtons && $(filteredNode).is('input[type=submit], button'))
                         || (!options.allowRadios && $(filteredNode).is('input[type=radio]'))
