@@ -1071,6 +1071,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         var localTemplates = _.get(groupedTemplates, 'local', []);
         var fetchTemplateKeys = _.get(groupedTemplates, 'fetch', []);
 
+        fetchTemplateKeys = _.uniq(fetchTemplateKeys);
+
         tplFetch(fetchTemplateKeys, data);
 
         _.forEach(localTemplates, function(localTemplate){
@@ -1086,6 +1088,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         _.forEach(templates, function(template, key){
             var compiled = _.template(_.get(template, 'content'));
             var checksum = _.get(template, 'checksum');
+
+            setLocalTpl(key, checksum, compiled);
+
             tplRender(
                 data,
                 compiled,
@@ -1116,7 +1121,18 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getLocalTpl(templateKey)
     {
+        //Check if it exists in memory
+
+        //Check local storage (if available), then check hashes
+
         return false;
+    }
+
+    function setLocalTpl(templateKey, templateHash, compiledTemplate)
+    {
+        //Write to local storage (if available)
+
+        //Write to memory
     }
 
     /**

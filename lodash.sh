@@ -28,4 +28,5 @@ wrap,\
 isFunction,\
 reduce,\
 includes,\
-defaults
+defaults,\
+uniq
