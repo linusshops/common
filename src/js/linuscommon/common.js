@@ -1332,7 +1332,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function injectStylesheet(url)
     {
-        $('body').append('<link rel="stylesheet" type="text/css" href="'+url+'"/>');
+        $('head').append('<link rel="stylesheet" type="text/css" href="'+url+'"/>');
     }
 
     /**

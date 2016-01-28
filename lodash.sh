@@ -27,4 +27,5 @@ isEmpty,\
 wrap,\
 isFunction,\
 reduce,\
-includes
+includes,\
+defaults
