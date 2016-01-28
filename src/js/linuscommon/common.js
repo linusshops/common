@@ -1088,10 +1088,11 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     function onValidTplFetch(data, templates) {
         _.forEach(templates, function(template, key){
-            var compiled = _.template(_.get(template, 'content'));
-            var checksum = _.get(template, 'checksum');
-
-            setLocalTpl(key, checksum, compiled);
+            var compiled = tplCompile(
+                key,
+                _.get(template, 'content'),
+                _.get(template, 'checksum')
+            );
 
             tplRender(
                 data,
@@ -1125,23 +1126,72 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         //Check if it exists in memory- don't bother with localstorage if it
         //does, as this only persists on one request
+        var local = _.get(compiledTemplateFunctions, templateKey, false);
+        if (local !== false) {
+            return local;
+        }
 
         //Check local storage (if available), then check hashes
         //Invalidate and delete as necessary
-
-        //Otherwise, load into memory and make it a memoized function
-
-        //If a storage quota exception is thrown, invalidate the oldest template
+        if (isLocalStorageAvailable()) {
+            //Otherwise, load into memory and make it a memoized function
+        }
 
         return false;
     }
 
-    function setLocalTpl(templateKey, templateHash, compiledTemplate)
+    function storeLocalTpl(templateKey, checksum, compiledTemplate)
     {
-        //Write to local storage (if available)
-        //Update the template storage registry (for LRU cache invalidation strategy)
+        if (isLocalStorageAvailable()) {
+            window.localStorage.setItem('common:'+templateKey, JSON.stringify({
+                compiledTemplate: compiledTemplate,
+                checksum: checksum
+            }));
+        }
+    }
 
-        //Write to memory as a memoized function!
+    /**
+     * Test if local storage is available on the current browser.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API#Testing_for_support_vs_availability
+     * @returns {boolean}
+     */
+    function isLocalStorageAvailable()
+    {
+        try {
+            var storage = window['localStorage'],
+                x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        }
+        catch(e) {
+            return false;
+        }
+    }
+
+    /**
+     * Compiles the template content to a function, then stores it in memory
+     * as a memoized function. Will also attempt to save the template
+     * in localStorage, depending on availability.
+     *
+     * @param templateKey
+     * @param templateContent
+     * @param checksum
+     * @returns {function}
+     */
+    function tplCompile(templateKey, templateContent, checksum)
+    {
+        var compiled = _.template(templateContent);
+
+        compiledTemplateFunctions[templateKey] = _.memoize(
+            _.template(templateContent),
+            _.partial(generateHash, templateKey)
+        );
+
+        //storeLocalTpl(templateKey, checksum, compiled);
+
+        return compiled;
     }
 
     /**
