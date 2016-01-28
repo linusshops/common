@@ -1067,7 +1067,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             //local storage were cleared the template would not be available.
             var localTemplate = getLocalTpl(templateKey);
 
-            if (localTemplate === false || !_.isFunction(localTemplate)) {
+            if (localTemplate === false) {
                 container.fetch.push(templateKey);
             } else {
                 container.local.push({selector: templateKey, template: localTemplate});
@@ -1094,11 +1094,16 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     function onValidTplFetch(data, templates) {
         _.forEach(templates, function(template, key){
+            var content = _.get(template, 'content');
+            var checksum =_.get(template, 'checksum');
+
             var compiled = tplCompile(
                 key,
-                _.get(template, 'content'),
-                _.get(template, 'checksum')
+                content,
+                checksum
             );
+
+            storeLocalTpl(key, checksum, content);
 
             tplRender(
                 data,
@@ -1109,6 +1114,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Retrieve frontend templates from the server.
      *
      * @param {array} templateKeys
      * @param {object} data
@@ -1145,20 +1151,62 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         //Check local storage (if available), then check hashes
         //Invalidate and delete as necessary
+        //If template exists and is not invalid, load it into memory
         if (isLocalStorageAvailable()) {
-            //Otherwise, load into memory and make it a memoized function
+            checksum = window.localStorage.getItem('common-tpl-mapping:'+templateKey);
+            if (!_.isNull(checksum) && isLocalTplValid(templateKey, checksum)) {
+                var rawTemplate = window.localStorage.getItem('common-tpl-hash:'+checksum);
+                if (!_.isNull(rawTemplate)) {
+                    var compiled = tplCompile(templateKey, rawTemplate, checksum);
+                    storeMemoryTpl(templateKey, checksum, compiled);
+                    return compiled;
+                }
+            }
         }
 
         return false;
     }
 
-    function storeLocalTpl(templateKey, checksum, compiledTemplate)
+    function isLocalTplValid(templateKey, checksum)
+    {
+        var checksums = getCspData('commonTplChecksums');
+        var blockName = getTplBlockNameFromTemplateKey(templateKey);
+
+        var cspChecksum = _.get(
+            checksums,
+            blockName
+        );
+
+        return checksum === cspChecksum;
+    }
+
+    function getTplBlockNameFromTemplateKey(templateKey)
+    {
+        return templateKey
+            .replace(/^([\.\#])/, '')
+            .replace(/([-])/g, '_')
+        ;
+    }
+
+    function storeLocalTpl(templateKey, checksum, templateContent)
     {
         if (isLocalStorageAvailable()) {
-            window.localStorage.setItem('common:'+templateKey, JSON.stringify({
-                compiledTemplate: compiledTemplate,
-                checksum: checksum
-            }));
+            window.localStorage.setItem('common-tpl-mapping:'+templateKey, checksum);
+            window.localStorage.setItem('common-tpl-hash:'+checksum, templateContent);
+        }
+    }
+
+    function storeMemoryTpl(templateKey, checksum, compiledTemplate)
+    {
+        compiledTemplateFunctions.mappings[templateKey] = checksum;
+
+        //The compiled function doesn't need to be updated if it already
+        //exists in memory.
+        if (!_.get(compiledTemplateFunctions, 'templates.'+checksum, false)) {
+            compiledTemplateFunctions.templates[checksum] = _.memoize(
+                compiledTemplate,
+                _.partial(generateHash, templateKey)
+            );
         }
     }
 
@@ -1196,18 +1244,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         var compiled = _.template(templateContent);
 
-        compiledTemplateFunctions.mappings[templateKey] = checksum;
-
-        //The compiled function doesn't need to be updated if it already
-        //exists in memory.
-        if (_.get('templates.'+checksum, false)) {
-            compiledTemplateFunctions.templates[checksum] = _.memoize(
-                _.template(templateContent),
-                _.partial(generateHash, templateKey)
-            );
-        }
-
-        //storeLocalTpl(templateKey, checksum, compiled);
+        storeMemoryTpl(templateKey, checksum, compiled);
 
         return compiled;
     }
