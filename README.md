@@ -103,7 +103,7 @@ before `skin_js`. Assets will be automatically loaded.
  
 Additionally, `Common` has modified Magento in such a way that it can reorder
 the loading of frontend assets. This is described below. Subsequently, this
-means that all of `Common`s JavaScript is loaded before anything else&mdasheven
+means that all of `Common`s JavaScript is loaded before anything else&mdash;even
 Magento's own assets, like `prototype.js`.
 
 ## Features by use case
@@ -519,6 +519,18 @@ allows other modules to reorder the assets loaded in the head of a document.
 `Linus_Common` itself uses this method so that its assets can be loaded even
 before Magento's own assets: for example, this is used for loading `jQuery`,
 `lodash` and other `Linus_Common` assets. [todo more]
+
+## Async Resource loader
+`common.js` provides a `lazy()` method, which allows asynchronous loading of
+resources such as stylesheets and scripts.  It returns a promise, which can be
+used to only continue once the resource is loaded.
+
+The type can be explicitly specified as 'css' or 'script'.  If not specified,
+an attempt will be made to autodetect the resource type, based on file
+extension (js for script, css for css).
+ 
+Stylesheets will be auto-injected into the page by creating a new <link> element
+in the page head.
 
 ### `linus.common.post` method
 
