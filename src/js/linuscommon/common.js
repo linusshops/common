@@ -1154,13 +1154,17 @@ linus.common = linus.common || (function($, _, Dependencies)
         //If template exists and is not invalid, load it into memory
         if (isLocalStorageAvailable()) {
             checksum = window.localStorage.getItem('common-tpl-mapping:'+templateKey);
-            if (!_.isNull(checksum) && isLocalTplValid(templateKey, checksum)) {
+            var isValid = isLocalTplValid(templateKey, checksum);
+            if (!_.isNull(checksum) && isValid) {
                 var rawTemplate = window.localStorage.getItem('common-tpl-hash:'+checksum);
                 if (!_.isNull(rawTemplate)) {
                     var compiled = tplCompile(templateKey, rawTemplate, checksum);
                     storeMemoryTpl(templateKey, checksum, compiled);
                     return compiled;
                 }
+            } else if (!isValid) {
+                window.localStorage.removeItem('common-tpl-mapping:'+templateKey);
+                window.localStorage.removeItem('common-tpl-hash:'+checksum);
             }
         }
 
