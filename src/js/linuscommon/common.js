@@ -1041,7 +1041,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * will be cached on the page in the compiledTemplateFunctions store.
      *
      * The template key should be the css selector that indicates the target
-     * for the template content.
+     * for the template content, as provided in the JSON response `target.payload`.
      *
      * @param {array|string} templateKeys
      * @param {Object} data - The data to apply to the template. If false, tpl
@@ -1051,8 +1051,8 @@ linus.common = linus.common || (function($, _, Dependencies)
     function tpl(templateKeys, data)
     {
         //Normalize inputs
-        if (_.isUndefined(data) || data === false) {
-            data = null;
+        if (_.isUndefined(data)) {
+            data = {};
         }
 
         if (!_.isArray(templateKeys)) {
@@ -1083,15 +1083,24 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         tplFetch(fetchTemplateKeys, data);
 
-        _.forEach(localTemplates, function(localTemplate){
-            tplRender(
-                data,
-                _.get(localTemplate, 'template'),
-                _.get(localTemplate, 'selector')
-            );
-        });
+        //If we're just prefetching, don't render.
+        if (data !== false) {
+            _.forEach(localTemplates, function (localTemplate) {
+                tplRender(
+                    data,
+                    _.get(localTemplate, 'template'),
+                    _.get(localTemplate, 'selector')
+                );
+            });
+        }
     }
 
+    /**
+     * Event handler for templates being retrieved successfully from the server.
+     * Compiles and renders the received templates, and caches as necessary.
+     * @param {Object} data
+     * @param {array} templates
+     */
     function onValidTplFetch(data, templates) {
         _.forEach(templates, function(template, key){
             var content = _.get(template, 'content');
@@ -1105,11 +1114,14 @@ linus.common = linus.common || (function($, _, Dependencies)
 
             storeLocalTpl(key, checksum, content);
 
-            tplRender(
-                data,
-                compiled,
-                key
-            );
+            //If we're just prefetching, don't render.
+            if (data !== false) {
+                tplRender(
+                    data,
+                    compiled,
+                    key
+                );
+            }
         });
     }
 
@@ -1130,8 +1142,8 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     /**
      * Retrieves the compiled tpl if it is stored locally, or false if it is
-     * not available.
-     * @param templateKey
+     * not available. Checks memory and localStorage, in that order.
+     * @param {string} templateKey
      * @returns {function|boolean}
      */
     function getLocalTpl(templateKey)
@@ -1171,6 +1183,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         return false;
     }
 
+    /**
+     * Checks the retrieved template against the current checksum list, verifying
+     * if the locally cached template is usable.
+     * @param {string} templateKey
+     * @param {string} checksum
+     * @returns {boolean}
+     */
     function isLocalTplValid(templateKey, checksum)
     {
         var checksums = getCspData('commonTplChecksums');
@@ -1184,6 +1203,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         return checksum === cspChecksum;
     }
 
+    /**
+     * Transforms the block name for the template key to match the block name
+     * after transformation of the selector. This key then matches the csp
+     * data key for the template checksum.
+     * @param {string} templateKey
+     * @returns {string}
+     */
     function getTplBlockNameFromTemplateKey(templateKey)
     {
         return templateKey
@@ -1192,6 +1218,12 @@ linus.common = linus.common || (function($, _, Dependencies)
         ;
     }
 
+    /**
+     * Attempts to store the uncompiled template in localstorage.
+     * @param {string} templateKey
+     * @param {string} checksum
+     * @param {string} templateContent
+     */
     function storeLocalTpl(templateKey, checksum, templateContent)
     {
         if (isLocalStorageAvailable()) {
@@ -1204,6 +1236,12 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
     }
 
+    /**
+     * Stores the compiled and memoized template function in memory.
+     * @param {string} templateKey
+     * @param {string} checksum
+     * @param {string} compiledTemplate
+     */
     function storeMemoryTpl(templateKey, checksum, compiledTemplate)
     {
         compiledTemplateFunctions.mappings[templateKey] = checksum;
@@ -1243,9 +1281,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      * as a memoized function. Will also attempt to save the template
      * in localStorage, depending on availability.
      *
-     * @param templateKey
-     * @param templateContent
-     * @param checksum
+     * @param {string} templateKey
+     * @param {string} templateContent
+     * @param {string} checksum
      * @returns {function}
      */
     function tplCompile(templateKey, templateContent, checksum)
@@ -1259,9 +1297,9 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     /**
      * Render a template to the target locations on the page
-     * @param data
-     * @param compiledTemplate
-     * @param selector
+     * @param {Object} data
+     * @param {Function} compiledTemplate - a compiled template function
+     * @param {string|jQuery} selector - the target selector location for the rendered template
      */
     function tplRender(data, compiledTemplate, selector)
     {
