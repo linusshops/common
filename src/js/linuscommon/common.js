@@ -1195,8 +1195,12 @@ linus.common = linus.common || (function($, _, Dependencies)
     function storeLocalTpl(templateKey, checksum, templateContent)
     {
         if (isLocalStorageAvailable()) {
-            window.localStorage.setItem('common-tpl-mapping:'+templateKey, checksum);
-            window.localStorage.setItem('common-tpl-hash:'+checksum, templateContent);
+            try {
+                window.localStorage.setItem('common-tpl-mapping:' + templateKey, checksum);
+                window.localStorage.setItem('common-tpl-hash:' + checksum, templateContent);
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
