@@ -520,7 +520,7 @@ allows other modules to reorder the assets loaded in the head of a document.
 before Magento's own assets: for example, this is used for loading `jQuery`,
 `lodash` and other `Linus_Common` assets. [todo more]
 
-## Async Resource loader
+### Async Resource loader
 `common.js` provides a `lazy()` method, which allows asynchronous loading of
 resources such as stylesheets and scripts.  It returns a promise, which can be
 used to only continue once the resource is loaded.
@@ -607,6 +607,47 @@ $(document).on('Common:beforePost', function(e, eventData) {
         console.log('limbo!', requestData);
     };
 });
+```
+
+#### Automatic templating
+If a `target.payload` property is provided in the JSON response, the Common
+ ajax method will interpret it in one of three ways.
+ 
+* If `target.payload` is specified, and the target selector has a matching
+top level property in the payload, the contents of that property will be
+written to that DOM target
+* If `target.payload` is specified, but there is no matching property, Common
+will attempt to look up a matching template for use on the frontend. If it
+finds a template, it will automatically insert the response payload data and
+render to the target selector.
+* If none of the above, it will take no additional actions.
+
+Common will request the template with a block name matching that of the selector
+with any leading `.` or `#` stripped, and `-` converted to `_`. To define a
+template, simply define a Magento block under `default` as follows.
+
+In this example, the template target selector is `#demo_lodash_template`.
+
+```xml
+<default>
+    <block type="linus_common/tpl" name="demo_lodash_template" as="demo_lodash_template" template="tpl/demo_lodash_template.phtml"/>
+</default>
+```
+
+To benefit from caching, frontend templates must be of the type linus_common/tpl,
+or a child of that class.
+
+Common will automatically cache received templates in local storage, and automatically
+handle cache invalidation via CSP injected md5 hashes. All caching and fetching
+is black-boxed within the single tpl() method.  Should you want to use a template
+without making an ajax request first (just passing some arbitrary data), the
+`Common.tpl()` method can be called directly, passing only the targets for
+your template, and the data to inject. If you pass false for your data, this
+will just precache the templates, but not attempt rendering.
+
+Manual call to tpl()
+```javascript
+linus.common.tpl(['#demo-lodash-template','#demo-lodash-template2'], {name:"linus"})
 ```
 
 ## Authors
