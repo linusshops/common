@@ -29,4 +29,5 @@ isFunction,\
 reduce,\
 includes,\
 defaults,\
-uniq
+uniq,\
+deburr
