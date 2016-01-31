@@ -129,8 +129,9 @@ linus.common = linus.common || (function($, _, Dependencies)
     var regexes = {
         properName: /^[a-z][a-z\s\-\'\.]+$/i,
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
-        cityName: /^[a-z0-9][a-z0-9\s\-\'\.]+$/i,
-        companyName: /^.{4,}$/i
+        cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
+        companyName: /^.{4,}$/i,
+        addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i
     };
 
     /**
@@ -801,6 +802,31 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Split string on whitespace and return.
+     *
+     * @param string
+     */
+    function getPartsFromSpacedString(string)
+    {
+        return _.words(string, /[^\s]+/gi);
+    }
+
+    /**
+     * Capitalize all distinct words in a string.
+     *
+     * For example, "john doe" becomes "John Doe"
+     *
+     * @param string
+     * @returns {string}
+     */
+    function capitalizeAllWordsInString(string)
+    {
+        return string.replace(/(?:^|\s)\S/g, function(stringPart) {
+            return stringPart.toUpperCase();
+        });
+    }
+
+    /**
      * Validate email according to different rules.
      *
      * @param email
@@ -845,11 +871,32 @@ linus.common = linus.common || (function($, _, Dependencies)
         if (_.size(postalCode)) {
             postalCode = _.deburr(_.trim(stripRedundantSpaces(postalCode)));
             if (regexes.canadianPostalCode.test(postalCode)) {
-                validPostalCode = postalCode;
+                validPostalCode = formatPostalCode(postalCode);
             }
         }
 
         return validPostalCode;
+    }
+
+    function formatPostalCode(postalCode)
+    {
+        var formattedPostalCode = '';
+
+        if (_.size(postalCode)) {
+            postalCode = stripAllSpaces(postalCode);
+            var postalCodeParts = _.words(postalCode, /.{1}/g);
+
+            _.forEach(postalCodeParts, function(postalCodePart, key) {
+                formattedPostalCode += postalCodePart;
+                if (key == 2) {
+                    formattedPostalCode += ' ';
+                }
+            });
+
+            formattedPostalCode = _.trim(formattedPostalCode.toUpperCase());
+        }
+
+        return formattedPostalCode;
     }
 
     /**
@@ -902,6 +949,19 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validCompanyName;
     }
 
+    function validateAddressLine(addressLine)
+    {
+        var validAddressLine = false;
+        if (_.size(addressLine)) {
+            addressLine = _.trim(stripRedundantSpaces(addressLine));
+            if (regexes.addressLine.test(_.deburr(addressLine))) {
+                validAddressLine = addressLine;
+            }
+        }
+
+        return validAddressLine;
+    }
+
     /**
      * Strip out redundant spaces.
      *
@@ -914,6 +974,11 @@ linus.common = linus.common || (function($, _, Dependencies)
     function stripRedundantSpaces(string)
     {
         return string.replace(/\s+/g, ' ');
+    }
+
+    function stripAllSpaces(string)
+    {
+        return string.replace(/\s+/g, '');
     }
 
     /**
@@ -1637,7 +1702,11 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateProperName: validateProperName,
         validateCityName: validateCityName,
         validateCompanyName: validateCompanyName,
-        stripRedundantSpaces: stripRedundantSpaces
+        validateAddressLine: validateAddressLine,
+        stripRedundantSpaces: stripRedundantSpaces,
+        getPartsFromSpacedString: getPartsFromSpacedString,
+        capitalizeAllWordsInString: capitalizeAllWordsInString,
+        formatPostalCode: formatPostalCode
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
