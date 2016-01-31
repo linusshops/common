@@ -30,4 +30,6 @@ reduce,\
 includes,\
 defaults,\
 uniq,\
-deburr
+deburr,\
+join
+

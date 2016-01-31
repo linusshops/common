@@ -126,6 +126,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     var emailStrict = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 
+    var regexes = {
+        properName: /^[a-z][a-z\s\-\'\.]+$/i,
+        canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i
+    };
+
     /**
      * Constructor
      *
@@ -835,15 +840,52 @@ linus.common = linus.common || (function($, _, Dependencies)
     function validatePostalCode(postalCode)
     {
         var validPostalCode = false;
-        if (postalCode) {
-            var postalCode = postalCode.toLowerCase().replace(/[\W_]+/g, '');
-            var patternPostalCode = /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i;
-            if (patternPostalCode.test(postalCode)) {
+        if (_.size(postalCode)) {
+            postalCode = _.deburr(_.trim(stripRedundantSpaces(postalCode)));
+            if (regexes.canadianPostalCode.test(postalCode)) {
                 validPostalCode = postalCode;
             }
         }
 
         return validPostalCode;
+    }
+
+    /**
+     * Basic name validation.
+     *
+     * This will deburr names before testing, as validating against unicode
+     * characters from other languages, like accents in French, for example,
+     * will invalidate it.
+     *
+     * @todo consolidate all regex checkers.
+     *
+     * @param name
+     */
+    function validateProperName(properName)
+    {
+        var validProperName = false;
+        if (_.size(properName)) {
+            properName = _.trim(stripRedundantSpaces(properName));
+            if (regexes.properName.test(_.deburr(properName))) {
+                validProperName = properName;
+            }
+        }
+
+        return validProperName;
+    }
+
+    /**
+     * Strip out redundant spaces.
+     *
+     * This is useful for inputs where a user types a full name, for example,
+     * and multiple spaces are included between the      name     parts.
+     *
+     * @param string
+     * @returns {*}
+     */
+    function stripRedundantSpaces(string)
+    {
+        return string.replace(/\s+/g, ' ');
     }
 
     /**
@@ -1521,7 +1563,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         post: post,
         focusMostRelevantInput: focusMostRelevantInput,
         tpl: tpl,
-        lazy: lazy
+        lazy: lazy,
+        validateProperName: validateProperName,
+        stripRedundantSpaces: stripRedundantSpaces
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
