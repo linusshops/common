@@ -128,7 +128,9 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     var regexes = {
         properName: /^[a-z][a-z\s\-\'\.]+$/i,
-        canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i
+        canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
+        cityName: /^[a-z0-9][a-z0-9\s\-\'\.]+$/i,
+        companyName: /^.{4,}$/i
     };
 
     /**
@@ -874,6 +876,32 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validProperName;
     }
 
+    function validateCityName(cityName)
+    {
+        var validCityName = false;
+        if (_.size(cityName)) {
+            cityName = _.trim(stripRedundantSpaces(cityName));
+            if (regexes.cityName.test(_.deburr(cityName))) {
+                validCityName = cityName;
+            }
+        }
+
+        return validCityName;
+    }
+
+    function validateCompanyName(companyName)
+    {
+        var validCompanyName = false;
+        if (_.size(companyName)) {
+            companyName = _.trim(stripRedundantSpaces(companyName));
+            if (regexes.companyName.test(_.deburr(companyName))) {
+                validCompanyName = companyName;
+            }
+        }
+
+        return validCompanyName;
+    }
+
     /**
      * Strip out redundant spaces.
      *
@@ -1607,6 +1635,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         tpl: tpl,
         lazy: lazy,
         validateProperName: validateProperName,
+        validateCityName: validateCityName,
+        validateCompanyName: validateCompanyName,
         stripRedundantSpaces: stripRedundantSpaces
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
