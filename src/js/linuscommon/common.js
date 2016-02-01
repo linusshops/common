@@ -132,7 +132,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
         addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i,
-        telephone: /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}.*/
+        telephone: /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}(\s{1}#{1}.*)?$/
     };
 
     /**
