@@ -867,8 +867,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getHourDescription()
     {
-        var description = 'today';
         var hour = (new Date()).getHours();
+
+        var description = 'today';
 
         if (hour >= 5) {
             description = 'this morning';
