@@ -127,12 +127,12 @@ linus.common = linus.common || (function($, _, Dependencies)
     var emailStrict = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 
     var regexes = {
-        properName: /^[a-z][a-z\s\-\'\.]+$/i,
+        properName: /^[a-z][a-z\s\-\'\.\,]+$/i,
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
         addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i,
-        telephone: /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}$/
+        telephone: /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}.*/
     };
 
     /**
