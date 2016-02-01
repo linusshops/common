@@ -37,5 +37,6 @@ initial,\
 dropRight,\
 findKey,\
 random,\
-uniqueId\
+uniqueId,\
+startCase\
 "
