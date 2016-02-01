@@ -863,6 +863,37 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Determine whether it is morning, afternoon, evening, and night.
+     */
+    function getHourDescription()
+    {
+        var description = 'today';
+        var hour = (new Date()).getHours();
+
+        if (hour >= 5) {
+            description = 'this morning';
+        }
+
+        if (hour >= 12) {
+            description = 'this afternoon';
+        }
+
+        if (hour >= 15) {
+            description = 'today';
+        }
+
+        if (hour >= 18) {
+            description = 'this evening';
+        }
+
+        if (hour >= 21) {
+            description = 'tonight';
+        }
+
+        return description;
+    }
+
+    /**
      * Validate email according to different rules.
      *
      * @param email
@@ -1764,7 +1795,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         capitalizeAllWordsInString: capitalizeAllWordsInString,
         getFullnameParts: getFullnameParts,
         formatPostalCode: formatPostalCode,
-        generateUniqueRandomId: generateUniqueRandomId
+        generateUniqueRandomId: generateUniqueRandomId,
+        getHourDescription: getHourDescription
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
