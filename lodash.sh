@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-lodash strict -o ./src/js/linuscommon/lodash-3.10.1.custom.min.js -p include=\
+lodash strict -o ./src/js/linuscommon/lodash-3.10.1.custom.min.js -p include="\
 noConflict,\
 has,\
 get,\
@@ -31,3 +31,11 @@ includes,\
 defaults,\
 uniq,\
 deburr,
+last,\
+slice,\
+initial,\
+dropRight,\
+findKey,\
+random,\
+uniqueId\
+"

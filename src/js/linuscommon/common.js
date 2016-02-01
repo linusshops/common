@@ -131,7 +131,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
-        addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i
+        addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i,
+        telephone: /^((\d[-. ]?)?((\(\d{3}\))|\d{3}))?[-. ]?\d{3}[-. ]?\d{4}$/
     };
 
     /**
@@ -802,6 +803,41 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Given a full name, return a first and last name.
+     *
+     * A last name is always the last distinct name separated by a space. All
+     * other previous words are considered first name, or the given names.
+     *
+     * @param fullname
+     * @returns {{firstName: string, lastName: string}}
+     */
+    function getFullnameParts(fullname)
+    {
+        var nameParts = {
+            firstName: '',
+            lastName: ''
+        };
+
+        if (_.size(fullname)) {
+            var fullnameParts = getPartsFromSpacedString(fullname);
+
+            nameParts.lastName = _.trim(stripRedundantSpaces(
+                _.last(fullnameParts)
+            ));
+
+            _.forEach(_.initial(fullnameParts), function(firstNamePart) {
+                nameParts.firstName += firstNamePart + ' ';
+            });
+
+            nameParts.firstName = _.trim(stripRedundantSpaces(
+                nameParts.firstName
+            ));
+        }
+
+        return nameParts;
+    }
+
+    /**
      * Split string on whitespace and return.
      *
      * @param string
@@ -961,6 +997,25 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         return validAddressLine;
     }
+
+    function validateTelephone(telephone)
+    {
+        var validTelephone = false;
+        if (_.size(telephone)) {
+            telephone = _.trim(stripRedundantSpaces(telephone));
+            if (regexes.telephone.test(_.deburr(telephone))) {
+                validTelephone = telephone;
+            }
+        }
+
+        return validTelephone;
+    }
+
+    function generateUniqueRandomId()
+    {
+        return _.uniqueId(_.random(0,100000000));
+    }
+
 
     /**
      * Strip out redundant spaces.
@@ -1703,10 +1758,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateCityName: validateCityName,
         validateCompanyName: validateCompanyName,
         validateAddressLine: validateAddressLine,
+        validateTelephone: validateTelephone,
         stripRedundantSpaces: stripRedundantSpaces,
         getPartsFromSpacedString: getPartsFromSpacedString,
         capitalizeAllWordsInString: capitalizeAllWordsInString,
-        formatPostalCode: formatPostalCode
+        getFullnameParts: getFullnameParts,
+        formatPostalCode: formatPostalCode,
+        generateUniqueRandomId: generateUniqueRandomId
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
