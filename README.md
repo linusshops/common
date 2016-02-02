@@ -358,6 +358,12 @@ specified, like `PRODUCT_674238`, it will trump that more general one.
 The order of handles is carefully built, so that a more specific handle will
 always trump a parent or less specific handle, which is what Magento expects.
 
+###### `cms_identifier_{identifier}`
+
+This allows specific cms pages to be targeted with layout xml. For example, to
+target the home page, the layout handle would be `cms_identifier_home`, if your
+home page uses the 'home' identifier.
+
 ### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
 
 [TODO]

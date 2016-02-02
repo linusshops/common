@@ -279,4 +279,33 @@ class Linus_Common_Model_Observer
             'commonTplChecksums' => $cspData
         ));
     }
+
+    /**
+     * Allow targeting cms pages via layout xml. The handle will be of the form:
+     * cms_cmsIdentifier.
+     *
+     * For example, targeting the home page would use the handle "cms_home".
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function onCmsPageRender(Varien_Event_Observer $observer)
+    {
+        $page = $observer->getEvent()->getPage();
+
+        $identifier = $page->getIdentifier();
+
+        if (!empty($identifier)) {
+            $handle = preg_replace(
+                '/[\/|.|-]/',
+                '_',
+                'cms_identifier_' . $identifier
+            );
+
+            $observer
+                ->getControllerAction()
+                ->getLayout()
+                ->getUpdate()
+                ->addHandle($handle);
+        }
+    }
 }
