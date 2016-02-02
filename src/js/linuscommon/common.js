@@ -1118,6 +1118,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      * is complete. Passes `responseData.payload`.
      * @param {function} callbacks.error - This will run when an 4xx/5xx error
      * occurs. Passes `jqXHR`.
+     * @param {function} callbacks.cache - Determine whether the response
+     * should be memoized (cached). Falsey values will disable caching; truthy
+     * values will enable it.
      */
     function ajax(endpoint, method, requestData, callbacks)
     {
@@ -1130,7 +1133,10 @@ linus.common = linus.common || (function($, _, Dependencies)
                 valid: function(){},
                 invalid: function(){},
                 cleanup: function(){},
-                error: function(){}
+                error: function(){},
+                cache: function() {
+                    return false;
+                }
             })
         };
         $(document).trigger('Common:before'+method, eventData);
