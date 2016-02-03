@@ -1173,6 +1173,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         callbacks = eventData.callbacks;
 
         if (!callbacks.cache(endpoint, requestData)) {
+            if (!_.isObject(requestData)) {
+                requestData = {};
+            }
             requestData['_'] = _.now();
         }
 
