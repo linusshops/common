@@ -1120,7 +1120,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      * occurs. Passes `jqXHR`.
      * @param {function} callbacks.cache - Determine whether the response
      * should be memoized (cached). Falsey values will disable caching; truthy
-     * values will enable it.
+     * values will enable it. Passes `endpoint` and `requestData` to customize
+     * cache handling per request.
      */
     function ajax(endpoint, method, requestData, callbacks)
     {
@@ -1143,6 +1144,10 @@ linus.common = linus.common || (function($, _, Dependencies)
         endpoint = eventData.endpoint;
         requestData = eventData.requestData;
         callbacks = eventData.callbacks;
+
+        if (!callbacks.cache(endpoint, requestData)) {
+            requestData['_'] = _.now();
+        }
 
         callbacks.limbo(requestData);
 
