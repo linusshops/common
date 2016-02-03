@@ -1609,7 +1609,8 @@ linus.common = linus.common || (function($, _, Dependencies)
             node: null,
             delay: 300,
             allowButtons: false,
-            allowRadios: false
+            allowRadios: false,
+            select: false
         });
 
         setTimeout(function() {
@@ -1690,6 +1691,11 @@ linus.common = linus.common || (function($, _, Dependencies)
                         }
 
                         $node.focus();
+
+                        if (options.select && !$submit && !$radio) {
+                            $node.select();
+                        }
+
                         return false;
                     }
 
@@ -1700,6 +1706,10 @@ linus.common = linus.common || (function($, _, Dependencies)
                     ) {
                         $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         $node.focus();
+                        if (options.select) {
+                            $node.select();
+                        }
+
                         return false;
                     }
                 });
