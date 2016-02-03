@@ -1198,6 +1198,8 @@ linus.common = linus.common || (function($, _, Dependencies)
                         targetPayloadSelectors = [targetPayloadSelectors];
                     }
 
+                    var templateSelectors = [];
+
                     _.each(targetPayloadSelectors, function(targetPayloadSelector) {
                         var $target = $(targetPayloadSelector);
 
@@ -1211,9 +1213,13 @@ linus.common = linus.common || (function($, _, Dependencies)
                         } else if (_.isUndefined(payload[targetPayloadSelector])
                                 && $target.length
                         ) {
-                            tpl(targetPayloadSelector, payload);
+                            templateSelectors.push(targetPayloadSelector);
                         }
                     });
+
+                    if (templateSelectors.length > 0) {
+                        tpl(templateSelectors, payload);
+                    }
 
                     if (error === 0) {
                         callbacks.valid(payload);
