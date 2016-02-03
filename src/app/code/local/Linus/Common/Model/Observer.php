@@ -271,7 +271,9 @@ class Linus_Common_Model_Observer
             if (get_class($block) == 'Linus_Common_Block_Tpl'
                 || in_array('Linus_Common_Block_Tpl', class_parents($block))
             ) {
+                $block->setRenderMode('tpl');
                 $cspData[$identifier] = md5($block->toHtml());
+                $block->setRenderMode('magento');
             }
         };
 
