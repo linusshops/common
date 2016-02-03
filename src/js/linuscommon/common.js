@@ -1591,11 +1591,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      * The first child input that is found within a parent that is empty,
      * visible, and unfocused will be focused upon.
      *
-     * @param {HTMLElement|string} node - Pass a selector string, or node, of
-     * either the specific input to focus on, or the parent that contains
-     * several of them.
-     *
-     * @param {Object} userOptions - User options available.
+     * @param {Object|HTMLElement|string} userOptions - User options available.
+     * Provide an object of options, or just a node as shorthand with all the
+     * default options specified in this method.
      * @param {HTMLElement|string} userOptions.node - Node or container node to
      * target. If only one relevant match found, it will be targeted directly,
      * regardless of its contents. If multiple are found, the one that is least
@@ -1615,13 +1613,28 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function focusMostRelevantInput(userOptions)
     {
-        var options = _.defaultsDeep(userOptions||{}, {
+        var defaultOptions = {
             node: null,
             delay: 300,
             allowButtons: false,
             allowRadios: false,
             select: false
-        });
+        };
+
+        var validUserOptions = {};
+        if (_.size(userOptions)) {
+            _.forEach(defaultOptions, function(value, key) {
+                if (_.has(userOptions, key)) {
+                    validUserOptions[key] = userOptions[key];
+                }
+            });
+
+            if (!_.size(validUserOptions)) {
+                validUserOptions.node = userOptions;
+            }
+        }
+
+        var options = _.defaultsDeep({}, validUserOptions, defaultOptions);
 
         setTimeout(function() {
             var $currentFocus = $(document.activeElement);
@@ -1638,8 +1651,13 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                 var originalMatches = $(selector).length;
                 if (originalMatches === 1) {
-                    options.allowButtons = true;
-                    options.allowRadios = true;
+                    if (!_.has(validUserOptions, 'allowButtons')) {
+                        options.allowButtons = true;
+                    }
+
+                    if (_.has(validUserOptions, 'allowRadios')) {
+                        options.allowRadios = true;
+                    }
                 }
 
                 var $selector = $(selector).filter(function(index, filteredNode) {
@@ -1688,7 +1706,6 @@ linus.common = linus.common || (function($, _, Dependencies)
                     var $submit = $node.is('input[type=submit], button');
                     var $radio = $node.is('input[type=radio]');
 
-                    // Select only empty inputs or buttons, or if a
                     if (($submit || $radio || !$node.val())
                         && !$node.is(':focus')
                     ) {
