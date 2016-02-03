@@ -127,7 +127,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     var emailStrict = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 
     var regexes = {
-        properName: /^[a-z][a-z\s\-\'\.\,]+$/i,
+        properName: /^[a-z][a-z\s\-\'\.\,]*$/i,
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
@@ -991,6 +991,33 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validProperName;
     }
 
+    function validateFullName(fullName)
+    {
+        var fullNameParts = getFullnameParts(fullName);
+
+        var validFullName = false;
+        if (_.size(fullNameParts)) {
+
+            var validFirstName = false;
+            if (_.size(fullNameParts.firstName)) {
+                fullNameParts.firstName = _.deburr(_.trim(stripRedundantSpaces(fullNameParts.firstName)));
+                validFirstName = regexes.properName.test(fullNameParts.firstName);
+            }
+
+            var validLastName = false;
+            if (_.size(fullNameParts.lastName)) {
+                fullNameParts.lastName = _.deburr(_.trim(stripRedundantSpaces(fullNameParts.lastName)));
+                validLastName = regexes.properName.test(fullNameParts.lastName);
+            }
+
+            if (validFirstName && validLastName) {
+                validFullName =  fullNameParts;
+            }
+        }
+
+        return validFullName;
+    }
+
     function validateCityName(cityName)
     {
         var validCityName = false;
@@ -1798,6 +1825,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         tpl: tpl,
         lazy: lazy,
         validateProperName: validateProperName,
+        validateFullName: validateFullName,
         validateCityName: validateCityName,
         validateCompanyName: validateCompanyName,
         validateAddressLine: validateAddressLine,
