@@ -720,6 +720,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         _.templateSettings.interpolate = /{{(?![%|-])([\s\S]+?)}}/g; //{{}}
         _.templateSettings.escape = /{{-([\s\S]+?)}}/g; //{{-}}
         _.templateSettings.evaluate = /{{%([\s\S]+?)}}/g; //{{%}}
+
     }
 
     /**
@@ -1564,7 +1565,15 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function tplCompile(templateKey, templateContent, checksum)
     {
-        var compiled = _.template(templateContent);
+        //Bind Common and Lodash into availability for template scope
+        var options = {
+            imports: {
+                Common: linus.common,
+                _: lodash
+            }
+        };
+
+        var compiled = _.template(templateContent, options);
 
         storeMemoryTpl(templateKey, checksum, compiled);
 

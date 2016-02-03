@@ -10,10 +10,25 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
 {
     public function ifTpl($tplEchoValue, $defaultEchoValue)
     {
-        if ($this->getRenderMode() == 'tpl') {
+        if ($this->isTplMode()) {
             echo $tplEchoValue;
         } else {
             echo $defaultEchoValue;
         }
+    }
+
+    public function each($collectionVariable='items', $itemName='item')
+    {
+        echo "{{% _.forEach($collectionVariable, function($itemName){ }}";
+    }
+
+    public function endeach()
+    {
+        echo "{{% }); }}";
+    }
+
+    public function isTplMode()
+    {
+        return $this->getRenderMode() == 'tpl';
     }
 }
