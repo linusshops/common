@@ -25,6 +25,7 @@ class Linus_Common_Model_Tpl extends Mage_Core_Block_Template
             //CSS selectors use dashes, but blocks use underscores in the same way.
             $identifier = preg_replace('/([-])/', '_', $identifier);
             if ($block = $layout->getBlock($identifier)) {
+                $block->setRenderMode('tpl');
                 $content = $block->toHtml();
                 $tplCollection[$templateKey] = array(
                     'content' => $content,

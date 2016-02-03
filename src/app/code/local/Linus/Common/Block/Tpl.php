@@ -8,5 +8,12 @@
  */
 class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
 {
-
+    public function ifTpl($tplEchoValue, $defaultEchoValue)
+    {
+        if ($this->getRenderMode() == 'tpl') {
+            echo $tplEchoValue;
+        } else {
+            echo $defaultEchoValue;
+        }
+    }
 }
