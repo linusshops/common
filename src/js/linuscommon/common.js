@@ -1155,6 +1155,11 @@ linus.common = linus.common || (function($, _, Dependencies)
     function ajax(endpoint, method, requestData, callbacks)
     {
         method = _.capitalize(method);
+
+        if (!_.isObject(callbacks)) {
+            callbacks = {};
+        }
+
         var eventData = {
             endpoint: endpoint,
             requestData: requestData,
@@ -1285,7 +1290,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function get(endpoint, callbacks)
     {
-        ajax(endpoint, 'GET', null, callbacks);
+        ajax(endpoint, 'GET', {}, callbacks);
     }
 
     /**
