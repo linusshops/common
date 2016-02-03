@@ -1397,7 +1397,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     function tplFetch(templateKeys, data)
     {
         if (!_.isEmpty(templateKeys)) {
-            post(getStoreUrl() + 'common/template', JSON.stringify(templateKeys), {
+            post(getStoreUrl() + 'common/template', {keys: templateKeys}, {
                 valid: _.partial(onValidTplFetch, data)
             });
         }

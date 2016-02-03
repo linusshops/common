@@ -15,7 +15,7 @@ class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
     public function indexAction()
     {
         //Get keys to look up from request
-        $templateKeys = json_decode($this->getRequest()->getRawBody(), true);
+        $templateKeys = $this->getRequest()->getParam('keys');
         if (empty($templateKeys)) {
             Mage::helper('linus_common/request')->sendResponseJson(
                 array(),
