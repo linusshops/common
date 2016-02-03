@@ -715,7 +715,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function setLodashDefaultSettings()
     {
-        _.templateSettings.interpolate = /{{([\s\S]+?)}}/g; //{{}}
+        //Negative lookahead is necessary to ensure interpolate regex does
+        //not match the delimiters for escape and evaluation.
+        _.templateSettings.interpolate = /{{(?![%|-])([\s\S]+?)}}/g; //{{}}
         _.templateSettings.escape = /{{-([\s\S]+?)}}/g; //{{-}}
         _.templateSettings.evaluate = /{{%([\s\S]+?)}}/g; //{{%}}
     }
