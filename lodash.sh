@@ -39,5 +39,6 @@ findKey,\
 random,\
 uniqueId,\
 startCase,\
-now\
+now,\
+set
 "
