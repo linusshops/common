@@ -134,7 +134,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i,
         telephone: /^([+]?(\d[-. ]?)?((\(\d{3}\))|\d{3}))+[-. ]?\d{3}[-. ]?\d{4}(\s#[0-9]+)?$/,
         cvn: /^[0-9]{3,4}$/,
-        expiryDate: /^[0-1][0-9](\/|\-|\s)?[0-9][0-9]$/
+        expiryDate: /^[0-1][0-9](\/|\\|\-|\s)?[0-9][0-9]$/
     };
 
     /**
@@ -1111,6 +1111,30 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
     }
 
+    function formatExpiryDate(expiryDate)
+    {
+        var formattedExpiryDate = '';
+
+        if (_.size(expiryDate)) {
+            expiryDate = stripAllSpaces(expiryDate);
+            var expiryDateParts = getExpiryDateParts(expiryDate);
+
+            if (_.size(expiryDateParts.month)) {
+                formattedExpiryDate += _.trim(stripRedundantSpaces(expiryDateParts.month));
+            }
+
+            if (_.size(expiryDateParts.year)) {
+                formattedExpiryDate += '/' + _.trim(stripRedundantSpaces(expiryDateParts.year));
+            }
+
+            if (!validateExpiryDate(formattedExpiryDate)) {
+                formattedExpiryDate = '';
+            }
+        }
+
+        return formattedExpiryDate;
+    }
+
     function generateUniqueRandomId()
     {
         return _.uniqueId(_.random(0,100000000));
@@ -1929,7 +1953,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         getHourDescription: getHourDescription,
         validateCardVerificationNumber: validateCardVerificationNumber,
         validateExpiryDate: validateExpiryDate,
-        getExpiryDateParts: getExpiryDateParts
+        getExpiryDateParts: getExpiryDateParts,
+        formatExpiryDate: formatExpiryDate
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
