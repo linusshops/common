@@ -132,7 +132,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
         addressLine: /^[A-Za-z0-9\-\#\.\'\,\s]{3,}$/i,
-        telephone: /^([+]?(\d[-. ]?)?((\(\d{3}\))|\d{3}))+[-. ]?\d{3}[-. ]?\d{4}(\s#[0-9]+)?$/
+        telephone: /^([+]?(\d[-. ]?)?((\(\d{3}\))|\d{3}))+[-. ]?\d{3}[-. ]?\d{4}(\s#[0-9]+)?$/,
+        cvn: /^[0-9]{3,4}$/,
+        expiryDate: /^[0-1][0-9](\/|\-|\s)?[0-9][0-9]$/
     };
 
     /**
@@ -1073,6 +1075,42 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validTelephone;
     }
 
+    function validateCardVerificationNumber(cvn)
+    {
+        var validCvn = false;
+        if (_.size(cvn)) {
+            cvn = _.trim(stripRedundantSpaces(cvn));
+            if (regexes.cvn.test(cvn)) {
+                validCvn = cvn;
+            }
+        }
+
+        return validCvn;
+    }
+
+    function validateExpiryDate(expiryDate)
+    {
+        var validExpiryDate = false;
+        if (_.size(expiryDate)) {
+            expiryDate = _.trim(stripRedundantSpaces(expiryDate));
+            if (regexes.expiryDate.test(expiryDate)) {
+                validExpiryDate = expiryDate;
+            }
+        }
+
+        return validExpiryDate;
+    }
+
+    function getExpiryDateParts(expiryDate)
+    {
+        var expiryDateParts = _.words(expiryDate, /[0-9]{2}/g);
+
+        return {
+            month: expiryDateParts[0],
+            year: expiryDateParts[1]
+        }
+    }
+
     function generateUniqueRandomId()
     {
         return _.uniqueId(_.random(0,100000000));
@@ -1888,7 +1926,10 @@ linus.common = linus.common || (function($, _, Dependencies)
         getFullnameParts: getFullnameParts,
         formatPostalCode: formatPostalCode,
         generateUniqueRandomId: generateUniqueRandomId,
-        getHourDescription: getHourDescription
+        getHourDescription: getHourDescription,
+        validateCardVerificationNumber: validateCardVerificationNumber,
+        validateExpiryDate: validateExpiryDate,
+        getExpiryDateParts: getExpiryDateParts
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
