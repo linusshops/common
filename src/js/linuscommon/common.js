@@ -1257,7 +1257,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function ajax(endpoint, method, requestData, callbacks)
     {
-        method = _.capitalize(method);
+        method = _.capitalize(method.toLowerCase());
 
         if (!_.isObject(callbacks)) {
             callbacks = {};
