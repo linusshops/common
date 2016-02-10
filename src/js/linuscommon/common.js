@@ -352,9 +352,12 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
-     * Show all async requests when in debug mode.
+     * Show debug info.
+     *
+     * For the moment, this will method will show all debug info related to
+     * asynchronous requests using Common.ajax.
      */
-    function debugAsync()
+    function debug()
     {
         if (getIsDeveloperMode()) {
             $(document).on('Common:beforePost Common:beforeGet', function(e, eventData) {
@@ -1996,7 +1999,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateCardVerificationNumber: validateCardVerificationNumber,
         validateExpiryDate: validateExpiryDate,
         getExpiryDateParts: getExpiryDateParts,
-        formatExpiryDate: formatExpiryDate
+        formatExpiryDate: formatExpiryDate,
+        debug: debug
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
