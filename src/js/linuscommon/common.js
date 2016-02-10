@@ -286,6 +286,26 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get `isLoggedIn` set by CSP data.
+     *
+     * @returns {bool}
+     */
+    function isLoggedIn()
+    {
+        return getCspData('isLoggedIn');
+    }
+
+    /**
+     * Get `isDeveloperMode` set by CSP data.
+     *
+     * @returns {bool}
+     */
+    function getIsDeveloperMode()
+    {
+        return getCspData('isDeveloperMode');
+    }
+
+    /**
      * Wrapper to get CSP data.
      *
      * Pass the key name to retrieve exact value, or pass nothing to get the
@@ -329,6 +349,26 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         return cspDataValue;
+    }
+
+    /**
+     * Show all async requests when in debug mode.
+     */
+    function debugAsync()
+    {
+        if (getIsDeveloperMode()) {
+            $(document).on('Common:beforePost Common:beforeGet', function(e, eventData) {
+                console.info(e.type);
+                console.log('------------------');
+                //console.group();
+                console.log('Event:');
+                console.dir(e);
+                console.log('Event data:');
+                console.dir(eventData);
+                //console.groupEnd();
+                console.log('----------------------------------------------------');
+            });
+        }
     }
 
     /**
@@ -1238,6 +1278,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             })
         };
         $(document).trigger('Common:before'+method, eventData);
+
         endpoint = eventData.endpoint;
         requestData = eventData.requestData;
         callbacks = eventData.callbacks;
@@ -1913,6 +1954,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         getSkinUrl: getSkinUrl,
         getStoreUrl: getStoreUrl,
         getUenc: getUenc,
+        isLoggedIn: isLoggedIn,
         getCspData: getCspData,
         getHashParameter: getHashParameter,
         hide: hide,
