@@ -592,6 +592,24 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get the given key from the url query string.
+     * @param {string} key
+     * @returns {string|boolean} The value, or false if not found.
+     */
+    function getUrlParameter(key)
+    {
+        var query = window.location.href;
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == key) {
+                return pair[1];
+            }
+        }
+        return false;
+    }
+
+    /**
      * Pass a font object literal and it will be added to the font stack.
      *
      * This is an implementation of Google's Web Font Loader:
@@ -1976,6 +1994,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         isLoggedIn: isLoggedIn,
         getCspData: getCspData,
         getHashParameter: getHashParameter,
+        getUrlParameter: getUrlParameter,
         hide: hide,
         invisible: invisible,
         makeCspArray: makeCspArray,
