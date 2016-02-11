@@ -598,18 +598,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getUrlParameter(key)
     {
-        var hashless = window.location.href.split('#')[0];
-        var query = _.get(hashless.split("?"), 1, '');
-        var vars = query.split("&");
+        var query = _.get(window.location.href.split('?'), 1, '');
 
-        return _.reduce(vars, function(accumulator, value){
-            var split = value.split('=');
-            if (_.get(split, 0) == key) {
-                return _.get(split, 1);
-            }
-
-            return accumulator;
-        }, false);
+        return _.get(query.match(new RegExp(key+'=([^&#]*)')), 1, false);
     }
 
     /**
