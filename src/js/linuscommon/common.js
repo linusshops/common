@@ -596,7 +596,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {string} key
      * @returns {string|boolean} The value, or false if not found.
      */
-    function getUrlParameter(key)
+    function getQueryStringParameter(key)
     {
         var query = _.get(window.location.href.split('?'), 1, '');
 
@@ -1988,7 +1988,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         isLoggedIn: isLoggedIn,
         getCspData: getCspData,
         getHashParameter: getHashParameter,
-        getUrlParameter: getUrlParameter,
+        getQueryStringParameter: getQueryStringParameter,
         hide: hide,
         invisible: invisible,
         makeCspArray: makeCspArray,
