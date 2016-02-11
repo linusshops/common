@@ -598,7 +598,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getUrlParameter(key)
     {
-        var query = window.location.href;
+        var query = _.get(window.location.href.split("?"), 1, '');
         var vars = query.split("&");
         for (var i=0;i<vars.length;i++) {
             var pair = vars[i].split("=");
