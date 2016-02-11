@@ -600,13 +600,15 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         var query = _.get(window.location.href.split("?"), 1, '');
         var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
-            var pair = vars[i].split("=");
-            if (pair[0] == key) {
-                return pair[1];
+
+        return _.reduce(vars, function(accumulator, value){
+            var split = value.split('=');
+            if (_.get(split, 0) == key) {
+                return _.get(split, 1);
             }
-        }
-        return false;
+
+            return accumulator;
+        }, false);
     }
 
     /**
