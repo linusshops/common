@@ -375,6 +375,22 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * If developer mode is enabled, calls console.log on each parameter.
+     */
+    function log()
+    {
+        if (getIsDeveloperMode()) {
+            _.forEach(arguments, function(arg){
+                if (_.isObject(arg)) {
+                    console.dir(arg);
+                } else {
+                    console.log(arg);
+                }
+            });
+        }
+    }
+
+    /**
      * Iterate over nodes in DOM subtree section to find all text nodes.
      *
      * This is multitudes faster than regular DOM traversal techniques. See
@@ -2000,7 +2016,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateExpiryDate: validateExpiryDate,
         getExpiryDateParts: getExpiryDateParts,
         formatExpiryDate: formatExpiryDate,
-        debug: debug
+        debug: debug,
+        log: log
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
