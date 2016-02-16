@@ -1211,6 +1211,15 @@ linus.common = linus.common || (function($, _, Dependencies)
         return _.uniqueId(_.random(0,100000000));
     }
 
+    /**
+     * Replace all but last four digits of credit card number with
+     * @param creditCardNumber
+     */
+    function starrifyCreditCardNumber(creditCardNumber)
+    {
+        return creditCardNumber.replace(/([0-9]+\s?){3}/, '**** **** **** ');
+    }
+
 
     /**
      * Strip out redundant spaces.
@@ -2030,7 +2039,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         getExpiryDateParts: getExpiryDateParts,
         formatExpiryDate: formatExpiryDate,
         debug: debug,
-        log: log
+        log: log,
+        starrifyCreditCardNumber: starrifyCreditCardNumber
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
