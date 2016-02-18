@@ -1336,11 +1336,11 @@ linus.common = linus.common || (function($, _, Dependencies)
             .done(function(responseData) {
                 var error = _.get(responseData, 'error');
                 var payload = _.get(responseData, 'payload');
-                var tpl = _.get(responseData, 'tpl', '');
+                var tplSelectors = _.get(responseData, 'tpl', '');
 
                 if (_.isNumber(error) && _.size(payload)) {
-                    if (!_.isArray(tpl)) {
-                        tpl = [tpl];
+                    if (!_.isArray(tplSelectors)) {
+                        tplSelectors = [tplSelectors];
                     }
 
                     _.forEach(payload, function(payloadValue, payloadKey) {
@@ -1348,7 +1348,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                                 || _.startsWith(payloadKey, '.'))
                             && $(payloadKey).length
                         ) {
-                            if (_.includes(tpl, payloadKey)) {
+                            if (_.includes(tplSelectors, payloadKey)) {
                                 throw new Error('A payload selector key name and matching tpl name cannot match. Either a payload HTML dump is directly inserted at the node provided, or payload data is compiled into a template and inserted at the node provided.');
                             }
 
@@ -1356,13 +1356,13 @@ linus.common = linus.common || (function($, _, Dependencies)
                         }
                     });
 
-                    if (tpl.length) {
-                        tpl(tpl, payload);
+                    if (tplSelectors.length) {
+                        tpl(tplSelectors, payload);
                     }
 
                     if (error === 0) {
                         callbacks.valid(payload);
-                    } else if (parseInt(responseData.error) >= 1) {
+                    } else if (error >= 1) {
                         callbacks.invalid(payload);
                     }
                 }
