@@ -1336,33 +1336,28 @@ linus.common = linus.common || (function($, _, Dependencies)
             .done(function(responseData) {
                 var error = _.get(responseData, 'error');
                 var payload = _.get(responseData, 'payload');
-                var targetPayloadSelectors = _.get(responseData, 'target.payload', '');
+                var tpl = _.get(responseData, 'tpl', '');
+
                 if (_.isNumber(error) && _.size(payload)) {
-                    if (!_.isArray(targetPayloadSelectors)) {
-                        targetPayloadSelectors = [targetPayloadSelectors];
+                    if (!_.isArray(tpl)) {
+                        tpl = [tpl];
                     }
 
-                    var templateSelectors = [];
-
-                    _.each(targetPayloadSelectors, function(targetPayloadSelector) {
-                        var $target = $(targetPayloadSelector);
-
-                        if (_.isString(payload[targetPayloadSelector])
-                            && $target.length
+                    _.forEach(payload, function(payloadValue, payloadKey) {
+                        if ((_.startsWith(payloadKey, '#')
+                                || _.startsWith(payloadKey, '.'))
+                            && $(payloadKey).length
                         ) {
-                            $target
-                                .addClass('payload-target-container')
-                                .html(payload[targetPayloadSelector])
-                                .trigger('Common:afterTargetPayloadInsert');
-                        } else if (_.isUndefined(payload[targetPayloadSelector])
-                                && $target.length
-                        ) {
-                            templateSelectors.push(targetPayloadSelector);
+                            if (_.includes(tpl, payloadKey)) {
+                                throw new Error('A payload selector key name and matching tpl name cannot match. Either a payload HTML dump is directly inserted at the node provided, or payload data is compiled into a template and inserted at the node provided.');
+                            }
+
+                            tpl(payloadKey, payloadValue);
                         }
                     });
 
-                    if (templateSelectors.length > 0) {
-                        tpl(templateSelectors, payload);
+                    if (tpl.length) {
+                        tpl(tpl, payload);
                     }
 
                     if (error === 0) {
