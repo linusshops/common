@@ -40,5 +40,5 @@ random,\
 uniqueId,\
 startCase,\
 now,\
-set
+set,
 "

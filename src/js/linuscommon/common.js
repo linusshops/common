@@ -1459,7 +1459,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * for the template content, as provided in the JSON response `target.payload`.
      *
      * @param {array|string} templateKeys
-     * @param {Object} data - The data to apply to the template. If false, tpl
+     * @param {Object} data - The data to apply to the template. If false or undefined, tpl
      * will not render any data, but will download and parse the template if it
      * is not already available from the cache.
      */
@@ -1467,11 +1467,21 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         //Normalize inputs
         if (_.isUndefined(data)) {
-            data = {};
+            data = false;
         }
 
         if (!_.isArray(templateKeys)) {
             templateKeys = [templateKeys];
+        }
+
+        //If data is a string, no fetch is needed as it is being directly
+        //injected. Immediately call tplRender and exit.
+        if (_.isString(data)) {
+            _.forEach(templateKeys, function(key){
+                tplRender(data, undefined, key);
+            });
+
+            return;
         }
 
         //Divide into cached and uncached templates. We will dispatch the fetch
@@ -1727,15 +1737,27 @@ linus.common = linus.common || (function($, _, Dependencies)
     function tplRender(data, compiledTemplate, selector)
     {
         var $target = $(selector);
+        var renderedHtml;
 
         //Target doesn't exist, skip render.
         if (!$target.length) {
             return;
         }
 
-        $target.html(
-            compiledTemplate(data)
-        );
+        //Render template (or detect if the data is raw html or compiledTemplate
+        //is not a function).
+        if (_.isString(data)) {
+            renderedHtml = data;
+        } else if (_.isFunction(compiledTemplate)) {
+            renderedHtml = compiledTemplate(data);
+        } else {
+            throw new Error('Invalid render path requested: data must be a string, or compiled template must be a function.');
+        }
+
+        $target
+            .addClass('payload-tpl-container')
+            .html(renderedHtml)
+            .trigger('Common:afterTplRender', [data]);
     }
 
     /**
