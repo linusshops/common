@@ -93,7 +93,8 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
             'error' => $error,
             'feedback' => array(
                 'message' => $feedbackMessage,
-                'debug' => $feedbackDebug
+                'debug' => $feedbackDebug,
+                'target' => $feedbackTarget
             ),
             'target' => array(
                 'feedback' => $feedbackTarget,

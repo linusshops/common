@@ -1339,7 +1339,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 var tplSelectors = _.get(responseData, 'tpl', '');
 
                 if (_.isNumber(error) && _.size(payload)) {
-                    if (!_.isArray(tplSelectors)) {
+                    if (!_.isArray(tplSelectors) && _.size(tplSelectors)) {
                         tplSelectors = [tplSelectors];
                     }
 
