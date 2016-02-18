@@ -1465,6 +1465,18 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function tpl(templateKeys, data)
     {
+        //Strip any empty keys
+        if (_.isArray(templateKeys)) {
+            templateKeys = _.filter(templateKeys, function(key){
+                return _.size(_.trim(key));
+            });
+        }
+
+        //If empty string or array for keys, nothing to do- shortcircuit
+        if (!_.size(templateKeys)) {
+            return;
+        }
+
         //Normalize inputs
         if (_.isUndefined(data)) {
             data = false;
