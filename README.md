@@ -630,14 +630,14 @@ render to the target selector.
 
 Common will request the template with a block name matching that of the selector
 with any leading `.` or `#` stripped, and `-` converted to `_`. To define a
-template, simply define a Magento block under `linus_common_template_index` as follows.
+template, simply define a Magento block under `default` as follows.
 
 In this example, the template target selector is `#demo_lodash_template`.
 
 ```xml
-<linus_common_template_index>
+<default>
     <block type="linus_common/tpl" name="demo_lodash_template" as="demo_lodash_template" template="tpl/demo_lodash_template.phtml"/>
-</linus_common_template_index>
+</default>
 ```
 
 To benefit from caching, frontend templates must be of the type linus_common/tpl,
