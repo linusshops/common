@@ -1220,7 +1220,6 @@ linus.common = linus.common || (function($, _, Dependencies)
         return creditCardNumber.replace(/([0-9]+\s?){3}/, '**** **** **** ');
     }
 
-
     /**
      * Strip out redundant spaces.
      *
@@ -2057,6 +2056,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateAddressLine: validateAddressLine,
         validateTelephone: validateTelephone,
         stripRedundantSpaces: stripRedundantSpaces,
+        stripAllSpaces: stripAllSpaces,
         getPartsFromSpacedString: getPartsFromSpacedString,
         capitalizeAllWordsInString: capitalizeAllWordsInString,
         getFullnameParts: getFullnameParts,
