@@ -1518,15 +1518,49 @@ linus.common = linus.common || (function($, _, Dependencies)
         fetchTemplateKeys = _.uniq(fetchTemplateKeys);
 
         tplFetch(fetchTemplateKeys, data);
+        renderTemplates(localTemplates, data);
+    }
 
-        //If we're just prefetching, don't render.
+    function getTplPrefetchedData(key)
+    {
+        if (!isLocalStorageAvailable()) {
+            return false;
+        }
+
+        var data = window.localStorage.getItem('common-tpl-data:'+key);
+
+        return _.isNull(data) ? false : JSON.parse(data);
+    }
+
+    function renderTemplates(templates, data)
+    {
+        //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
-            _.forEach(localTemplates, function (localTemplate) {
+            _.forEach(templates, function (template) {
                 tplRender(
                     data,
-                    _.get(localTemplate, 'template'),
-                    _.get(localTemplate, 'selector')
+                    _.get(template, 'template'),
+                    _.get(template, 'selector')
                 );
+            });
+
+            //After we render everything, write the used data to the prefetch cache.
+            //Do this last so it doesn't delay rendering.
+            _.forEach(templates, function (template) {
+                window.localStorage.setItem('common-tpl-data:'+_.get(template, 'selector'), JSON.stringify(data));
+            });
+        } else {
+            _.forEach(templates, function(template) {
+                var key = _.get(template, 'selector');
+                data = getTplPrefetchedData(key);
+
+                if (data) {
+                    tplRender(
+                        data,
+                        _.get(template, 'template'),
+                        key
+                    );
+                }
             });
         }
     }
@@ -1550,14 +1584,10 @@ linus.common = linus.common || (function($, _, Dependencies)
 
             storeLocalTpl(key, checksum, content);
 
-            //If we're just prefetching, don't render.
-            if (data !== false) {
-                tplRender(
-                    data,
-                    compiled,
-                    key
-                );
-            }
+            renderTemplates({
+                template: compiled,
+                selector: key
+            }, data);
         });
     }
 
