@@ -70,7 +70,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      * @param array $feedbackDebug The debug dump
      * @return array
      */
-    public function buildJsonPayload($payload = array(), $feedbackMessage = '', $error = null, $feedbackDebug = array(), $feedbackTarget = '', $payloadTarget = '')
+    public function buildJsonPayload($payload = array(), $feedbackMessage = '', $error = null, $feedbackDebug = array(), $feedbackTarget = '', $payloadTarget = '', $tpl = array())
     {
         if ($error == null) {
             $error = ($payload || count($payload))
@@ -96,6 +96,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
                 'debug' => $feedbackDebug,
                 'target' => $feedbackTarget
             ),
+            'tpl' => $tpl,
             'target' => array(
                 'feedback' => $feedbackTarget,
                 'payload'  => $payloadTarget
@@ -142,7 +143,8 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
             'feedbackTarget' => '',
             'payloadTarget' => '',
             'httpCode' => 200,
-            'cacheTimeSeconds' => 0
+            'cacheTimeSeconds' => 0,
+            'tpl' => array()
         ));
 
         $cacheControlDirectives = (!$options['cacheTimeSeconds'])
@@ -167,7 +169,8 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
                 $options['error'],
                 $options['feedbackDebug'],
                 $options['feedbackTarget'],
-                $options['payloadTarget']
+                $options['payloadTarget'],
+                $options['tpl']
             ))
             ->setHttpResponseCode($options['httpCode']);
     }
