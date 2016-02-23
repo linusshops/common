@@ -1772,7 +1772,11 @@ linus.common = linus.common || (function($, _, Dependencies)
             }
         };
 
-        var compiled = _.attempt(_.template(templateContent, options));
+        var compiled = _.attempt(function () {
+            //Wrap this in a function, as we want to attempt
+            //the compile, not the render. (remember template returns a fn)
+            return _.template(templateContent, options);
+        });
 
         if (!_.isError(compiled)) {
             storeMemoryTpl(templateKey, checksum, compiled);
