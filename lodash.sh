@@ -41,5 +41,7 @@ uniqueId,\
 startCase,\
 now,\
 set,\
-filter
+filter,\
+attempt,\
+isError
 "

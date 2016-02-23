@@ -1534,6 +1534,10 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     function renderTemplates(templates, data)
     {
+        if (!_.size(templates)) {
+            return;
+        }
+
         //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
             _.forEach(templates, function (template) {
@@ -1569,9 +1573,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      * Event handler for templates being retrieved successfully from the server.
      * Compiles and renders the received templates, and caches as necessary.
      * @param {Object} data
-     * @param {array} templates
+     * @param {array} payload
      */
-    function onValidTplFetch(data, templates) {
+    function onValidTplFetch(data, payload) {
+        var templates = payload.templates;
+
         _.forEach(templates, function(template, key){
             var content = _.get(template, 'content');
             var checksum =_.get(template, 'checksum');
@@ -1582,12 +1588,14 @@ linus.common = linus.common || (function($, _, Dependencies)
                 checksum
             );
 
-            storeLocalTpl(key, checksum, content);
+            if (!_.isError(compiled)) {
+                storeLocalTpl(key, checksum, content);
 
-            renderTemplates({
-                template: compiled,
-                selector: key
-            }, data);
+                renderTemplates({
+                    template: compiled,
+                    selector: key
+                }, data);
+            }
         });
     }
 
@@ -1637,7 +1645,9 @@ linus.common = linus.common || (function($, _, Dependencies)
                 var rawTemplate = window.localStorage.getItem('common-tpl-hash:'+checksum);
                 if (!_.isNull(rawTemplate)) {
                     var compiled = tplCompile(templateKey, rawTemplate, checksum);
-                    storeMemoryTpl(templateKey, checksum, compiled);
+                    if (!_.isError(compiled)) {
+                        storeMemoryTpl(templateKey, checksum, compiled);
+                    }
                     return compiled;
                 }
             } else if (!isValid) {
@@ -1762,9 +1772,15 @@ linus.common = linus.common || (function($, _, Dependencies)
             }
         };
 
-        var compiled = _.template(templateContent, options);
+        var compiled = _.attempt(_.template(templateContent, options));
 
-        storeMemoryTpl(templateKey, checksum, compiled);
+        if (!_.isError(compiled)) {
+            storeMemoryTpl(templateKey, checksum, compiled);
+        } else {
+            if (getIsDeveloperMode()) {
+                console.error("common.tpl: Fatal error on compile of " + templateKey + ": ", compiled);
+            }
+        }
 
         return compiled;
     }

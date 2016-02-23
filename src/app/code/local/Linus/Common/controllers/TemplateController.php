@@ -28,12 +28,14 @@ class Linus_Common_TemplateController extends Mage_Core_Controller_Front_Action
         //Load requested blocks by name
         $this->loadLayout();
 
-        Mage::helper('linus_common/request')->sendResponseJson(
-            Mage::getModel('linus_common/tpl')
+        //Template listing must be in a separate section so that the keys are
+        //not mistaken by the frontend for more template indicators.
+        Mage::helper('linus_common/request')->sendResponseJson(array(
+            'templates' => Mage::getModel('linus_common/tpl')
                 ->getTplBlocksByName(
                     $this->getLayout(),
                     $templateKeys
                 )
-        );
+        ));
     }
 }
