@@ -164,7 +164,10 @@ class Linus_Common_Model_Observer
                 ? $eventContainer->getCmsStaticBlockId()
                 : $eventContainer->getCmsStaticBlockIdentifier();
 
-            $key = sprintf(self::STATIC_DATA_BLOCK_CACHE_KEY, $cmsBlockIdOrIdentifier);
+            $key = sprintf(
+                self::STATIC_DATA_BLOCK_CACHE_KEY,
+                $cmsBlockIdOrIdentifier."_store_".Mage::app()->getStore()->getId()
+            );
 
             //Check if the cache key exists. If it does, skip the parsing
             //as the html is cached and pre-rendered.  There is a possible, though
