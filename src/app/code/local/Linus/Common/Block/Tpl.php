@@ -17,10 +17,12 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
     public function ifTpl($tplEchoValue, $defaultEchoValue)
     {
         if ($this->isTplMode()) {
-            echo $tplEchoValue;
+            $out = $tplEchoValue;
         } else {
-            echo $defaultEchoValue;
+            $out = $defaultEchoValue;
         }
+
+        return $out;
     }
 
     /**
@@ -32,7 +34,7 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
      */
     public function each($collectionVariable='items', $itemName='item')
     {
-        echo "{{% _.forEach($collectionVariable, function($itemName){ }}";
+        return $this->wrap("_.forEach($collectionVariable, function($itemName){");
     }
 
     /**
@@ -40,7 +42,32 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
      */
     public function endeach()
     {
-        echo "{{% }); }}";
+        return $this->wrap("});");
+    }
+
+    public function displayCondition($condition)
+    {
+        return $this->wrap("if ($condition) {");
+    }
+
+    public function displayElseIf($condition)
+    {
+        return $this->wrap("} else if($condition) {");
+    }
+
+    public function displayElse()
+    {
+        return $this->wrap("} else {");
+    }
+
+    public function endDisplayCondition()
+    {
+        return $this->wrap("}");
+    }
+
+    protected function wrap($code)
+    {
+        return "{{% $code }}";
     }
 
     /**
