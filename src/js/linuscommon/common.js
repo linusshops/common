@@ -1538,6 +1538,10 @@ linus.common = linus.common || (function($, _, Dependencies)
             return;
         }
 
+        if (!_.isArray(templates)) {
+            templates = [templates];
+        }
+
         //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
             _.forEach(templates, function (template) {
@@ -1551,7 +1555,12 @@ linus.common = linus.common || (function($, _, Dependencies)
             //After we render everything, write the used data to the prefetch cache.
             //Do this last so it doesn't delay rendering.
             _.forEach(templates, function (template) {
-                window.localStorage.setItem('common-tpl-data:'+_.get(template, 'selector'), JSON.stringify(data));
+                var datakey = _.get(template, 'selector');
+                if (!_.isUndefined(datakey)) {
+                    //It is safe to assume the data can be jsonified, as direct
+                    //injections bypass this part of the pipeline entirely.
+                    window.localStorage.setItem('common-tpl-data:' + datakey, JSON.stringify(data));
+                }
             });
         } else {
             _.forEach(templates, function(template) {
