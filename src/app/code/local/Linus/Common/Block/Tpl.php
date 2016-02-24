@@ -45,24 +45,32 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
         return $this->wrap("});");
     }
 
-    public function displayCondition($condition)
+    public function displayBlockCondition($condition)
     {
         return $this->wrap("if ($condition) {");
     }
 
-    public function displayElseIf($condition)
+    public function displayBlockElseIf($condition)
     {
         return $this->wrap("} else if($condition) {");
     }
 
-    public function displayElse()
+    public function displayBlockElse()
     {
         return $this->wrap("} else {");
     }
 
-    public function endDisplayCondition()
+    public function endDisplayBlockCondition()
     {
         return $this->wrap("}");
+    }
+
+    public function showIf($condition, $markup)
+    {
+        return $this->displayBlockCondition($condition)
+            .$markup
+            .$this->endDisplayBlockCondition()
+        ;
     }
 
     protected function wrap($code)
