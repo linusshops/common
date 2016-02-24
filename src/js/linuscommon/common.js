@@ -793,7 +793,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         _.templateSettings.interpolate = /{{(?![%|-])([\s\S]+?)}}/g; //{{}}
         _.templateSettings.escape = /{{-([\s\S]+?)}}/g; //{{-}}
         _.templateSettings.evaluate = /{{%([\s\S]+?)}}/g; //{{%}}
-
+        _.templateSettings.variable = 'data';
     }
 
     /**
