@@ -1817,7 +1817,12 @@ linus.common = linus.common || (function($, _, Dependencies)
 
             if (_.isError(renderedHtml)) {
                 if (getIsDeveloperMode()) {
-                    console.error("Failed to render to "+selector+": ", renderedHtml, "\n Render was attempted with: ", data);
+                    console.error(
+                        "Failed to render to "+selector+": ",
+                        renderedHtml,
+                        "\n Render was attempted with: ",
+                        data
+                    );
                 }
 
                 injectToTarget = false;
