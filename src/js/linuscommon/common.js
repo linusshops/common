@@ -1799,6 +1799,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         var $target = $(selector);
         var renderedHtml;
+        var injectToTarget = true;
 
         //Target doesn't exist, skip render.
         if (!$target.length) {
@@ -1810,15 +1811,31 @@ linus.common = linus.common || (function($, _, Dependencies)
         if (_.isString(data)) {
             renderedHtml = data;
         } else if (_.isFunction(compiledTemplate)) {
-            renderedHtml = compiledTemplate(data);
+            renderedHtml = _.attempt(function(){
+                return compiledTemplate(data)
+            });
+
+            if (_.isError(renderedHtml)) {
+                if (getIsDeveloperMode()) {
+                    console.error("Failed to render to "+selector+": ", renderedHtml, "\n Render was attempted with: ", data);
+                }
+
+                injectToTarget = false;
+            }
         } else {
-            throw new Error('Invalid render path requested: data must be a string, or compiled template must be a function.');
+            if (getIsDeveloperMode()) {
+                console.error('Invalid render path requested: data must be a string, or compiled template must be a function.');
+            }
+
+            injectToTarget = false;
         }
 
-        $target
-            .addClass('payload-tpl-container')
-            .html(renderedHtml)
-            .trigger('Common:afterTplRender', [data]);
+        if (injectToTarget) {
+            $target
+                .addClass('payload-tpl-container')
+                .html(renderedHtml)
+                .trigger('Common:afterTplRender', [data]);
+        }
     }
 
     /**
