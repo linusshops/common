@@ -7,7 +7,7 @@
  * @since 2016-01-05
  * @company Linus Shops
  */
-class Linus_Common_Block_Csv extends Mage_Core_Block_Template
+class Linus_Common_Block_Csv extends Linus_Common_Block_CommonAbstract
 {
     use Linus_Common_Trait_Csv_Parser;
 }

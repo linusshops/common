@@ -6,7 +6,7 @@
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-25
  */
-class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
+class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
 {
     /**
      * Depending on the value of render_mode, if we are in 'tpl', echo
@@ -85,15 +85,5 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
     public function isTplMode()
     {
         return $this->getRenderMode() == 'tpl';
-    }
-
-    /**
-     * Quick access to linus_common helpers.
-     *
-     * @return Linus_Common_Helper_Data
-     */
-    public function Common()
-    {
-        return Mage::helper('linus_common');
     }
 }

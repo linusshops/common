@@ -5,7 +5,7 @@
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
-class Linus_Common_Block_Csp extends Mage_Core_Block_Template
+class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
 {
     /**
      * Insert base CSP data at reference `after_body_start`.
