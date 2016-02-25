@@ -17,10 +17,7 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
      */
     public function outputBaseCspData()
     {
-        /** @var Linus_Common_Helper_Data $Common */
-        $CommonCsp = Mage::helper('linus_common/csp');
-
-        $CommonCsp->setCspData(array(
+        $this->CommonCsp()->setCspData(array(
             'baseUrl' => $this->getBaseUrl(),
             'formKey' => Mage::getSingleton('core/session')->getFormKey(),
             'jsUrl' => $this->getJsUrl(),
@@ -33,6 +30,6 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
             'isDeveloperMode' => Mage::getIsDeveloperMode()
         ));
 
-        return $CommonCsp->generateHiddenCspMarkup();
+        return $this->CommonCsp()->generateHiddenCspMarkup();
     }
 }
