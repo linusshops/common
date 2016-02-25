@@ -170,6 +170,40 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Grammatically represent proper word form based on count of objects.
+     *
+     * Example usages:
+     *  plural(0, 'item', 'items') == '0 items'
+     *  plural(1, 'product', 'products') == '1 product'
+     *  plural(0, 'item', 'items', 'Empty cart') == 'Empty cart'
+     *
+     * @param {int} count The number of objects.
+     * @param {string} singularWordForm The singular word form of that object.
+     * @param {string} pluralWordForm The plural word form of that object.
+     * @param {bool|string} nilFormat Optional: If nil, allow alternate text.
+     *
+     * @return string
+     */
+    function plural(count, singularWordForm, pluralWordForm, nilFormat)
+    {
+        var formattedString = count + ' ' + pluralWordForm;
+
+        if (count === 0
+            && _.isString(nilFormat)
+        ) {
+            formattedString = nilFormat;
+        } else {
+            var grammaticalWordForm = (count >= 2 || count === 0)
+                ? __(pluralWordForm)
+                : __(singularWordForm);
+
+            formattedString = count + ' ' + grammaticalWordForm;
+        }
+
+        return formattedString;
+    }
+
+    /**
      * Use injected dependencies.
      *
      * If a dependencies object has been defined, but is empty, halt execution
@@ -2095,6 +2129,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     return {
         __: __,
+        plural: plural,
         getBaseUrl: getBaseUrl,
         getJsUrl: getJsUrl,
         getFormKey: getFormKey,
