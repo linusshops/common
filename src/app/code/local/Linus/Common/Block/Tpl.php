@@ -86,4 +86,14 @@ class Linus_Common_Block_Tpl extends Mage_Core_Block_Template
     {
         return $this->getRenderMode() == 'tpl';
     }
+
+    /**
+     * Quick access to linus_common helpers.
+     *
+     * @return Linus_Common_Helper_Data
+     */
+    public function Common()
+    {
+        return Mage::helper('linus_common');
+    }
 }

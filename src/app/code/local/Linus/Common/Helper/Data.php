@@ -47,4 +47,41 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
             ? $layout->getBlock($blockName)
             : $layout;
     }
+
+    /**
+     * Grammatically represent proper word form based on count of objects.
+     *
+     * Example usages:
+     *  plural(0, 'item', 'items') == '0 items'
+     *  plural(1, 'product', 'products') == '1 product'
+     *  plural(0, 'item', 'items', 'Empty cart') == 'Empty cart'
+     *
+     * @param int $count The number of objects.
+     * @param string $singularWordForm The singular word form of that object.
+     * @param string $pluralWordForm The plural word form of that object.
+     * @param bool|string $nilFormat Optional: If nil, allow alternate text.
+     *
+     * @return string
+     */
+    function plural($count, $singularWordForm, $pluralWordForm, $nilFormat = false)
+    {
+        $formattedString = "%s $pluralWordForm";
+
+        if ($count === 0
+            && is_string($nilFormat)
+        ) {
+            $formattedString = $nilFormat;
+        } else {
+            $grammaticalWordForm = ($count >= 2 || $count === 0)
+                ? Mage::helper('core')->__($pluralWordForm)
+                : Mage::helper('core')->__($singularWordForm);
+
+            $formattedString = "%s $grammaticalWordForm";
+        }
+
+        return sprintf(
+            Mage::helper('core')->__($formattedString),
+            $count
+        );
+    }
 }
