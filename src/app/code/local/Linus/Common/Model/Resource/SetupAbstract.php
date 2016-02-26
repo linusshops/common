@@ -20,6 +20,16 @@ abstract class Linus_Common_Model_Resource_SetupAbstract extends Mage_Core_Model
     const TPL_FEEDBACK_SETUP_FAIL = '<div class="magento-module-setup magento-module-setup-fail">%s</div>';
 
     /**
+     * Basic setup data feedback template that appears at top of site on success.
+     */
+    const TPL_FEEDBACK_SETUP_DATA_SUCCESS = '<div class="magento-module-setup-data magento-module-setup-data-success">%s</div>';
+
+    /**
+     * Basic setup data feedback template that appears at top of site on fail.
+     */
+    const TPL_FEEDBACK_SETUP_DATA_FAIL = '<div class="magento-module-setup magento-module-setup-data-fail">%s</div>';
+
+    /**
      * Shortcut for translation method.
      *
      * @param $text
@@ -84,6 +94,42 @@ abstract class Linus_Common_Model_Resource_SetupAbstract extends Mage_Core_Model
         if (Mage::getIsDeveloperMode()) {
             var_dump($Exception);
         }
-
     }
+
+    /**
+     * Output the success setup data feedback.
+     *
+     * @return string
+     */
+    public function outputSetupDataFeedback()
+    {
+        $upgradeText = $this->__('Populating module resource with data') . ': ' . $this->getModuleName();
+        echo sprintf(
+            self::TPL_FEEDBACK_SETUP_DATA_SUCCESS,
+            $upgradeText
+        );
+    }
+
+    /**
+     * Output the fail setup data feedback and log exception.
+     *
+     * @param Exception $Exception
+     */
+    public function outputSetupDataFeedbackFail($Exception)
+    {
+        $upgradeText = $this->__('Failure populating module resource with data') . ': ' . $this->getModuleName();
+        echo sprintf(
+            self::TPL_FEEDBACK_SETUP_DATA_FAIL,
+            $upgradeText
+        );
+
+        Mage::log($upgradeText);
+        Mage::log($Exception->getMessage());
+        Mage::log($Exception->getTraceAsString());
+
+        if (Mage::getIsDeveloperMode()) {
+            var_dump($Exception);
+        }
+    }
+
 }
