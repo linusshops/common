@@ -10,20 +10,6 @@ class Linus_Common_Model_Observer
     const STATIC_DATA_BLOCK_CACHE_KEY = "static_data_block_%s";
 
     /**
-     * Observe adding item to cart event.
-     *
-     * Hijax the event so it responds to asynchronous requests.
-     *
-     * @TODO Dane - Look at oemparts integration.
-     *
-     * @param Varien_Event_Observer $observer
-     */
-    public function onControllerActionPredispatchCheckoutCartAdd(Varien_Event_Observer $observer)
-    {
-
-    }
-
-    /**
      * Add new layout XML handles.
      *
      * CATEGORY_PARENT_{ID}:

@@ -37,17 +37,6 @@
                 </observers>
             </controller_action_layout_render_before>
 
-            <!-- CartController->addAction -->
-            <controller_action_predispatch_checkout_cart_add>
-                <observers>
-                    <linus_common>
-                        <type>singleton</type>
-                        <class>Linus_Common_Model_Observer</class>
-                        <method>onControllerActionPredispatchCheckoutCartAdd</method>
-                    </linus_common>
-                </observers>
-            </controller_action_predispatch_checkout_cart_add>
-
             <!-- Mage_Core_Controller_Varien_Action->loadLayoutUpdates -->
             <controller_action_layout_load_before>
                 <observers>
@@ -58,7 +47,6 @@
                     </linus_common>
                 </observers>
             </controller_action_layout_load_before>
-
 
             <linus_common_block_before_head_getCssJsHtml>
                 <observers>
@@ -79,6 +67,7 @@
                     </linus_common>
                 </observers>
             </core_block_abstract_to_html_before>
+
             <cms_page_render>
                 <observers>
                     <linus_common>
