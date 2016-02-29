@@ -2168,6 +2168,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         getStoreUrl: getStoreUrl,
         getUenc: getUenc,
         isLoggedIn: isLoggedIn,
+        getCustomerId: getCustomerId,
         getCspData: getCspData,
         setCspData: setCspData,
         getHashParameter: getHashParameter,
