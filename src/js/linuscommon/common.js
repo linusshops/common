@@ -2115,6 +2115,18 @@ linus.common = linus.common || (function($, _, Dependencies)
         $('head').append('<link rel="stylesheet" type="text/css" href="'+url+'"/>');
     }
 
+    function getCookieValue(name)
+    {
+        return _.reduce(document.cookie.split(';'), function(carry, cookie) {
+            cookie = _.trim(cookie);
+            if (_.isNull(carry) && _.startsWith(cookie, name)) {
+                carry = cookie.substring((name.length + 1));
+            }
+
+            return carry;
+        }, null);
+    }
+
     /**
      * Initialize class. Register for DOM ready.
      */
@@ -2185,7 +2197,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         formatExpiryDate: formatExpiryDate,
         debug: debug,
         log: log,
-        starrifyCreditCardNumber: starrifyCreditCardNumber
+        starrifyCreditCardNumber: starrifyCreditCardNumber,
+        getCookieValue: getCookieValue
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
