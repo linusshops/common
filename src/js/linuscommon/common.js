@@ -340,6 +340,16 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get `customerId` set by CSP data.
+     *
+     * @returns {int|null}
+     */
+    function getCustomerId()
+    {
+        return getCspData('customerId');
+    }
+
+    /**
      * Wrapper to get CSP data.
      *
      * Pass the key name to retrieve exact value, or pass nothing to get the
@@ -383,6 +393,25 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         return cspDataValue;
+    }
+
+    /**
+     * Set CSP data on the frontend.
+     *
+     * Remember that this will not persist across page loads.
+     *
+     * @param cspDataKey
+     * @param cspDataValue
+     */
+    function setCspData(cspDataKey, cspDataValue)
+    {
+        var cspData = getCspData();
+        var mergedCspData = {};
+        var newCspData = {};
+
+        newCspData[cspDataKey] = cspDataValue;
+
+        $.extend(true, mergedCspData, newCspData);
     }
 
     /**
@@ -2169,7 +2198,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         getStoreUrl: getStoreUrl,
         getUenc: getUenc,
         isLoggedIn: isLoggedIn,
+        getCustomerId: getCustomerId,
         getCspData: getCspData,
+        setCspData: setCspData,
         getHashParameter: getHashParameter,
         getQueryStringParameter: getQueryStringParameter,
         hide: hide,
