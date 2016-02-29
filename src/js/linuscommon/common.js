@@ -2135,7 +2135,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     function setCookie(name, value, seconds)
     {
         var expiry = new Date();
-        expiry.setTime(date.getTime()+seconds);
+        expiry.setTime(expiry.getTime()+seconds);
 
         document.cookie = name+'='+value+'; expires='+expiry.toGMTString()+'; path=/';
     }
@@ -2219,7 +2219,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         getCookie: getCookie,
         setCookie: setCookie,
         deleteCookie: deleteCookie,
-        hasCookie: hasCookie
+        hasCookie: hasCookie,
+        getIsDeveloperMode: getIsDeveloperMode
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
