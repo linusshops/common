@@ -2115,7 +2115,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         $('head').append('<link rel="stylesheet" type="text/css" href="'+url+'"/>');
     }
 
-    function getCookieValue(name)
+    function getCookie(name)
     {
         return _.reduce(document.cookie.split(';'), function(carry, cookie) {
             cookie = _.trim(cookie);
@@ -2125,6 +2125,24 @@ linus.common = linus.common || (function($, _, Dependencies)
 
             return carry;
         }, null);
+    }
+
+    function hasCookie(name)
+    {
+        return !(getCookie(name) == null);
+    }
+
+    function setCookie(name, value, seconds)
+    {
+        var expiry = new Date();
+        expiry.setTime(date.getTime()+seconds);
+
+        document.cookie = name+'='+value+'; expires='+expiry.toGMTString()+'; path=/';
+    }
+
+    function deleteCookie(name)
+    {
+        setCookie(name, '', -1);
     }
 
     /**
@@ -2198,7 +2216,10 @@ linus.common = linus.common || (function($, _, Dependencies)
         debug: debug,
         log: log,
         starrifyCreditCardNumber: starrifyCreditCardNumber,
-        getCookieValue: getCookieValue
+        getCookie: getCookie,
+        setCookie: setCookie,
+        deleteCookie: deleteCookie,
+        hasCookie: hasCookie
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
