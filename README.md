@@ -616,17 +616,16 @@ $(document).on('Common:beforePost', function(e, eventData) {
 ```
 
 #### Automatic templating
-If a `target.payload` property is provided in the JSON response, the Common
- ajax method will interpret it in one of three ways.
+Common provides a magical frontend automatic templater.
  
-* If `target.payload` is specified, and the target selector has a matching
-top level property in the payload, the contents of that property will be
-written to that DOM target
-* If `target.payload` is specified, but there is no matching property, Common
+* If the json payload contains a key beginning with `.` or `#`, and the selector exists
+on the page, the contents of that property will be written to that DOM target
+* If `tpl` is specified in the response (top level, like `error`), Common
 will attempt to look up a matching template for use on the frontend. If it
 finds a template, it will automatically insert the response payload data and
 render to the target selector.
-* If none of the above, it will take no additional actions.
+* If a selector exists in both `tpl` and the body of the response, Common will
+throw an error for that selector. This error does not block other valid templates.
 
 Common will request the template with a block name matching that of the selector
 with any leading `.` or `#` stripped, and `-` converted to `_`. To define a
@@ -655,6 +654,19 @@ Manual call to tpl()
 ```javascript
 linus.common.tpl(['#demo-lodash-template','#demo-lodash-template2'], {name:"linus"})
 ```
+
+Templates should be defined like regular Magento templates. There are three
+tag types available:
+
+* `{{}}` - interpolate, will attempt to insert the data from the path of the json
+object provided as data to the template. `data.` must prefix every property. `data`
+represents the object provided to the template
+```
+{{data.property1}}
+```
+* `{{- }}` - escape, will automatically encode special characters as html
+* `{{% }}` - evaluate, will execute javascript contained within. The `data` object
+is available, as well as Common and Lodash (as `_`).
 
 ## Authors
 
