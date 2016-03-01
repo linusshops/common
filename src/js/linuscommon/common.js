@@ -1079,20 +1079,25 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validPostalCode;
     }
 
-    function formatPostalCode(postalCode)
+    function formatPostalCode(postalCode, addSpace)
     {
         var formattedPostalCode = '';
 
         if (_.size(postalCode)) {
-            postalCode = stripAllSpaces(postalCode);
-            var postalCodeParts = _.words(postalCode, /.{1}/g);
+            postalCode = stripAllSpaces(_.deburr(postalCode));
+            formattedPostalCode = postalCode;
 
-            _.forEach(postalCodeParts, function(postalCodePart, key) {
-                formattedPostalCode += postalCodePart;
-                if (key == 2) {
-                    formattedPostalCode += ' ';
-                }
-            });
+            if (addSpace) {
+                formattedPostalCode = '';
+                var postalCodeParts = _.words(postalCode, /.{1}/g);
+
+                _.forEach(postalCodeParts, function(postalCodePart, key) {
+                    formattedPostalCode += postalCodePart;
+                    if (key == 2) {
+                        formattedPostalCode += ' ';
+                    }
+                });
+            }
 
             formattedPostalCode = _.trim(formattedPostalCode.toUpperCase());
         }
