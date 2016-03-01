@@ -405,13 +405,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function setCspData(cspDataKey, cspDataValue)
     {
-        var cspData = getCspData();
-        var mergedCspData = {};
-        var newCspData = {};
-
-        newCspData[cspDataKey] = cspDataValue;
-
-        $.extend(true, mergedCspData, newCspData);
+        cspData[cspDataKey] = cspDataValue;
     }
 
     /**
