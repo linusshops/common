@@ -2105,36 +2105,38 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
-     * Get percentage of likelihood that the misspelled word is real word.
+     *  Determine the likelihood that a misspelled word should use its real word.
      *
      * If the uncertainty for a fuzzy match drops below or is equal to n%,
      * then it is safe to make the guess that the desired fuzzy-matched word
      * should be used instead of the misspelling.
      *
-     * @param properlySpelledWord
-     * @param possiblyMisspelledWord
+     * @param {string} properlySpelledWord
+     * @param {string} possiblyMisspelledWord
+     * @param {number} fuzzyMatchUncertaintyPercentageTolerance
+     *
+     * @returns {boolean}
      */
-    function isFuzzyMatchedWord(properlySpelledWord, possiblyMisspelledWord, fuzzyMatchUncertaintyPercentageThreshold)
+    function hasFuzzyStringMatch(properlySpelledWord, possiblyMisspelledWord, fuzzyMatchUncertaintyPercentageTolerance)
     {
-        properlySpelledWord = (_.deburr(properlySpelledWord)).toLowerCase();
-        possiblyMisspelledWord = (_.deburr(possiblyMisspelledWord)).toLowerCase();
+        properlySpelledWord = stripAllSpaces(
+            (_.deburr(properlySpelledWord)).toLowerCase()
+        );
 
-        if (_.isUndefined(fuzzyMatchUncertaintyPercentageThreshold)) {
-            fuzzyMatchUncertaintyPercentageThreshold = 25;
+        possiblyMisspelledWord = stripAllSpaces(
+            (_.deburr(possiblyMisspelledWord)).toLowerCase()
+        );
+
+        if (_.isUndefined(fuzzyMatchUncertaintyPercentageTolerance)) {
+            fuzzyMatchUncertaintyPercentageTolerance = 25;
         }
-        var isFuzzyMatchedWord = false;
 
-        var letterCountProperlySpelledWord = _.size(properlySpelledWord);
-        var letterCountMisspelledWord = _.size(possiblyMisspelledWord);
         var symmetricDifference = _.xor(properlySpelledWord, possiblyMisspelledWord);
-        var letterCountSymmetricDifference = _.size(symmetricDifference);
-        var fuzzyMatchUncertaintyPercentage = _.ceil((letterCountSymmetricDifference / letterCountMisspelledWord) * 100);
+        var fuzzyMatchUncertaintyPercentage = _.ceil(
+            (_.size(symmetricDifference) / _.size(possiblyMisspelledWord)) * 100
+        );
 
-        if (fuzzyMatchUncertaintyPercentage <= fuzzyMatchUncertaintyPercentageThreshold) {
-            isFuzzyMatchedWord = true;
-        }
-
-        return isFuzzyMatchedWord;
+        return (fuzzyMatchUncertaintyPercentage <= fuzzyMatchUncertaintyPercentageTolerance);
     }
 
     /**
@@ -2288,7 +2290,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         post: post,
         focusMostRelevantInput: focusMostRelevantInput,
         splitWordIntoVowelsAndConsonants: splitWordIntoVowelsAndConsonants,
-        isFuzzyMatchedWord: isFuzzyMatchedWord,
+        hasFuzzyStringMatch: hasFuzzyStringMatch,
         tpl: tpl,
         lazy: lazy,
         validateProperName: validateProperName,
