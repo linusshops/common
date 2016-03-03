@@ -2074,6 +2074,70 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Split a word into vowels and consonants.
+     *
+     * This can help in fuzzy matching badly-typed words, or to make intelligent
+     * guesses for the word actually desired.
+     *
+     * @param word
+     * @returns {{vowels: *, consonants: *}}
+     */
+    function splitWordIntoVowelsAndConsonants(word)
+    {
+        word = (_.deburr(word)).toLowerCase();
+
+        var letterPartition = _.partition(word, function(fragmentLetter) {
+            return /[aeiou]/i.test(fragmentLetter);
+        });
+
+        var vowels = _.sortBy(letterPartition[0], function(letter) {
+            return letter;
+        });
+
+        var consonants = _.sortBy(letterPartition[1], function(letter) {
+            return letter;
+        });
+
+        return {
+            vowels: vowels,
+            consonants: consonants
+        }
+    }
+
+    /**
+     * Get percentage of likelihood that the misspelled word is real word.
+     *
+     * If the uncertainty for a fuzzy match drops below or is equal to n%,
+     * then it is safe to make the guess that the desired fuzzy-matched word
+     * should be used instead of the misspelling.
+     *
+     * @param properlySpelledWord
+     * @param possiblyMisspelledWord
+     */
+    function isFuzzyMatchedWord(properlySpelledWord, possiblyMisspelledWord, fuzzyMatchUncertaintyPercentageThreshold)
+    {
+        properlySpelledWord = (_.deburr(properlySpelledWord)).toLowerCase();
+        possiblyMisspelledWord = (_.deburr(possiblyMisspelledWord)).toLowerCase();
+
+        if (_.isUndefined(fuzzyMatchUncertaintyPercentageThreshold)) {
+            fuzzyMatchUncertaintyPercentageThreshold = 25;
+        }
+        var isFuzzyMatchedWord = false;
+
+        var letterCountProperlySpelledWord = _.size(properlySpelledWord);
+        var letterCountMisspelledWord = _.size(possiblyMisspelledWord);
+        var symmetricDifference = _.xor(properlySpelledWord, possiblyMisspelledWord);
+        var letterCountSymmetricDifference = _.size(symmetricDifference);
+        var fuzzyMatchUncertaintyPercentage = _.ceil((letterCountSymmetricDifference / letterCountMisspelledWord) * 100);
+
+        if (fuzzyMatchUncertaintyPercentage <= fuzzyMatchUncertaintyPercentageThreshold) {
+            isFuzzyMatchedWord = true;
+        }
+
+        return isFuzzyMatchedWord;
+    }
+
+    /**
      * Generate string hash from arbitrary number of arguments.
      *
      * @return String
@@ -2223,6 +2287,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         get: get,
         post: post,
         focusMostRelevantInput: focusMostRelevantInput,
+        splitWordIntoVowelsAndConsonants: splitWordIntoVowelsAndConsonants,
+        isFuzzyMatchedWord: isFuzzyMatchedWord,
         tpl: tpl,
         lazy: lazy,
         validateProperName: validateProperName,

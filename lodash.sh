@@ -43,5 +43,12 @@ now,\
 set,\
 filter,\
 attempt,\
-isError
+isError,\
+first,\
+take,\
+partition,\
+sortBy,\
+difference,\
+xor,\
+ceil\
 "
