@@ -383,9 +383,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             cspData = mergedCspData;
         }
 
-        var cspDataValue = (cspData[cspDataKey])
-            ? cspData[cspDataKey]
-            : '';
+        var cspDataValue = _.get(cspData, cspDataKey, '');
 
         // Passing nothing will return the whole CSP data set.
         if (typeof cspDataKey === 'undefined'){
