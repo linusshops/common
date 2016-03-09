@@ -2209,14 +2209,31 @@ linus.common = linus.common || (function($, _, Dependencies)
 
     function getCookie(name)
     {
-        return _.reduce(document.cookie.split(';'), function(carry, cookie) {
+        var findCookie = function(carry, cookie) {
             cookie = _.trim(cookie);
             if (_.isNull(carry) && _.startsWith(cookie, name)) {
                 carry = cookie.substring((name.length + 1));
             }
 
             return carry;
-        }, null);
+        };
+
+        var getAllCookies = function(carry, cookie) {
+            if (!_.isObject(carry)) {
+                carry = {};
+            }
+
+            cookie = _.trim(cookie);
+            var name = cookie.split('=')[0];
+
+            carry[name] = cookie.substring((name.length + 1));
+
+            return carry;
+        };
+
+        var reducer = _.isUndefined(name) ? getAllCookies : findCookie;
+
+        return _.reduce(document.cookie.split(';'), reducer, null);
     }
 
     function hasCookie(name)
