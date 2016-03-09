@@ -2333,7 +2333,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         setCookie: setCookie,
         deleteCookie: deleteCookie,
         hasCookie: hasCookie,
-        getIsDeveloperMode: getIsDeveloperMode
+        getIsDeveloperMode: getIsDeveloperMode,
+        deadLastReady: deadLastReady
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
