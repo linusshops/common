@@ -364,23 +364,35 @@ This allows specific cms pages to be targeted with layout xml. For example, to
 target the home page, the layout handle would be `cms_identifier_home`, if your
 home page uses the 'home' identifier.
 
+### New layout XML action methods
+
+A new `linus_common` block is created. Within it are methods that should be
+called from the layout XML as layout XML action methods.
+
+###### Add browser user agent string to body class
+
+This is an example usage of adding a browser user agent string to the body
+class from the onepage checkout. For the meantime, only IE-related classes
+are created.
+
+The example also adds an arbitrary string, to demonstrate the ease of adding
+new body class strings to the body class attribute.
+
+```xml
+<checkout_onepage_index>
+    <reference name="linus_common">
+        <action method="addUserAgentToBodyClass"/>
+        <action method="addClassNameToBodyClass">
+            <classname>hiyooo</classname>
+        </action>
+    </reference>
+</checkout_onepage_index>
+```
+
 ### Hijax: hijacking existing form endpoints for asynchronous (Ajax) responses
 
 [TODO]
 
-
-### Asynchronously add items to cart (Ajax)
-
-The Magento endpoint for adding an item to the cart is synchronous. In other
-words, the browser will redirect the user at least once, and typically to the
-cart preview, upon successfully adding an item. Often, a store just wants
-clients to quickly add an item to the cart without redirecting them all over
-the place; it can be disorienting. `Common` uses a special `hijax` technique
-for sending asynchronous request to the existing Magento endpoint without
-having to define a new one, or break the regular synchronous one. That means
-that all existing forms on the site will continue to work, but if `Common`
-detects that the request to add an item to the cart is asynchronous, it will
-respond with a `JSON` payload instead of redirect the browser.
 
 ### Generic CMS Templating as CSV
 
@@ -667,6 +679,8 @@ represents the object provided to the template
 * `{{- }}` - escape, will automatically encode special characters as html
 * `{{% }}` - evaluate, will execute javascript contained within. The `data` object
 is available, as well as Common and Lodash (as `_`).
+
+
 
 ## Authors
 
