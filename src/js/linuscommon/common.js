@@ -130,7 +130,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         properName: /^[a-z][a-z\s\-\'\.\,]*$/i,
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
-        companyName: /^.{4,}$/i,
+        companyName: /^.{1,}$/i,
         addressLine: /^[A-Za-z0-9\-\#\.\'\,\s\(\)\&]{1,100}$/i,
         telephone: /^([+]?(\d[-. ]?)?((\(\d{3}\))|\d{3}))+[-. ]?\d{3}[-. ]?\d{4}(\s#[0-9]+)?$/,
         cvn: /^[0-9]{3,4}$/,
