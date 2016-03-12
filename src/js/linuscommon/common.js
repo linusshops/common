@@ -1219,13 +1219,37 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validCvn;
     }
 
+    /**
+     * Validate credit card expiry date.
+     *
+     * Note that this will also check the expiry date based on the current date.
+     * The year must be checked first, then the month.
+     *
+     * @param expiryDate
+     * @returns {boolean}
+     */
     function validateExpiryDate(expiryDate)
     {
         var validExpiryDate = false;
         if (_.size(expiryDate)) {
             expiryDate = _.trim(stripRedundantSpaces(expiryDate));
             if (regexes.expiryDate.test(expiryDate)) {
-                validExpiryDate = expiryDate;
+                var date = new Date();
+
+                var ccYear = expiryDate.slice(-2);
+                var actualYear = (date.getFullYear()).toString();
+                var actualShortYear = actualYear.slice(-2);
+
+                var ccMonth = expiryDate.slice(0, 2);
+                var actualMonth = ('0' + (date.getMonth() + 1)).toString();
+                var actualShortMonth = actualMonth.slice(-2);
+
+                if ((parseInt(ccYear) == parseInt(actualShortYear)
+                        && parseInt(ccMonth) >= parseInt(actualShortMonth))
+                    || parseInt(ccYear) > parseInt(actualShortYear)
+                ) {
+                    validExpiryDate = expiryDate;
+                }
             }
         }
 
