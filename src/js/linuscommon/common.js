@@ -131,7 +131,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         canadianPostalCode: /^[abceghjklmnprstvxy]\d[abceghjklmnprstvwxyz]( )?\d[abceghjklmnprstvwxyz]\d$/i,
         cityName: /^[a-z0-9][a-z0-9\s\-\'\.]{2,}$/i,
         companyName: /^.{4,}$/i,
-        addressLine: /^[A-Za-z0-9\-\#\.\'\,\s\(\)\&]{3,100}$/i,
+        addressLine: /^[A-Za-z0-9\-\#\.\'\,\s\(\)\&]{1,100}$/i,
         telephone: /^([+]?(\d[-. ]?)?((\(\d{3}\))|\d{3}))+[-. ]?\d{3}[-. ]?\d{4}(\s#[0-9]+)?$/,
         cvn: /^[0-9]{3,4}$/,
         expiryDate: /^[0-1][0-9](\/|\\|\-|\s)?[0-9][0-9]$/
