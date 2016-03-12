@@ -63,7 +63,7 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return string
      */
-    function plural($count, $singularWordForm, $pluralWordForm, $nilFormat = false)
+    public function plural($count, $singularWordForm, $pluralWordForm, $nilFormat = false)
     {
         $formattedString = "%s $pluralWordForm";
 
@@ -83,5 +83,46 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::helper('core')->__($formattedString),
             $count
         );
+    }
+
+    /**
+     * Get the user agent body class name.
+     */
+    public function getUserAgentBodyClassName()
+    {
+        $userAgentBodyClassName = '';
+
+        if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT'])
+            || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false)
+        ) {
+            $userAgentBodyClassName = 'ie';
+        }
+
+        return $userAgentBodyClassName;
+    }
+
+    /**
+     * Get the user agent body class name.
+     *
+     * Version detection based on http://stackoverflow.com/a/11741586.
+     */
+    public function getUserAgentVersionBodyClassName()
+    {
+        $userAgentVersionBodyClassName = '';
+
+        if ($this->getUserAgentBodyClassName() == 'ie') {
+            preg_match('/MSIE (.*?);/', $_SERVER['HTTP_USER_AGENT'], $matches);
+            if(count($matches) < 2){
+                preg_match('/Trident\/\d{1,2}.\d{1,2}; rv:([0-9]*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
+            }
+
+            if (count($matches) > 1){
+                $version = explode('.', $matches[1]);
+                $version = reset($version);
+                $userAgentVersionBodyClassName = 'ie' . $version;
+            }
+        }
+
+        return $userAgentVersionBodyClassName;
     }
 }

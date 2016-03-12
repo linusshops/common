@@ -26,7 +26,7 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
      *      </reference>
      *  </checkout_cart_index>
      */
-    function addClassNameToBodyClass($className)
+    public function addClassNameToBodyClass($className)
     {
         /** @var Mage_Page_Block_Html $root */
         $root = $this->getLayout()->getBlock('root');
@@ -50,8 +50,12 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
      *      </reference>
      *  </checkout_cart_index>
      */
-    function addUserAgentToBodyClass()
+    public function addUserAgentToBodyClass()
     {
-        $this->addClassNameToBodyClass('ua');
+        $userAgentBodyClassName = $this->Common()->getUserAgentBodyClassName();
+        $this->addClassNameToBodyClass($userAgentBodyClassName);
+
+        $userAgentVersionBodyClassName = $this->Common()->getUserAgentVersionBodyClassName();
+        $this->addClassNameToBodyClass($userAgentVersionBodyClassName);
     }
 }
