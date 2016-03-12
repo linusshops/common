@@ -9,6 +9,16 @@
  */
 class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    /**
+     * Prefix for user agent body class name.
+     */
+    const USER_AGENT_BODY_CLASS_NAME_PREFIX = 'ua';
+
+    /**
+     * Body class name used in body class for Internet Explorer.
+     */
+    const USER_AGENT_BODY_CLASS_NAME_INTERNET_EXPLORER = 'ie';
+
     public function mergeDefaultOptions($options, $defaultOptions)
     {
         return array_intersect_key(array_filter($options) + $defaultOptions, $defaultOptions);
@@ -86,16 +96,31 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Build user agent string used in body class attribute.
+     *
+     * @param $userAgentBodyClassName
+     *
+     * @return string
+     */
+    private function buildUserAgentBodyClassName($userAgentBodyClassName)
+    {
+        return self::USER_AGENT_BODY_CLASS_NAME_PREFIX . '-' . $userAgentBodyClassName;
+    }
+
+    /**
      * Get the user agent body class name.
      */
     public function getUserAgentBodyClassName()
     {
         $userAgentBodyClassName = '';
+        $userAgent = Mage::helper('core/http')->getHttpUserAgent();
 
-        if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT'])
-            || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false)
+        if (preg_match('~MSIE|Internet Explorer~i', $userAgent)
+            || (strpos($userAgent, 'Trident/7.0; rv:11.0') !== false)
         ) {
-            $userAgentBodyClassName = 'ie';
+            $userAgentBodyClassName = $this->buildUserAgentBodyClassName(
+                self::USER_AGENT_BODY_CLASS_NAME_INTERNET_EXPLORER
+            );
         }
 
         return $userAgentBodyClassName;
@@ -109,17 +134,20 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
     public function getUserAgentVersionBodyClassName()
     {
         $userAgentVersionBodyClassName = '';
+        $userAgent = Mage::helper('core/http')->getHttpUserAgent();
 
-        if ($this->getUserAgentBodyClassName() == 'ie') {
-            preg_match('/MSIE (.*?);/', $_SERVER['HTTP_USER_AGENT'], $matches);
+        if ($this->getUserAgentBodyClassName() == $this->buildUserAgentBodyClassName(self::USER_AGENT_BODY_CLASS_NAME_INTERNET_EXPLORER)) {
+            preg_match('/MSIE (.*?);/', $userAgent, $matches);
             if(count($matches) < 2){
-                preg_match('/Trident\/\d{1,2}.\d{1,2}; rv:([0-9]*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
+                preg_match('/Trident\/\d{1,2}.\d{1,2}; rv:([0-9]*)/', $userAgent, $matches);
             }
 
             if (count($matches) > 1){
                 $version = explode('.', $matches[1]);
                 $version = reset($version);
-                $userAgentVersionBodyClassName = 'ie' . $version;
+                $userAgentVersionBodyClassName = $this->buildUserAgentBodyClassName(
+                    self::USER_AGENT_BODY_CLASS_NAME_INTERNET_EXPLORER . $version
+                );
             }
         }
 
