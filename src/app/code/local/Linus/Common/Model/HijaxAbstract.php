@@ -81,7 +81,9 @@ abstract class Linus_Common_Model_HijaxAbstract
     public function __construct()
     {
         $this->hijaxController = Mage::app()->getFrontController()->getAction();
-        $this->isAjax = $this->hijaxController->getRequest()->isAjax();
+        if (!empty($this->hijaxController)) {
+            $this->isAjax = $this->hijaxController->getRequest()->isAjax();
+        }
 
         if ($this->isAjax) {
             $this->cancelDispatch();
