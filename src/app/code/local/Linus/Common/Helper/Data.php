@@ -59,6 +59,26 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Similar to getBlockFromLayoutHandle, but return the output from handle.
+     *
+     * @param string $layoutHandle
+     *
+     * @return string
+     * @throws Mage_Core_Exception
+     */
+    function getBlockOutputFromLayoutHandle($layoutHandle)
+    {
+        $layout = Mage::app()->getLayout();
+        $update = $layout->getUpdate();
+        $update->load($layoutHandle);
+        $layout->generateXml();
+        $layout->generateBlocks();
+
+        return $layout->getOutput();
+    }
+
+
+    /**
      * Grammatically represent proper word form based on count of objects.
      *
      * Example usages:
