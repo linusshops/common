@@ -1377,6 +1377,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * should be memoized (cached). Falsey values will disable caching; truthy
      * values will enable it. Passes `endpoint` and `requestData` to customize
      * cache handling per request.
+     * @param {function} callbacks.timeout - Set a timeout. Default: no timeout.
      */
     function ajax(endpoint, method, requestData, callbacks)
     {
@@ -1397,6 +1398,9 @@ linus.common = linus.common || (function($, _, Dependencies)
                 error: function(){},
                 cache: function() {
                     return false;
+                },
+                timeout: function() {
+                    return null
                 }
             })
         };
@@ -1415,8 +1419,8 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         callbacks.limbo(requestData);
 
-        mem.ajax(endpoint, method, requestData)
-            .done(function(responseData) {
+        mem.ajax(endpoint, method, requestData, callbacks.timeout())
+            .done(function(responseData, textStatus, jqXHR) {
                 var error = _.get(responseData, 'error');
                 var payload = _.get(responseData, 'payload');
                 var tplSelectors = _.get(responseData, 'tpl', '');
@@ -1444,23 +1448,23 @@ linus.common = linus.common || (function($, _, Dependencies)
                     }
 
                     if (error === 0) {
-                        callbacks.valid(payload);
+                        callbacks.valid(payload, textStatus, jqXHR);
                     } else if (error >= 1) {
-                        callbacks.invalid(payload);
+                        callbacks.invalid(payload, textStatus, jqXHR);
                     }
                 }
             })
-            .fail(function(responseData) {
+            .fail(function(responseData, textStatus, errorThrown) {
                 mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
                 if (_.has(jqXHR, 'responseJSON.payload')) {
-                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'));
+                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), textStatus, errorThrown);
                 }
 
-                callbacks.error(jqXHR);
+                callbacks.error(jqXHR, textStatus, errorThrown);
             })
-            .always(function (responseData) {
+            .always(function (responseData, textStatus, errorThrown) {
                 var standardResponse = responseData;
                 if (_.has(responseData, 'responseJSON.payload')) {
                     standardResponse = _.get(responseData, 'responseJSON');
@@ -1479,7 +1483,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                         .trigger('Common:afterTargetFeedbackInsert');
                 }
 
-                callbacks.cleanup(standardResponse.payload);
+                callbacks.cleanup(standardResponse.payload, textStatus, errorThrown);
 
                 $(document).trigger('Common:after'+method, {
                     endpoint: endpoint,
@@ -1502,10 +1506,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @return {promise}
      */
-    mem.ajax = _.memoize(function(endpoint, method, requestData) {
+    mem.ajax = _.memoize(function(endpoint, method, requestData, timeout) {
         return $.ajax(endpoint, {
             method: method,
-            data: requestData
+            data: requestData,
+            timeout: timeout
         });
     }, function(endpoint, method, requestData) {
         return generateHash(endpoint, method, requestData);
