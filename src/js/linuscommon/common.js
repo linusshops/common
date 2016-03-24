@@ -2284,26 +2284,6 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
-     * Applies a class to the provided target only if the target does not already
-     * have this class.
-     *
-     * @param target - the selector to take action on
-     * @param className - the class name to apply
-     */
-    function applyClassOnce(target, className)
-    {
-        var $target = $(target);
-
-        if (_.startsWith(className, '.')) {
-            className = className.substr(1);
-        }
-
-        if (!$target.hasClass(className)) {
-            $target.addClass(className);
-        }
-    }
-
-    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -2383,8 +2363,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         deleteCookie: deleteCookie,
         hasCookie: hasCookie,
         getIsDeveloperMode: getIsDeveloperMode,
-        deadLastReady: deadLastReady,
-        applyClassOnce: applyClassOnce
+        deadLastReady: deadLastReady
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
