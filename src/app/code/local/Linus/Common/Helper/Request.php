@@ -66,7 +66,7 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
      *
      * @param array|bool $payload The main data payload.
      * @param int $error The error code. A non-zero/not null value indicates an error
-     * @param string $feedbackMessage The feedback message.
+     * @param string|array $feedbackMessage The feedback message or messages.
      * @param array $feedbackDebug The debug dump
      * @return array
      */
@@ -78,7 +78,9 @@ class Linus_Common_Helper_Request extends Mage_Core_Helper_Abstract
                 : 1;
         }
 
-        if (!strlen($feedbackMessage)) {
+        if ((is_string($feedbackMessage) && !strlen($feedbackMessage))
+            || (is_array($feedbackMessage) && !count($feedbackMessage))
+        ) {
             $feedbackMessage = (!(bool) $error)
                 ? 'Data retrieved successfully!'
                 : 'Data could not be retrieved.';

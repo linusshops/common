@@ -1422,6 +1422,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         mem.ajax(endpoint, method, requestData, callbacks.timeout())
             .done(function(responseData, textStatus, jqXHR) {
                 var error = _.get(responseData, 'error');
+                var feedback = _.get(responseData, 'feedback');
                 var payload = _.get(responseData, 'payload');
                 var tplSelectors = _.get(responseData, 'tpl', '');
 
@@ -1446,20 +1447,20 @@ linus.common = linus.common || (function($, _, Dependencies)
                     if (tplSelectors.length) {
                         tpl(tplSelectors, payload);
                     }
+                }
 
-                    if (error === 0) {
-                        callbacks.valid(payload, textStatus, jqXHR);
-                    } else if (error >= 1) {
-                        callbacks.invalid(payload, textStatus, jqXHR);
-                    }
+                if (error === 0) {
+                    callbacks.valid(payload, textStatus, jqXHR);
+                } else if (error >= 1) {
+                    callbacks.invalid(feedback, textStatus, jqXHR);
                 }
             })
             .fail(function(responseData, textStatus, errorThrown) {
                 mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
-                if (_.has(jqXHR, 'responseJSON.payload')) {
-                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), textStatus, errorThrown);
+                if (_.has(jqXHR, 'responseJSON.feedback')) {
+                    callbacks.invalid(_.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
                 }
 
                 callbacks.error(jqXHR, textStatus, errorThrown);
