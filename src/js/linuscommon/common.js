@@ -1069,6 +1069,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         var validPostalCode = false;
         if (_.size(postalCode)) {
             postalCode = _.deburr(_.trim(stripRedundantSpaces(postalCode)));
+            postalCode = postalCode.replace(/[^a-zA-Z0-9\s]/gi, '');
+
             if (regexes.canadianPostalCode.test(postalCode)) {
                 validPostalCode = formatPostalCode(postalCode);
             }
@@ -1083,7 +1085,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         if (_.size(postalCode)) {
             postalCode = stripAllSpaces(_.deburr(postalCode));
-            formattedPostalCode = postalCode;
+            formattedPostalCode = postalCode.replace(/[^a-zA-Z0-9\s]/gi, '');
 
             if (addSpace) {
                 formattedPostalCode = '';
