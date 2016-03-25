@@ -1454,15 +1454,15 @@ linus.common = linus.common || (function($, _, Dependencies)
                 if (error === 0) {
                     callbacks.valid(payload, textStatus, jqXHR);
                 } else if (error >= 1) {
-                    callbacks.invalid(feedback, textStatus, jqXHR);
+                    callbacks.invalid(payload, feedback, textStatus, jqXHR);
                 }
             })
             .fail(function(responseData, textStatus, errorThrown) {
                 mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
 
                 var jqXHR = responseData;
-                if (_.has(jqXHR, 'responseJSON.feedback')) {
-                    callbacks.invalid(_.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
+                if (_.has(jqXHR, 'responseJSON.payload')) {
+                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), _.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
                 }
 
                 callbacks.error(jqXHR, textStatus, errorThrown);
