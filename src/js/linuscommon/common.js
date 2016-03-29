@@ -181,10 +181,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {string} singularWordForm The singular word form of that object.
      * @param {string} pluralWordForm The plural word form of that object.
      * @param {bool|string} nilFormat Optional: If nil, allow alternate text.
+     * @param {bool} wordOnly Optional: if true, do not concatenate the word with the total.
      *
      * @return string
      */
-    function plural(count, singularWordForm, pluralWordForm, nilFormat)
+    function plural(count, singularWordForm, pluralWordForm, nilFormat, wordOnly)
     {
         var formattedString = count + ' ' + pluralWordForm;
 
@@ -197,7 +198,11 @@ linus.common = linus.common || (function($, _, Dependencies)
                 ? __(pluralWordForm)
                 : __(singularWordForm);
 
-            formattedString = count + ' ' + grammaticalWordForm;
+            if (!_.isUndefined(wordOnly) && wordOnly) {
+                formattedString = grammaticalWordForm;
+            } else {
+                formattedString = count + ' ' + grammaticalWordForm;
+            }
         }
 
         return formattedString;

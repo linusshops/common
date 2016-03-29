@@ -90,10 +90,11 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
      * @param string $singularWordForm The singular word form of that object.
      * @param string $pluralWordForm The plural word form of that object.
      * @param bool|string $nilFormat Optional: If nil, allow alternate text.
+     * @param bool $wordOnly Optional: if true, do not concatenate the word with the total.
      *
      * @return string
      */
-    public function plural($count, $singularWordForm, $pluralWordForm, $nilFormat = false)
+    public function plural($count, $singularWordForm, $pluralWordForm, $nilFormat = false, $wordOnly = false)
     {
         $formattedString = "%s $pluralWordForm";
 
@@ -106,7 +107,11 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
                 ? Mage::helper('core')->__($pluralWordForm)
                 : Mage::helper('core')->__($singularWordForm);
 
-            $formattedString = "%s $grammaticalWordForm";
+            if ($wordOnly) {
+                $formattedString = $grammaticalWordForm;
+            } else {
+                $formattedString = "%s $grammaticalWordForm";
+            }
         }
 
         return sprintf(
