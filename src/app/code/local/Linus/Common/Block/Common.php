@@ -36,6 +36,12 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
         }
     }
 
+    public function addLocaleClassNameToBodyClass()
+    {
+        $code = Mage::app()->getLocale()->getLocaleCode();
+        $this->addClassNameToBodyClass($code);
+    }
+
     /**
      * This adds a browser's user agent the body class.
      *
