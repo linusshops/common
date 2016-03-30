@@ -2299,6 +2299,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         setCookie(name, '', -1);
     }
 
+    /**
+     * Adds an item to local storage with the specified key.
+     *
+     * @param {string} key
+     * @param {string} value
+     * @returns {Error} if setting the item fails for any reason.
+     */
     function setLocalStorageItem(key, value)
     {
         return _.attempt(function(key, value) {
@@ -2307,6 +2314,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         }, key, value);
     }
 
+    /**
+     * Get an item with the specified key from localstorage.
+     *
+     * @param {string} key
+     * @returns {string|Error} the item value, or an Error if getting the item fails
+     * due to an issue with communicating with localstorage.
+     */
     function getLocalStorageItem(key)
     {
         return _.attempt(function(key) {
@@ -2314,6 +2328,12 @@ linus.common = linus.common || (function($, _, Dependencies)
         }, key);
     }
 
+    /**
+     * Remove an item from localstorage.
+     *
+     * @param {string} key - the item to remove
+     * @returns {Error} if removing the item fails for any reason
+     */
     function removeLocalStorageItem(key)
     {
         return _.attempt(function(key){
