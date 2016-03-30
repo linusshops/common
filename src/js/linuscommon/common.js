@@ -138,15 +138,6 @@ linus.common = linus.common || (function($, _, Dependencies)
     };
 
     /**
-     * Custom exceptions
-     */
-    function LocalStorageError(message) {
-        this.message = message;
-    }
-
-    LocalStorageError.prototype = new Error;
-
-    /**
      * Constructor
      *
      * @private
