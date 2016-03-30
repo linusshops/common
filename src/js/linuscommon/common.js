@@ -138,6 +138,15 @@ linus.common = linus.common || (function($, _, Dependencies)
     };
 
     /**
+     * Custom exceptions
+     */
+    function LocalStorageError(message) {
+        this.message = message;
+    }
+
+    LocalStorageError.prototype = new Error;
+
+    /**
      * Constructor
      *
      * @private
@@ -1624,9 +1633,9 @@ linus.common = linus.common || (function($, _, Dependencies)
             return false;
         }
 
-        var data = window.localStorage.getItem('common-tpl-data:'+key);
+        var data = getLocalStorageItem('common-tpl-data:'+key);
 
-        return _.isNull(data) ? false : JSON.parse(data);
+        return _.isError(data) || _.isNull(data) ? false : JSON.parse(data);
     }
 
     function renderTemplates(templates, data)
@@ -1656,7 +1665,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 if (!_.isUndefined(datakey)) {
                     //It is safe to assume the data can be jsonified, as direct
                     //injections bypass this part of the pipeline entirely.
-                    window.localStorage.setItem('common-tpl-data:' + datakey, JSON.stringify(data));
+                    setLocalStorageItem('common-tpl-data:' + datakey, JSON.stringify(data));
                 }
             });
         } else {
@@ -1745,20 +1754,22 @@ linus.common = linus.common || (function($, _, Dependencies)
         //Invalidate and delete as necessary
         //If template exists and is not invalid, load it into memory
         if (isLocalStorageAvailable()) {
-            checksum = window.localStorage.getItem('common-tpl-mapping:'+templateKey);
-            var isValid = isLocalTplValid(templateKey, checksum);
-            if (!_.isNull(checksum) && isValid) {
-                var rawTemplate = window.localStorage.getItem('common-tpl-hash:'+checksum);
-                if (!_.isNull(rawTemplate)) {
-                    var compiled = tplCompile(templateKey, rawTemplate, checksum);
-                    if (!_.isError(compiled)) {
-                        storeMemoryTpl(templateKey, checksum, compiled);
+            checksum = getLocalStorageItem('common-tpl-mapping:'+templateKey);
+            if (!_.isError(checksum)) {
+                var isValid = isLocalTplValid(templateKey, checksum);
+                if (!_.isNull(checksum) && isValid) {
+                    var rawTemplate = getLocalStorageItem('common-tpl-hash:' + checksum);
+                    if (!_.isNull(rawTemplate) && !_.isError(rawTemplate)) {
+                        var compiled = tplCompile(templateKey, rawTemplate, checksum);
+                        if (!_.isError(compiled)) {
+                            storeMemoryTpl(templateKey, checksum, compiled);
+                        }
+                        return compiled;
                     }
-                    return compiled;
+                } else if (!isValid) {
+                    removeLocalStorageItem('common-tpl-mapping:' + templateKey);
+                    removeLocalStorageItem('common-tpl-hash:' + checksum);
                 }
-            } else if (!isValid) {
-                window.localStorage.removeItem('common-tpl-mapping:'+templateKey);
-                window.localStorage.removeItem('common-tpl-hash:'+checksum);
             }
         }
 
@@ -1809,11 +1820,8 @@ linus.common = linus.common || (function($, _, Dependencies)
     function storeLocalTpl(templateKey, checksum, templateContent)
     {
         if (isLocalStorageAvailable()) {
-            try {
-                window.localStorage.setItem('common-tpl-mapping:' + templateKey, checksum);
-                window.localStorage.setItem('common-tpl-hash:' + checksum, templateContent);
-            } catch (e) {
-                console.log(e);
+            if (!_.isError(setLocalStorageItem('common-tpl-mapping:' + templateKey, checksum))) {
+                setLocalStorageItem('common-tpl-hash:' + checksum, templateContent);
             }
         }
     }
@@ -2289,6 +2297,28 @@ linus.common = linus.common || (function($, _, Dependencies)
     function deleteCookie(name)
     {
         setCookie(name, '', -1);
+    }
+
+    function setLocalStorageItem(key, value)
+    {
+        return _.attempt(function(key, value) {
+            window.localStorage.setItem(key, value);
+            return true;
+        }, key, value);
+    }
+
+    function getLocalStorageItem(key)
+    {
+        return _.attempt(function(key) {
+            return window.localStorage.getItem(key);
+        }, key);
+    }
+
+    function removeLocalStorageItem(key)
+    {
+        return _.attempt(function(key){
+            return window.localStorage.removeItem(key);
+        }, key);
     }
 
     /**
