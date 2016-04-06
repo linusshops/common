@@ -178,4 +178,31 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $userAgentVersionBodyClassName;
     }
+
+    /**
+     * Return all the other store IDs, relative to the current one.
+     *
+     * @param int|null $currentStoreId
+     *
+     * @return array
+     */
+    public function getAllOtherStoreIds($currentStoreId = null)
+    {
+        $allOtherStoreIds = array();
+
+        if (!$currentStoreId) {
+            $currentStoreId = Mage::app()->getStore()->getStoreId();
+        }
+
+        $stores = Mage::app()->getStores();
+        if (!empty($stores[$currentStoreId])) {
+            unset($stores[$currentStoreId]);
+        }
+
+        if (count($stores)) {
+            $allOtherStoreIds = array_keys($stores);
+        }
+
+        return $allOtherStoreIds;
+    }
 }
