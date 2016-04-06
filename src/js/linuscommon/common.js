@@ -796,6 +796,23 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Decode HTML entities.
+     *
+     * Passing complex JSON strings to frontend for parsing by JS can result in
+     * errors. Examples of complexity include French characters, single, and
+     * double quotes. This hack decodes them. It was originally created for
+     * handling imagebox nonsense; see that file for more information.
+     */
+    function htmlentityDecode(text)
+    {
+        if (text && text.length) {
+            text = jQuery('<textarea />').html(text).text();
+        }
+
+        return text;
+    }
+
+    /**
      * Default settings for the Accounting library wrapper.
      *
      * This will handle `fr_FR` locale.
@@ -2370,6 +2387,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         use: use,
         addWebFont: addWebFont,
         disableWebFonts: disableWebFonts,
+        htmlentityDecode: htmlentityDecode,
         getFormData: getFormData,
         getFormattedNumber: getFormattedNumber,
         getFormattedPrice: getFormattedPrice,
