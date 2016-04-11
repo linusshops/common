@@ -377,7 +377,18 @@ linus.common = linus.common || (function($, _, Dependencies)
             var mergedCspData = {};
 
             $(cspSelectorName).each(function() {
-                var newCspData = JSON.parse(decodeURIComponent($(this).val()));
+                var newCspData = _.attempt(function () {
+                    JSON.parse(decodeURIComponent($(this).val()));
+                });
+
+                //If some data is invalid, skip it, and alert New Relic.
+                if (_.isError(newCspData)) {
+                    _.attempt(function(){
+                        sendNewRelicError('Failed to parse csp data: '+$(this).val());
+                    });
+                    return;
+                }
+
                 // Deep merge all values together.
                 $.extend(true, mergedCspData, newCspData);
 
@@ -2349,6 +2360,15 @@ linus.common = linus.common || (function($, _, Dependencies)
         }, key);
     }
 
+    function sendNewRelicError(message) {
+        if (!_.isUndefined(NREUM) && _.isObject(NREUM)) {
+            if (!_.isError(message) && _.isString(message)) {
+                message = new Error(message);
+            }
+            NREUM.noticeError(message);
+        }
+    }
+
     /**
      * Initialize class. Register for DOM ready.
      */
@@ -2430,7 +2450,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         deleteCookie: deleteCookie,
         hasCookie: hasCookie,
         getIsDeveloperMode: getIsDeveloperMode,
-        deadLastReady: deadLastReady
+        deadLastReady: deadLastReady,
+        sendNewRelicError: sendNewRelicError
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
