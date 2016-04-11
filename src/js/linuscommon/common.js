@@ -363,7 +363,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param string|optional cspDataKey Get key value or entire data set.
      * @param string cspSelectorName Optional node target to get data.
      *
-     * @return string | object
+     * @return string | object | boolean
      */
     function getCspData(cspDataKey, cspSelectorName)
     {
