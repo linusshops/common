@@ -377,15 +377,16 @@ linus.common = linus.common || (function($, _, Dependencies)
             var mergedCspData = {};
 
             $(cspSelectorName).each(function() {
+                var $element = $(this);
                 var newCspData = _.attempt(function () {
-                    JSON.parse(decodeURIComponent($(this).val()));
+                    return JSON.parse(decodeURIComponent($element.val()));
                 });
 
                 //If some data is invalid, skip it, and alert New Relic.
                 if (_.isError(newCspData)) {
-                    _.attempt(function(){
-                        sendNewRelicError('Failed to parse csp data: '+$(this).val());
-                    });
+                    sendNewRelicError('Failed to parse csp data: '+$element.val());
+
+                    //Continue to the next element.
                     return;
                 }
 
@@ -393,7 +394,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 $.extend(true, mergedCspData, newCspData);
 
                 // Remove CSP node from DOM, so origin of data seems mythical.
-                $(this).remove();
+                $element.remove();
             });
 
             cspData = mergedCspData;
@@ -2360,13 +2361,20 @@ linus.common = linus.common || (function($, _, Dependencies)
         }, key);
     }
 
+    /**
+     * Send an error message to New Relic. The message will not be sent if
+     * developer mode is on.
+     * @param message
+     */
     function sendNewRelicError(message) {
-        if (!_.isUndefined(NREUM) && _.isObject(NREUM)) {
-            if (!_.isError(message) && _.isString(message)) {
-                message = new Error(message);
+        _.attempt(function() {
+            if (typeof NREUM != 'undefined' && _.isObject(NREUM) && !getIsDeveloperMode()) {
+                if (!_.isError(message) && _.isString(message)) {
+                    message = new Error(message);
+                }
+                NREUM.noticeError(message);
             }
-            NREUM.noticeError(message);
-        }
+        });
     }
 
     /**
