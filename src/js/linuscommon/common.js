@@ -1587,6 +1587,9 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} data - The data to apply to the template. If false or undefined, tpl
      * will not render any data, but will download and parse the template if it
      * is not already available from the cache.
+     * @param {Object} options - Additional options to control tpl actions
+     *      options.allowPrefetchRender: Controls whether a tpl will have prefetch data
+     *              injected when no data is passed. Default is true.
      */
     function tpl(templateKeys, data, options)
     {
