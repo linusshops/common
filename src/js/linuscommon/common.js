@@ -1679,6 +1679,10 @@ linus.common = linus.common || (function($, _, Dependencies)
             templates = [templates];
         }
 
+        if (_.isUndefined(options)) {
+            options = {};
+        }
+
         //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
             _.forEach(templates, function (template) {
