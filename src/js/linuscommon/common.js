@@ -1588,7 +1588,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * will not render any data, but will download and parse the template if it
      * is not already available from the cache.
      */
-    function tpl(templateKeys, data)
+    function tpl(templateKeys, data, options)
     {
         //Strip any empty keys
         if (_.isArray(templateKeys)) {
@@ -1606,6 +1606,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         if (_.isUndefined(data)) {
             data = false;
         }
+
+        if (_.isUndefined(options)) {
+            options = {};
+        }
+
+        options = _.defaultsDeep(options, {
+            allowPrefetchRender: true
+        });
 
         if (!_.isArray(templateKeys)) {
             templateKeys = [templateKeys];
@@ -1644,7 +1652,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         fetchTemplateKeys = _.uniq(fetchTemplateKeys);
 
         tplFetch(fetchTemplateKeys, data);
-        renderTemplates(localTemplates, data);
+        renderTemplates(localTemplates, data, options);
     }
 
     function getTplPrefetchedData(key)
@@ -1658,7 +1666,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         return _.isError(data) || _.isNull(data) ? false : JSON.parse(data);
     }
 
-    function renderTemplates(templates, data)
+    function renderTemplates(templates, data, options)
     {
         if (!_.size(templates)) {
             return;
@@ -1693,7 +1701,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 var key = _.get(template, 'selector');
                 data = getTplPrefetchedData(key);
 
-                if (data) {
+                if (data && options.allowPrefetchRender) {
                     tplRender(
                         data,
                         _.get(template, 'template'),
