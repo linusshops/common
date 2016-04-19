@@ -1705,10 +1705,10 @@ linus.common = linus.common || (function($, _, Dependencies)
             });
         } else {
             _.forEach(templates, function(template) {
-                var key = _.get(template, 'selector');
-                data = getTplPrefetchedData(key);
-
                 if (data && options.allowPrefetchRender) {
+                    var key = _.get(template, 'selector');
+                    data = getTplPrefetchedData(key);
+
                     tplRender(
                         data,
                         _.get(template, 'template'),
