@@ -1680,7 +1680,9 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         if (_.isUndefined(options)) {
-            options = {};
+            options = {
+                allowPrefetchRender: true
+            };
         }
 
         //If we're prefetching, check local storage for cached data for prefetch.
@@ -1705,15 +1707,17 @@ linus.common = linus.common || (function($, _, Dependencies)
             });
         } else {
             _.forEach(templates, function(template) {
-                if (data && options.allowPrefetchRender) {
+                if (options.allowPrefetchRender) {
                     var key = _.get(template, 'selector');
                     data = getTplPrefetchedData(key);
 
-                    tplRender(
-                        data,
-                        _.get(template, 'template'),
-                        key
-                    );
+                    if (data) {
+                        tplRender(
+                            data,
+                            _.get(template, 'template'),
+                            key
+                        );
+                    }
                 }
             });
         }
