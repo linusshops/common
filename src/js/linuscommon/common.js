@@ -1654,8 +1654,15 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         fetchTemplateKeys = _.uniq(fetchTemplateKeys);
 
-        tplFetch(fetchTemplateKeys, data);
+        tplFetch(fetchTemplateKeys, data, options);
         renderTemplates(localTemplates, data, options);
+    }
+
+    function preloadTemplate(templateKeys)
+    {
+        tpl(templateKeys, false, {
+            allowPrefetchRender: false
+        });
     }
 
     function getTplPrefetchedData(key)
@@ -1729,7 +1736,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} data
      * @param {array} payload
      */
-    function onValidTplFetch(data, payload) {
+    function onValidTplFetch(data, options, payload) {
         var templates = payload.templates;
 
         _.forEach(templates, function(template, key){
@@ -1748,7 +1755,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 renderTemplates({
                     template: compiled,
                     selector: key
-                }, data);
+                }, data, options);
             }
         });
     }
@@ -1758,12 +1765,13 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @param {array} templateKeys
      * @param {object} data
+     * @param options
      */
-    function tplFetch(templateKeys, data)
+    function tplFetch(templateKeys, data, options)
     {
         if (!_.isEmpty(templateKeys)) {
             post(getBaseUrl() + 'common/template', {keys: templateKeys}, {
-                valid: _.partial(onValidTplFetch, data)
+                valid: _.partial(onValidTplFetch, data, options)
             });
         }
     }
@@ -2450,6 +2458,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         splitWordIntoVowelsAndConsonants: splitWordIntoVowelsAndConsonants,
         hasFuzzyStringMatch: hasFuzzyStringMatch,
         tpl: tpl,
+        preloadTemplate: preloadTemplate,
         lazy: lazy,
         validateProperName: validateProperName,
         validateFullName: validateFullName,
