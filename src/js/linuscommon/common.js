@@ -384,8 +384,6 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                 //If some data is invalid, skip it, and alert New Relic.
                 if (_.isError(newCspData)) {
-                    sendNewRelicError('Failed CSP: '+$element.prop('outerHTML'));
-
                     //Continue to the next element.
                     return;
                 }
