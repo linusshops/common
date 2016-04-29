@@ -2309,7 +2309,8 @@ linus.common = linus.common || (function($, _, Dependencies)
     function setCookie(name, value, seconds)
     {
         var expiry = new Date();
-        expiry.setTime(expiry.getTime()+seconds);
+        //SetTime expects milliseconds
+        expiry.setTime(expiry.getTime()+ (seconds*1000));
 
         document.cookie = name+'='+value+'; expires='+expiry.toGMTString()+'; path=/';
     }
