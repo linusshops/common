@@ -41,6 +41,10 @@
                     <type>js</type>
                     <name>linuscommon/common.js</name>
                 </action>
+                <action method="addItem">
+                    <type>js</type>
+                    <name>linuscommon/common.cachebust.1.js</name>
+                </action>
             </reference>
         </reference>
     </linus_common_head_js_common>
