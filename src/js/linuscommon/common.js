@@ -384,8 +384,6 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                 //If some data is invalid, skip it, and alert New Relic.
                 if (_.isError(newCspData)) {
-                    sendNewRelicError('Failed CSP: '+$element.prop('outerHTML'));
-
                     //Continue to the next element.
                     return;
                 }
@@ -1587,8 +1585,11 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} data - The data to apply to the template. If false or undefined, tpl
      * will not render any data, but will download and parse the template if it
      * is not already available from the cache.
+     * @param {Object} options - Additional options to control tpl actions
+     *      options.allowPrefetchRender: Controls whether a tpl will have prefetch data
+     *              injected when no data is passed. Default is true.
      */
-    function tpl(templateKeys, data)
+    function tpl(templateKeys, data, options)
     {
         //Strip any empty keys
         if (_.isArray(templateKeys)) {
@@ -1606,6 +1607,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         if (_.isUndefined(data)) {
             data = false;
         }
+
+        if (_.isUndefined(options)) {
+            options = {};
+        }
+
+        options = _.defaultsDeep(options, {
+            allowPrefetchRender: true
+        });
 
         if (!_.isArray(templateKeys)) {
             templateKeys = [templateKeys];
@@ -1643,8 +1652,15 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         fetchTemplateKeys = _.uniq(fetchTemplateKeys);
 
-        tplFetch(fetchTemplateKeys, data);
-        renderTemplates(localTemplates, data);
+        tplFetch(fetchTemplateKeys, data, options);
+        renderTemplates(localTemplates, data, options);
+    }
+
+    function preloadTemplate(templateKeys)
+    {
+        tpl(templateKeys, false, {
+            allowPrefetchRender: false
+        });
     }
 
     function getTplPrefetchedData(key)
@@ -1658,7 +1674,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         return _.isError(data) || _.isNull(data) ? false : JSON.parse(data);
     }
 
-    function renderTemplates(templates, data)
+    function renderTemplates(templates, data, options)
     {
         if (!_.size(templates)) {
             return;
@@ -1666,6 +1682,12 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         if (!_.isArray(templates)) {
             templates = [templates];
+        }
+
+        if (_.isUndefined(options)) {
+            options = {
+                allowPrefetchRender: true
+            };
         }
 
         //If we're prefetching, check local storage for cached data for prefetch.
@@ -1690,15 +1712,17 @@ linus.common = linus.common || (function($, _, Dependencies)
             });
         } else {
             _.forEach(templates, function(template) {
-                var key = _.get(template, 'selector');
-                data = getTplPrefetchedData(key);
+                if (options.allowPrefetchRender) {
+                    var key = _.get(template, 'selector');
+                    data = getTplPrefetchedData(key);
 
-                if (data) {
-                    tplRender(
-                        data,
-                        _.get(template, 'template'),
-                        key
-                    );
+                    if (data) {
+                        tplRender(
+                            data,
+                            _.get(template, 'template'),
+                            key
+                        );
+                    }
                 }
             });
         }
@@ -1710,7 +1734,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} data
      * @param {array} payload
      */
-    function onValidTplFetch(data, payload) {
+    function onValidTplFetch(data, options, payload) {
         var templates = payload.templates;
 
         _.forEach(templates, function(template, key){
@@ -1729,7 +1753,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                 renderTemplates({
                     template: compiled,
                     selector: key
-                }, data);
+                }, data, options);
             }
         });
     }
@@ -1739,12 +1763,13 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @param {array} templateKeys
      * @param {object} data
+     * @param options
      */
-    function tplFetch(templateKeys, data)
+    function tplFetch(templateKeys, data, options)
     {
         if (!_.isEmpty(templateKeys)) {
             post(getBaseUrl() + 'common/template', {keys: templateKeys}, {
-                valid: _.partial(onValidTplFetch, data)
+                valid: _.partial(onValidTplFetch, data, options)
             });
         }
     }
@@ -2432,6 +2457,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         splitWordIntoVowelsAndConsonants: splitWordIntoVowelsAndConsonants,
         hasFuzzyStringMatch: hasFuzzyStringMatch,
         tpl: tpl,
+        preloadTemplate: preloadTemplate,
         lazy: lazy,
         validateProperName: validateProperName,
         validateFullName: validateFullName,
