@@ -1240,6 +1240,28 @@ linus.common = linus.common || (function($, _, Dependencies)
         return validTelephone;
     }
 
+    /**
+     * Determine whether a string has at least n digits in length.
+     *
+     * This is useful to determine, for example, whether a telephone has at
+     * least ten digits irregardless of other nonsense in the string.
+     *
+     * @param string
+     * @param numberOfDigits int - Default of 0.
+     *
+     * @returns {boolean}
+     */
+    function hasAtLeastNDigits(string, numberOfDigits)
+    {
+        if (!_.isNumber(numberOfDigits)) {
+            numberOfDigits = 0;
+        }
+
+        var digitsOnly = string.replace(/[^\d]/g, '');
+
+        return (digitsOnly.length >= numberOfDigits)
+    }
+
     function validateCardVerificationNumber(cvn)
     {
         var validCvn = false;
@@ -2465,6 +2487,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         validateCompanyName: validateCompanyName,
         validateAddressLine: validateAddressLine,
         validateTelephone: validateTelephone,
+        hasAtLeastNDigits: hasAtLeastNDigits,
         stripRedundantSpaces: stripRedundantSpaces,
         stripAllSpaces: stripAllSpaces,
         getPartsFromSpacedString: getPartsFromSpacedString,
