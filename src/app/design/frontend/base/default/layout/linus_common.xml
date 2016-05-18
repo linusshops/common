@@ -6,7 +6,7 @@
             <reference name="head">
                 <action method="addItem">
                     <type>js</type>
-                    <name>linuscommon/jquery-1.11.3.min.js</name>
+                    <name>linuscommon/jquery-2.2.3.min.js</name>
                 </action>
             </reference>
         </reference>
