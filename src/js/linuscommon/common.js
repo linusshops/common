@@ -2241,7 +2241,7 @@ linus.common = linus.common || (function($, _, Dependencies)
             fuzzyMatchUncertaintyPercentageTolerance = 25;
         }
 
-        var symmetricDifference = _.xor(properlySpelledWord, possiblyMisspelledWord);
+        var symmetricDifference = _.xor(properlySpelledWord.split(''), possiblyMisspelledWord.split(''));
         var fuzzyMatchUncertaintyPercentage = _.ceil(
             (_.size(symmetricDifference) / _.size(possiblyMisspelledWord)) * 100
         );
