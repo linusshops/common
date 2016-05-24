@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-lodash strict -o ./src/js/linuscommon/lodash-4.12.0.custom.min.js -p include="\
+lodash strict -o ./src/js/linuscommon/lodash-4.13.1.custom.min.js -p include="\
 noConflict,\
 has,\
 get,\
