@@ -8,6 +8,15 @@
                     <type>js</type>
                     <name>linuscommon/jquery-2.2.3.min.js</name>
                 </action>
+                <!--Activate to check for jquery 1-2 upgrade issues-->
+                <!--<action method="addItem">-->
+                    <!--<type>js</type>-->
+                    <!--<name>linuscommon/jquery-migrate-1.3.0.js</name>-->
+                <!--</action>-->
+                <action method="addItem">
+                    <type>js</type>
+                    <name>linuscommon/jquery-adapter.js</name>
+                </action>
             </reference>
         </reference>
     </linus_common_head_js_jquery>
@@ -17,7 +26,7 @@
             <reference name="head">
                 <action method="addItem">
                     <type>js</type>
-                    <name>linuscommon/lodash-4.12.0.custom.min.js</name>
+                    <name>linuscommon/lodash-4.13.1.custom.min.js</name>
                 </action>
             </reference>
         </reference>
