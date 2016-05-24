@@ -17,6 +17,7 @@
  * Used by: bazaarvoice
  * 
  * @deprecated
+ * @shameful
  * @param loadFunction Function to execute when this event fires.
  */
 jQuery.fn.load = function(loadFunction) {
