@@ -4,6 +4,10 @@
  *
  * Internal LinusShops code should NEVER have a dependency on anything in here.
  * In an ideal world, we will eventually delete this code.
+ *
+ * If you depend on this, you will be subjected to the procession of shame.
+ * http://imgur.com/0eOD4Lk
+ *
  * @author Sam Schmidt <samuel@dersam.net>
  */
 
