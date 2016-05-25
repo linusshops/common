@@ -44,7 +44,6 @@ set,\
 filter,\
 attempt,\
 isError,\
-first,\
 take,\
 partition,\
 sortBy,\
