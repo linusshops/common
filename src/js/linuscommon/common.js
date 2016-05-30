@@ -2153,7 +2153,9 @@ linus.common = linus.common || (function($, _, Dependencies)
                         }
 
                         if ($radio) {
-                            $node.prop('checked', true);
+                            $node
+                                .prop('checked', true)
+                                .trigger('click');
                         }
 
                         $node.focus();
