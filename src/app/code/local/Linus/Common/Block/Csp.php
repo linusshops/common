@@ -21,6 +21,7 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
             'baseUrl' => $this->getBaseUrl(),
             'formKey' => Mage::getSingleton('core/session')->getFormKey(),
             'jsUrl' => $this->getJsUrl(),
+            'storeCode' => Mage::app()->getStore()->getCode(),
             'locale' => Mage::app()->getLocale()->getLocaleCode(),
             'mediaUrl' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA),
             'skinUrl' => $this->getSkinUrl(),
