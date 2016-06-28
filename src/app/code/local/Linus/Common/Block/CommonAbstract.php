@@ -18,16 +18,6 @@ abstract class Linus_Common_Block_CommonAbstract extends Mage_Core_Block_Templat
     }
 
     /**
-     * Quick access to linus_common/csp helpers.
-     *
-     * @return Linus_Common_Helper_Csp
-     */
-    public function CommonCsp()
-    {
-        return Mage::helper('linus_common/csp');
-    }
-
-    /**
      * Quick access to linus_common/cms helpers.
      *
      * @return Linus_Common_Helper_Cms

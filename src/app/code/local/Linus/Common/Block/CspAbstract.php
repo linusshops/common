@@ -1,16 +1,11 @@
 <?php
 
 /**
- * Class Linus_Common_Helper_Csp
- *
- * CSP helpers allow simple data to be securely passed to JavaScript without
- * the need to include inline JavaScript blocks. This is the first half of
- * the implementation; the second half exists in common.js, which includes its
- * own set of helpers for quickly grabbing this data.
+ * CSP block for handling CSP data blocks and setting their type.
  *
  * @author Dane MacMillan <work@danemacmillan.com>
  */
-class Linus_Common_Helper_Csp extends Mage_Core_Helper_Abstract
+abstract class Linus_Common_Block_CspAbstract extends Linus_Common_Block_CommonAbstract
 {
     /**
      * Hold arbitrary data to be encoded for CSP methods on frontend.
@@ -20,7 +15,7 @@ class Linus_Common_Helper_Csp extends Mage_Core_Helper_Abstract
      *
      * @var array
      */
-    private $cspData = array();
+    protected $cspData = [];
 
     /**
      * CSS selector class name that JavaScript will target.
@@ -128,4 +123,23 @@ class Linus_Common_Helper_Csp extends Mage_Core_Helper_Abstract
             '__' => $mergedTranslations
         ));
     }
+
+    /**
+     * Insert base CSP data at reference `after_body_start`.
+     *
+     * Modules that define their own CSP data can override the defaults set
+     * here.
+     *
+     * @return string
+     */
+    public function outputCspData()
+    {
+        $this->defineCspData();
+        return $this->generateHiddenCspMarkup();
+    }
+
+    /**
+     * Defines the CSP data to be encoded in this block.
+     */
+    abstract public function defineCspData();
 }

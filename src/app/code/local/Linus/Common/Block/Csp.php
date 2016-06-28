@@ -1,23 +1,40 @@
 <?php
 
 /**
- * CSP block for handling CSP data blocks and setting their type.
  *
- * @author Dane MacMillan <work@danemacmillan.com>
+ *
+ * @author Sam Schmidt <samuel@dersam.net>
+ * @since 2016-06-27
  */
-class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
+class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
 {
-    /**
-     * Insert base CSP data at reference `after_body_start`.
-     *
-     * Modules that define their own CSP data can override the defaults set
-     * here.
-     *
-     * @return string
-     */
-    public function outputBaseCspData()
+    public function defineCspData()
     {
-        $this->CommonCsp()->setCspData(array(
+        $blocks = Mage::app()->getLayout()->getAllBlocks();
+        $commonTplChecksums = array();
+
+        /**
+         * Find all tpl blocks, md5 them, and add this
+         * hash list to the page CSP data for use by the common.js tpl cache. These
+         * hashes allow the tpl cache in window.localStorage to determine if a
+         * locally cached template must be invalidated.
+         *
+         * @var string $identifier
+         * @var Mage_Core_Block_Abstract $block
+         */
+        foreach ($blocks as $identifier => $block) {
+            //If the block class is the Tpl block class, or if it is a child,
+            //add the block identifier and hash to template csp.
+            if (get_class($block) == 'Linus_Common_Block_Tpl'
+                || in_array('Linus_Common_Block_Tpl', class_parents($block))
+            ) {
+                $block->setRenderMode('tpl');
+                $commonTplChecksums[$identifier] = md5($block->toHtml());
+                $block->setRenderMode('magento');
+            }
+        };
+
+        $this->setCspData([
             'baseUrl' => $this->getBaseUrl(),
             'formKey' => Mage::getSingleton('core/session')->getFormKey(),
             'jsUrl' => $this->getJsUrl(),
@@ -29,9 +46,8 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
             'uenc' => Mage::helper('core')->urlEncode(rtrim($this->getBaseUrl(), '/') . $this->getRequest()->getRequestString()),
             'isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn(),
             'isDeveloperMode' => Mage::getIsDeveloperMode(),
-            'customerId' => Mage::getSingleton('customer/session')->getCustomerId()
-        ));
-
-        return $this->CommonCsp()->generateHiddenCspMarkup();
+            'customerId' => Mage::getSingleton('customer/session')->getCustomerId(),
+            'commonTplChecksums' => $commonTplChecksums
+        ]);
     }
 }

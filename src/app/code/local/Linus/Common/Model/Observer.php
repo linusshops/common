@@ -239,40 +239,6 @@ class Linus_Common_Model_Observer
     }
 
     /**
-     * Before layout is rendered, find all tpl blocks, md5 them, and add this
-     * hash list to the page CSP data for use by the common.js tpl cache. These
-     * hashes allow the tpl cache in window.localStorage to determine if a
-     * locally cached template must be invalidated.
-     *
-     * @param Varien_Event_Observer $observer
-     */
-    public function onControllerActionLayoutRenderBefore(Varien_Event_Observer $observer)
-    {
-        $blocks = Mage::app()->getLayout()->getAllBlocks();
-        $cspData = array();
-
-        /**
-         * @var string $identifier
-         * @var Mage_Core_Block_Abstract $block
-         */
-        foreach ($blocks as $identifier => $block) {
-            //If the block class is the Tpl block class, or if it is a child,
-            //add the block identifier and hash to template csp.
-            if (get_class($block) == 'Linus_Common_Block_Tpl'
-                || in_array('Linus_Common_Block_Tpl', class_parents($block))
-            ) {
-                $block->setRenderMode('tpl');
-                $cspData[$identifier] = md5($block->toHtml());
-                $block->setRenderMode('magento');
-            }
-        };
-
-        Mage::helper('linus_common/csp')->setCspData(array(
-            'commonTplChecksums' => $cspData
-        ));
-    }
-
-    /**
      * Allow targeting cms pages via layout xml. The handle will be of the form:
      * cms_cmsIdentifier.
      *
