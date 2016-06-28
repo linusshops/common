@@ -135,62 +135,51 @@ workflow is outlined below.
 
 ###### Backend
 
-It is recommended that these methods are used in a Magento `Block`, and then
-called from that block's corresponding template.
+Common provides a block and template to simplify usage of CSP. The general process
+to utilize CSP in a module is to create a new block that extends `Linus_Common_Block_CspAbstract`.
+Implement `defineCspData` to declare the data to be included on the page.
+Once the block has been created, it must then be added to the layout. Using the
+`linuscommon/csp.phtml` template will take care of including the data in the page.
+See Linus_Common_Block_Csp for an example implementation.
+
+Multidimensional arrays are valid, and recommended to use to namespace your
+module data to avoid unwanted conflicts and overwrites on the frontend.
 
 ```php
-/**
- * Set and generate the CSP data to be used by frontend.
- *
- * This depends on Common.
- *
- * @return string
- * @throws Mage_Core_Exception
- */
-public function insertHiddenCspMarkup()
+class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
 {
-    /** @var Linus_Common_Helper_Data $Common */
-    $CommonCsp = Mage::helper('linus_common/csp');
+    public function defineCspData()
+    {
+        $this->setTranslationString([
+            'Checkout' => null
+        ]);
 
-    // Set general CSP data.
-    $CommonCsp->setCspData(array(
-        'baseUrl' => $this->getBaseUrl(),
-        'cartUrlTemplate' => $this->cartUrlTemplateAddItem,
-        'uenc' => Mage::helper('core')->urlEncode(Mage::app()->getStore()->getBaseUrl()),
-        'formKey' => Mage::getSingleton('core/session')->getFormKey()
-    ));
-    
-    // Set more data. This merges with previously set data.
-    $CommonCsp->setCspData(array(
-        'baseUrl' => '//example.com/', // Overwrites
-        'newData' => 'abcdefg' // Merges new
-    ));
-
-    // Set translation data. Passing a null value will use the key as value
-    // and then pass to Magento's internal translation helper.
-    $CommonCsp->setCspTranslation(array(
-        'Add to Cart' => null,
-        'searching' => Mage::helper('core')->__('Looking'),
-        'Adding item' => null,
-        'Item added' => null,
-        'Error adding' => null,
-        'Out of stock' => null
-    ));
-    
-    // Redefine a translation string later on.
-    $CommonCsp->setCspTranslation(array(
-        'Out of stock' => Mage::helper('core')->__('Product unavailable')
-    ));
-
-    return $CommonCsp->generateHiddenCspMarkup();
+        $this->setCspData([
+            'baseUrl' => $this->getBaseUrl(),
+            'formKey' => Mage::getSingleton('core/session')->getFormKey(),
+            'jsUrl' => $this->getJsUrl(),
+            'storeCode' => Mage::app()->getStore()->getCode(),
+            'locale' => Mage::app()->getLocale()->getLocaleCode(),
+            'mediaUrl' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA),
+            'skinUrl' => $this->getSkinUrl(),
+            'storeUrl' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+            'uenc' => Mage::helper('core')->urlEncode(rtrim($this->getBaseUrl(), '/') . $this->getRequest()->getRequestString()),
+            'isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn(),
+            'isDeveloperMode' => Mage::getIsDeveloperMode(),
+            'customerId' => Mage::getSingleton('customer/session')->getCustomerId(),
+            'commonTplChecksums' => $commonTplChecksums
+            'sample' => [
+                'data' => 'here'
+            ]
+        ]);
+    }
 }
 ```
 
-```html+php
-<div class="linus-section">
-    <h1 class="linus-head"><i class="fa fa-cube"></i> <?php echo $this->__('Linus Title'); ?></h1>
-    <?php echo $this->insertHiddenCspMarkup(); ?>
-</div>
+Add the block to your module's layout.xml. The type should be the type of the
+block that you created.
+```xml
+<block type="linus_sample/csp" name="csp_sample" template="linuscommon/csp.phtml"/>
 ```
 
 ###### Frontend
@@ -200,6 +189,11 @@ corresponding `CSP` methods for retrieving the data passed to the frontend.
 
 The node containing the CSP data will be removed, as it should only be
 consumed using Common helpers.
+
+If a key is replicated in several CSP blocks, the last one to be included on
+the page will be the winner. This can be leveraged to allow a module to overwrite
+an individual key of another module.  If this behavior is not desired, namespace
+your data in nested objects, and retrieve it with dot notation (see example below)
 
 ```javascript
 var example = example || (function($, Common)
@@ -212,6 +206,9 @@ var example = example || (function($, Common)
         
         // Print out value of formKey.
         console.log(Common.getCspData('formKey'));
+
+        // Print out nested values
+        console.log(Common.getCspData('sample.data')); //will print 'here'
         
         // Print out translated version of Add to Cart. This uses the
         // wrapper defined below.
@@ -243,8 +240,7 @@ var example = example || (function($, Common)
 }(jQuery, linus.common || {}));
 ```
 
-Read the source for `Helper/Csp.php` for more information about the
-methods available to the backend. Read the source for `linus/common.js`g for
+Read the source for `linus/common.js` for
 more information about the methods available to the frontend.
 
 *No more messy script tags in templates with PHP embedded within inline
