@@ -355,6 +355,30 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get the currency code for the store.
+     *
+     * `CAD` is an example.
+     *
+     * @returns {string|Object|boolean}
+     */
+    function getCurrencyCode()
+    {
+        return getCspData('currencyCode');
+    }
+
+    /**
+     * Get the currency symbol for the store.
+     *
+     * `$` is a CAD currency symbol example.
+     *
+     * @returns {string|Object|boolean}
+     */
+    function getCurrencySymbol()
+    {
+        return getCspData('currencySymbol') || getCurrencyCode();
+    }
+
+    /**
      * Wrapper to get CSP data.
      *
      * Pass the key name to retrieve exact value, or pass nothing to get the
@@ -831,7 +855,7 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         Accounting.settings = {
             currency: {
-                symbol : '$',   // default currency symbol is '$'
+                symbol : getCurrencySymbol(), // default currency symbol is '$'
                 format: {
                     pos : '%s%v',
                     neg : '%s (%v)',
@@ -859,6 +883,19 @@ linus.common = linus.common || (function($, _, Dependencies)
             Accounting.settings.currency.thousand = ' ';
             Accounting.settings.number.decimal = ',';
             Accounting.settings.number.thousand = ' ';
+        }
+
+        if (getCurrencyCode() == 'SAR' || getLocale() == 'ar_SA') {
+            Accounting.settings.currency.format = {
+                pos : '%s%v',
+                neg : '%s (%v)',
+                zero: '%s0.00'
+            };
+
+            Accounting.settings.currency.decimal = '.';
+            Accounting.settings.currency.thousand = ',';
+            Accounting.settings.number.decimal = '.';
+            Accounting.settings.number.thousand = ',';
         }
     }
 

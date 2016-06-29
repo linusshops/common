@@ -29,7 +29,9 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CommonAbstract
             'uenc' => Mage::helper('core')->urlEncode(rtrim($this->getBaseUrl(), '/') . $this->getRequest()->getRequestString()),
             'isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn(),
             'isDeveloperMode' => Mage::getIsDeveloperMode(),
-            'customerId' => Mage::getSingleton('customer/session')->getCustomerId()
+            'customerId' => Mage::getSingleton('customer/session')->getCustomerId(),
+            'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
+            'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol()
         ));
 
         return $this->CommonCsp()->generateHiddenCspMarkup();
