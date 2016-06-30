@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * CSP block for handling CSP data blocks and setting their type.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-06-27
@@ -47,7 +47,11 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
             'isLoggedIn' => Mage::getSingleton('customer/session')->isLoggedIn(),
             'isDeveloperMode' => Mage::getIsDeveloperMode(),
             'customerId' => Mage::getSingleton('customer/session')->getCustomerId(),
-            'commonTplChecksums' => $commonTplChecksums
+            'commonTplChecksums' => $commonTplChecksums,
+            'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
+            'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol()
+        ));
+
         ]);
     }
 }
