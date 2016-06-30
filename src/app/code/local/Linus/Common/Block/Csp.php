@@ -50,8 +50,6 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
             'commonTplChecksums' => $commonTplChecksums,
             'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
             'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol()
-        ));
-
         ]);
     }
 }
