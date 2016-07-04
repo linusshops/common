@@ -194,6 +194,10 @@ class Linus_Common_Model_Observer
      * because they are library-level code, used universally, so they take
      * precedence over regular module assets in `skin_js`.
      *
+     * In addition to ordering all `linuscommon` assets before everything else,
+     * this will also ensure that any files that end in `last.(css|js)` also be
+     * moved to the end of the asset load stack.
+     *
      * @param Varien_Event_Observer $observer
      */
     public function onLinusCommonBlockBeforeHeadGetCssJsHtml(Varien_Event_Observer $observer)
@@ -203,14 +207,18 @@ class Linus_Common_Model_Observer
         $assets = $block->getItems();
 
         $commonAssets = array();
+        $lastCommonAssets = array();
         foreach ($assets as $assetKey => $assetValue) {
-            if (strpos($assetKey, '/linuscommon/') !== false) {
-                $commonAssets[$assetKey] = $assetValue;
+            if (preg_match('/.*last\.(js|css)$/', $assetKey)) {
                 unset($assets[$assetKey]);
+                $lastCommonAssets[$assetKey] = $assetValue;
+            } else if (strpos($assetKey, '/linuscommon/') !== false) {
+                unset($assets[$assetKey]);
+                $commonAssets[$assetKey] = $assetValue;
             }
         }
 
-        $block->setData('items', $commonAssets + $assets);
+        $block->setData('items', $commonAssets + $assets + $lastCommonAssets);
     }
 
     public function onAdminModelSaveAfter(Varien_Event_Observer $observer)

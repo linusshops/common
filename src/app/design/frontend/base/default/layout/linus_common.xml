@@ -60,9 +60,6 @@
                 <action method="addCss">
                     <stylesheet>css/linuscommon/common.css</stylesheet>
                 </action>
-                <action method="addCss">
-                    <stylesheet>css/linuscommon/last.css</stylesheet>
-                </action>
             </reference>
         </reference>
     </linus_common_head_css_common>
