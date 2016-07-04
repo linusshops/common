@@ -8,6 +8,14 @@
  * @author Dane MacMillan <work@danemacmillan.com>
  */
 
+.ltr {
+    direction: ltr;
+}
+
+.rtl {
+    direction: rtl;
+}
+
 /*
 For use with the common show/hide
 Hides and removes the element from the flow.
