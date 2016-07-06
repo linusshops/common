@@ -36,10 +36,36 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
         }
     }
 
+    /**
+     * This adds the locale as a class name on the body tag.
+     */
     public function addLocaleClassNameToBodyClass()
     {
-        $code = Mage::app()->getLocale()->getLocaleCode();
-        $this->addClassNameToBodyClass($code);
+        $localeCode = Mage::app()->getLocale()->getLocaleCode();
+        $this->addClassNameToBodyClass($localeCode);
+    }
+
+    /**
+     * Detect the locale and set the correct text direction code.
+     *
+     * For example, English is `ltr` direction, while Arabic is `rtl` direction.
+     * This is useful for targeting design changes.
+     */
+    public function addTextDirectionClassNameToBodyClass()
+    {
+        $textDirection = array(
+            'ar_SA' => 'rtl',
+            'en_US' => 'ltr',
+            'fr_FR' => 'ltr'
+        );
+
+        $localeCode = Mage::app()->getLocale()->getLocaleCode();
+
+        if ($localeCode
+            && array_key_exists($localeCode, $textDirection)
+        ) {
+            $this->addClassNameToBodyClass($textDirection[$localeCode]);
+        }
     }
 
     /**
