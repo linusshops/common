@@ -632,6 +632,20 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
     }
 
+    function toggle(selector)
+    {
+        if (_.isArray(selector)) {
+            _.map(selector, toggle);
+        } else {
+            selector = $(selector);
+            if (selector.hasClass('js-hidden') || selector.hasClass('js-invisible')) {
+                show(selector);
+            } else {
+                hide(selector);
+            }
+        }
+    }
+
     /**
      * Display an element for X seconds, then hide is
      * @param selector
@@ -2498,6 +2512,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         makeCspArray: makeCspArray,
         show: show,
         showUntil: showUntil,
+        toggle: toggle,
         translateAllTextIn: translateAllTextIn,
         use: use,
         addWebFont: addWebFont,
