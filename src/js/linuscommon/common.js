@@ -647,6 +647,23 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Add a class if it does not exist on the target, or remove it if it does.
+     *
+     * @param target selector to target for class modification
+     * @param className name of the class to look for
+     */
+    function toggleClass(target, className)
+    {
+        var $target = $(target);
+
+        if ($target.hasClass(className)) {
+            $target.removeClass(className);
+        } else {
+            $target.addClass(className);
+        }
+    }
+
+    /**
      * Display an element for X seconds, then hide is
      * @param selector
     * @param seconds
@@ -2513,6 +2530,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         show: show,
         showUntil: showUntil,
         toggle: toggle,
+        toggleClass: toggleClass,
         translateAllTextIn: translateAllTextIn,
         use: use,
         addWebFont: addWebFont,
