@@ -2514,6 +2514,11 @@ linus.common = linus.common || (function($, _, Dependencies)
         ], 'fa-exclamation-triangle');
     }
 
+    function clear()
+    {
+        $('.generic_status_message').empty();
+    }
+
     function displayMessage(messageText, styleClasses, icon)
     {
         tpl('.generic_status_message', {
@@ -2612,7 +2617,8 @@ linus.common = linus.common || (function($, _, Dependencies)
             display: displayMessage,
             success: success,
             notice: notice,
-            error: error
+            error: error,
+            clear: clear
         }
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
