@@ -680,7 +680,27 @@ represents the object provided to the template
 * `{{% }}` - evaluate, will execute javascript contained within. The `data` object
 is available, as well as Common and Lodash (as `_`).
 
+#### Messaging
+Common provides a way to display status messages in the page, similar to the Magento admin message block. In Magento, the message
+block id will vary depending on the page.  By binding to the `LinusCommonMessages:init`
+event and updating the `eventContainer`, the location of the messages can be
+modified on a per-page basis.
 
+Templating is done through tpl(), but is hidden from the consumer.
+
+```
+$('body').on('LinusCommonMessages:init', function(event, data){
+    data.messageContainer = '#messages_product_view';
+});
+
+linus.common.messages.success("This is a success styled message");
+
+//Message box with multiple classes, and an icon class.
+linus.common.messages.display(messageText, [
+            'alert',
+            'alert-warning'
+        ], 'fa-exclamation-triangle');
+```
 
 ## Authors
 

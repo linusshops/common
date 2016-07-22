@@ -2465,6 +2465,65 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Create messages similar to the top admin message block in Magento. By default,
+     * it will use the #admin_messages block. Different locations can be used by
+     * listening for the `LinusMessages:beforeInit` event and modifying the eventData
+     * parameter.  The init code fires on DeadLastReady, which ensures that every other
+     * module will have a chance to listen for this event before it fires (unless they
+     * are also using DeadLastReady, but that is unlikely).
+     *
+     * The different location is necessary as not every page is guaranteed to contain
+     * the same message block id (for example, the cart and product page both use a
+     * different id).
+     */
+    (function __messageInit(){
+        $(document).ready(function(){
+            preloadTemplate('generic_status_message');
+            deadLastReady(function(){
+                var eventData = {
+                    messageContainer: '#admin_messages'
+                };
+
+                $('body').trigger('LinusCommonMessages:init', eventData);
+
+                //Apply generic target class
+                $(eventData.messageContainer).addClass('generic_status_message')
+            });
+        });
+    })();
+
+    function success(messageText)
+    {
+        displayMessage(messageText, [
+            'success-msg'
+        ]);
+    }
+
+    function notice(messageText)
+    {
+        displayMessage(messageText, [
+            'alert',
+            'alert-warning'
+        ], 'fa-exclamation-triangle');
+    }
+
+    function error(messageText)
+    {
+        displayMessage(messageText, [
+            'error-msg'
+        ], 'fa-exclamation-triangle');
+    }
+
+    function displayMessage(messageText, styleClasses, icon)
+    {
+        tpl('.generic_status_message', {
+            message: messageText,
+            classes: styleClasses,
+            icon: icon
+        });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -2548,7 +2607,13 @@ linus.common = linus.common || (function($, _, Dependencies)
         hasCookie: hasCookie,
         getIsDeveloperMode: getIsDeveloperMode,
         deadLastReady: deadLastReady,
-        sendNewRelicError: sendNewRelicError
+        sendNewRelicError: sendNewRelicError,
+        messages: {
+            display: displayMessage,
+            success: success,
+            notice: notice,
+            error: error
+        }
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}
