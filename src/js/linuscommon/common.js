@@ -2504,14 +2504,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         displayMessage(messageText, [
             'alert',
             'alert-warning'
-        ], 'fa-exclamation-triangle');
+        ], 'fa fa-exclamation-triangle');
     }
 
     function error(messageText)
     {
         displayMessage(messageText, [
             'error-msg'
-        ], 'fa-exclamation-triangle');
+        ], 'fa fa-exclamation-triangle');
     }
 
     function clear()
