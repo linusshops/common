@@ -814,19 +814,68 @@ linus.common = linus.common || (function($, _, Dependencies)
     /**
      * Get all data values from a form's input body.
      *
-     * TODO: eventually provide a hijax helper for creating hijax requests,
-     * which will wrap the standard jQuery ajax method.
-     *
      * @param target HTML DOM node or jQuery object.
-     *
+     * @param reducer a processor function to convert the data (default: standardFormDataReducer)
      * @returns object
      */
-    function getFormData(target)
+    function getFormData(target, reducer)
     {
-        return $(target).closest('form').serializeArray().reduce(function(formObject, item) {
-            formObject[item.name] = item.value;
-            return formObject;
-        }, {});
+        if (_.isUndefined(reducer)) {
+            reducer = standardFormDataReducer;
+        }
+
+        return $(target).closest('form').serializeArray().reduce(reducer, {});
+    }
+
+    function getFormDataAsJson(target)
+    {
+        return getFormData(target, jsonFormDataReducer);
+    }
+
+    function standardFormDataReducer(formObject, item)
+    {
+        formObject[item.name] = item.value;
+        return formObject;
+    }
+
+    /**
+     * This will do more extensive processing on form data. Specifically, it will
+     * evaluate array name types as PHP generally does (example: cart[80][qty] will be
+     * turned into a nested structure).  This is useful when the form data is not
+     * being passed directly to the backend, but requires additional processing on
+     * the frontend.
+     *
+     * Detection is done by checking for the presence of square brackets in the
+     * key string. If no brackets are found, it will use the standard processor
+     * for the current item (standardFormDataReducer).
+     */
+    function jsonFormDataReducer(formObject, item)
+    {
+        var rawKey = item.name;
+
+        //Check if square brackets exist in the key string.
+        if (/[\[\]]/.match(rawKey)) {
+            var keyExtractor = /\[(.[^\]]+)\]/gi;
+            var keys = rawKey.match(keyExtractor);
+
+            var path = '';
+            _.forEach(keys, function (value, index) {
+                //Some browsers include the square brackets in the capture group.
+                //This will strip them leaving us with only the keys. If there are
+                //no square brackets in the string, nothing happens.
+                if (_.isString(value)) {
+                    keys[index] = value.replace(/[\[\]]/g, '');
+                }
+
+                path = (path=='') ? keys[index] : path+'.'+keys[index];
+            });
+
+            formObject = _.set(formObject, path, item.value);
+        } else {
+            formObject = standardFormDataReducer(formObject, item);
+        }
+
+        return formObject;
     }
 
     /**
@@ -2568,6 +2617,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         disableWebFonts: disableWebFonts,
         htmlentityDecode: htmlentityDecode,
         getFormData: getFormData,
+        getFormDataAsJson: getFormDataAsJson,
         getFormattedNumber: getFormattedNumber,
         getFormattedPrice: getFormattedPrice,
         getPriceAsInt: getPriceAsInt,
