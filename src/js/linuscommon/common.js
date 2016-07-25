@@ -855,7 +855,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         //Check if square brackets exist in the key string.
         if (/[\[\]]/.match(rawKey)) {
-            var keyExtractor = /\[(.[^\]]+)\]/gi;
+            var keyExtractor = /\[([^\]]+)\]/gi;
             var keys = rawKey.match(keyExtractor);
 
             var path = '';
