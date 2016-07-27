@@ -1561,12 +1561,21 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         callbacks.limbo(requestData);
 
+        var onResponseFail = _.curry(onAjaxError)(mem, generateHash(endpoint, method, requestData), callbacks);
+
         mem.ajax(endpoint, method, requestData, callbacks.timeout())
             .done(function(responseData, textStatus, jqXHR) {
                 var error = _.get(responseData, 'error');
                 var feedback = _.get(responseData, 'feedback');
                 var payload = _.get(responseData, 'payload');
                 var tplSelectors = _.get(responseData, 'tpl', '');
+
+                //Common.ajax requires usage of the standard JSON response format.
+                //If this format is not used, consider the response an error.
+                if (_.isUndefined(error)) {
+                    onResponseFail(responseData, textStatus, undefined);
+                    return;
+                }
 
                 if (_.isNumber(error) && _.size(payload)) {
                     if (!_.isArray(tplSelectors) && _.size(tplSelectors)) {
@@ -1597,16 +1606,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     callbacks.invalid(payload, feedback, textStatus, jqXHR);
                 }
             })
-            .fail(function(responseData, textStatus, errorThrown) {
-                mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
-
-                var jqXHR = responseData;
-                if (_.has(jqXHR, 'responseJSON.payload')) {
-                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), _.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
-                }
-
-                callbacks.error(jqXHR, textStatus, errorThrown);
-            })
+            .fail(onResponseFail)
             .always(function (responseData, textStatus, errorThrown) {
                 var standardResponse = responseData;
                 if (_.has(responseData, 'responseJSON.payload')) {
@@ -1639,6 +1639,18 @@ linus.common = linus.common || (function($, _, Dependencies)
                     console.log(standardResponse);
                 }
             });
+    }
+
+    function onAjaxError(memoizer, hash, callbacks, responseData, textStatus, errorThrown)
+    {
+        memoizer.ajax.cache.delete(hash);
+
+        var jqXHR = responseData;
+        if (_.has(jqXHR, 'responseJSON.payload')) {
+            callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), _.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
+        }
+
+        callbacks.error(jqXHR, textStatus, errorThrown);
     }
 
     /**
