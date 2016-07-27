@@ -49,5 +49,7 @@ partition,\
 sortBy,\
 difference,\
 xor,\
-ceil\
+ceil,\
+curry,\
+curryRight\
 "

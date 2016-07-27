@@ -814,19 +814,68 @@ linus.common = linus.common || (function($, _, Dependencies)
     /**
      * Get all data values from a form's input body.
      *
-     * TODO: eventually provide a hijax helper for creating hijax requests,
-     * which will wrap the standard jQuery ajax method.
-     *
      * @param target HTML DOM node or jQuery object.
-     *
+     * @param reducer a processor function to convert the data (default: standardFormDataReducer)
      * @returns object
      */
-    function getFormData(target)
+    function getFormData(target, reducer)
     {
-        return $(target).closest('form').serializeArray().reduce(function(formObject, item) {
-            formObject[item.name] = item.value;
-            return formObject;
-        }, {});
+        if (_.isUndefined(reducer)) {
+            reducer = standardFormDataReducer;
+        }
+
+        return $(target).closest('form').serializeArray().reduce(reducer, {});
+    }
+
+    function getFormDataAsJson(target)
+    {
+        return getFormData(target, jsonFormDataReducer);
+    }
+
+    function standardFormDataReducer(formObject, item)
+    {
+        formObject[item.name] = item.value;
+        return formObject;
+    }
+
+    /**
+     * This will do more extensive processing on form data. Specifically, it will
+     * evaluate array name types as PHP generally does (example: cart[80][qty] will be
+     * turned into a nested structure).  This is useful when the form data is not
+     * being passed directly to the backend, but requires additional processing on
+     * the frontend.
+     *
+     * Detection is done by checking for the presence of square brackets in the
+     * key string. If no brackets are found, it will use the standard processor
+     * for the current item (standardFormDataReducer).
+     */
+    function jsonFormDataReducer(formObject, item)
+    {
+        var rawKey = item.name;
+
+        //Check if square brackets exist in the key string.
+        if (/[\[\]]/.match(rawKey)) {
+            var keyExtractor = /\[([^\]]+)\]/gi;
+            var keys = rawKey.match(keyExtractor);
+
+            var path = '';
+            _.forEach(keys, function (value, index) {
+                //Some browsers include the square brackets in the capture group.
+                //This will strip them leaving us with only the keys. If there are
+                //no square brackets in the string, nothing happens.
+                if (_.isString(value)) {
+                    keys[index] = value.replace(/[\[\]]/g, '');
+                }
+
+                path = (path=='') ? keys[index] : path+'.'+keys[index];
+            });
+
+            formObject = _.set(formObject, path, item.value);
+        } else {
+            formObject = standardFormDataReducer(formObject, item);
+        }
+
+        return formObject;
     }
 
     /**
@@ -1512,12 +1561,21 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         callbacks.limbo(requestData);
 
+        var onResponseFail = _.curry(onAjaxError)(mem, generateHash(endpoint, method, requestData), callbacks);
+
         mem.ajax(endpoint, method, requestData, callbacks.timeout())
             .done(function(responseData, textStatus, jqXHR) {
                 var error = _.get(responseData, 'error');
                 var feedback = _.get(responseData, 'feedback');
                 var payload = _.get(responseData, 'payload');
                 var tplSelectors = _.get(responseData, 'tpl', '');
+
+                //Common.ajax requires usage of the standard JSON response format.
+                //If this format is not used, consider the response an error.
+                if (_.isUndefined(error)) {
+                    onResponseFail(responseData, textStatus, undefined);
+                    return;
+                }
 
                 if (_.isNumber(error) && _.size(payload)) {
                     if (!_.isArray(tplSelectors) && _.size(tplSelectors)) {
@@ -1548,16 +1606,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     callbacks.invalid(payload, feedback, textStatus, jqXHR);
                 }
             })
-            .fail(function(responseData, textStatus, errorThrown) {
-                mem.ajax.cache.delete(generateHash(endpoint, method, requestData));
-
-                var jqXHR = responseData;
-                if (_.has(jqXHR, 'responseJSON.payload')) {
-                    callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), _.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
-                }
-
-                callbacks.error(jqXHR, textStatus, errorThrown);
-            })
+            .fail(onResponseFail)
             .always(function (responseData, textStatus, errorThrown) {
                 var standardResponse = responseData;
                 if (_.has(responseData, 'responseJSON.payload')) {
@@ -1590,6 +1639,18 @@ linus.common = linus.common || (function($, _, Dependencies)
                     console.log(standardResponse);
                 }
             });
+    }
+
+    function onAjaxError(memoizer, hash, callbacks, responseData, textStatus, errorThrown)
+    {
+        memoizer.ajax.cache.delete(hash);
+
+        var jqXHR = responseData;
+        if (_.has(jqXHR, 'responseJSON.payload')) {
+            callbacks.invalid(_.get(jqXHR, 'responseJSON.payload'), _.get(jqXHR, 'responseJSON.feedback'), textStatus, errorThrown);
+        }
+
+        callbacks.error(jqXHR, textStatus, errorThrown);
     }
 
     /**
@@ -2465,6 +2526,70 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Create messages similar to the top admin message block in Magento. By default,
+     * it will use the #admin_messages block. Different locations can be used by
+     * listening for the `LinusMessages:beforeInit` event and modifying the eventData
+     * parameter.  The init code fires on DeadLastReady, which ensures that every other
+     * module will have a chance to listen for this event before it fires (unless they
+     * are also using DeadLastReady, but that is unlikely).
+     *
+     * The different location is necessary as not every page is guaranteed to contain
+     * the same message block id (for example, the cart and product page both use a
+     * different id).
+     */
+    (function __messageInit(){
+        $(document).ready(function(){
+            preloadTemplate('generic_status_message');
+            deadLastReady(function(){
+                var eventData = {
+                    messageContainer: '#admin_messages'
+                };
+
+                $('body').trigger('LinusCommonMessages:init', eventData);
+
+                //Apply generic target class
+                $(eventData.messageContainer).addClass('generic_status_message')
+            });
+        });
+    })();
+
+    function success(messageText)
+    {
+        displayMessage(messageText, [
+            'success-msg'
+        ]);
+    }
+
+    function notice(messageText)
+    {
+        displayMessage(messageText, [
+            'alert',
+            'alert-warning'
+        ], 'fa fa-exclamation-triangle');
+    }
+
+    function error(messageText)
+    {
+        displayMessage(messageText, [
+            'error-msg'
+        ], 'fa fa-exclamation-triangle');
+    }
+
+    function clear()
+    {
+        $('.generic_status_message').empty();
+    }
+
+    function displayMessage(messageText, styleClasses, icon)
+    {
+        tpl('.generic_status_message', {
+            message: messageText,
+            classes: styleClasses,
+            icon: icon
+        });
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -2504,6 +2629,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         disableWebFonts: disableWebFonts,
         htmlentityDecode: htmlentityDecode,
         getFormData: getFormData,
+        getFormDataAsJson: getFormDataAsJson,
         getFormattedNumber: getFormattedNumber,
         getFormattedPrice: getFormattedPrice,
         getPriceAsInt: getPriceAsInt,
@@ -2548,7 +2674,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         hasCookie: hasCookie,
         getIsDeveloperMode: getIsDeveloperMode,
         deadLastReady: deadLastReady,
-        sendNewRelicError: sendNewRelicError
+        sendNewRelicError: sendNewRelicError,
+        messages: {
+            display: displayMessage,
+            success: success,
+            notice: notice,
+            error: error,
+            clear: clear
+        }
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
     Accounting: accounting || {}

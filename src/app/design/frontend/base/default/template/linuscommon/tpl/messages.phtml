@@ -1,0 +1,6 @@
+<div class="{{% _.forEach(data.classes, function(value){ }} {{value}} {{% }); }}">
+    {{% if (!_.isUndefined(data.icon)) { }}
+    <i class="{{data.icon}}"></i>
+    {{% } }}
+    {{data.message}}
+</div>
