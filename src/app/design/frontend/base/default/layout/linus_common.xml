@@ -73,6 +73,12 @@
         </reference>
     </linus_common_csp_block>
 
+    <linus_common_tpl_inline>
+        <reference name="content">
+            <block type="linus_common/tpl_inline" name="linus_common_tpl_inline" template="linuscommon/tpl.phtml"/>
+        </reference>
+    </linus_common_tpl_inline>
+
     <default>
         <!-- Reference this block for calling action methods from a handle. -->
         <block type="linus_common/common" name="linus_common" as="linus_common"/>
@@ -84,6 +90,7 @@
         <update handle="linus_common_csp_block"/>
         <update handle="linus_common_head_css_common"/>
         <update handle="linus_common_head_js_common"/>
+        <update handle="linus_common_tpl_inline"/>
     </default>
 
 </layout>

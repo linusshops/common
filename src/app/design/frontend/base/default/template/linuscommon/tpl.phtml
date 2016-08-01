@@ -1,0 +1,19 @@
+<?php
+/**
+ *
+ *
+ * @author Sam Schmidt <samuel@dersam.net>
+ * @since 2016-08-01
+ */
+?>
+<div id="common-inline-templates">
+<?php foreach ($this as $block): ?>
+    <?php
+    $html = $block->toHtml();
+    $hash = md5($html);
+    ?>
+    <template id="tpl-id-<?= $block->getNameInLayout() ?>" data-tpl-hash="<?= $hash ?>">
+    <?= $html ?>
+    </template>
+<?php endforeach ?>
+</div>

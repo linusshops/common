@@ -1885,6 +1885,24 @@ linus.common = linus.common || (function($, _, Dependencies)
             }
         }
 
+        //Check inline templates. If it exists, pull it out and compile.
+        if ($('#common-inline-templates').length > 0) {
+            var inlineTemplate = $('#tpl-id-'+templateKey.replace('#', ''));
+
+            if (inlineTemplate.length > 0) {
+                var tempDiv = document.createElement('div');
+                var node = document.importNode(inlineTemplate[0].content, true);
+                tempDiv.appendChild(node);
+
+                var inlineChecksum = inlineTemplate.attr('data-tpl-hash');
+                var compiledInlineTemplate = tplCompile(templateKey, tempDiv.innerHTML, inlineChecksum);
+                if (!_.isError(compiledInlineTemplate)) {
+                    storeMemoryTpl(templateKey, inlineChecksum, compiledInlineTemplate);
+                }
+                return compiledInlineTemplate;
+            }
+        }
+
         //Check local storage (if available), then check hashes
         //Invalidate and delete as necessary
         //If template exists and is not invalid, load it into memory
