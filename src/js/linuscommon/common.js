@@ -1739,6 +1739,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} options - Additional options to control tpl actions
      *      options.allowPrefetchRender: Controls whether a tpl will have prefetch data
      *              injected when no data is passed. Default is true.
+     *      options.target: if set, the template will be rendered to the given
+     *              target, rather than the match of the provided templateKey.
      */
     function tpl(templateKeys, data, options)
     {
@@ -1844,10 +1846,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
             _.forEach(templates, function (template) {
+                var targetSelector = _.isUndefined(options.target)
+                    ? _.get(template, 'selector')
+                    : options.target;
+
                 tplRender(
                     data,
                     _.get(template, 'template'),
-                    _.get(template, 'selector')
+                    targetSelector
                 );
             });
 
