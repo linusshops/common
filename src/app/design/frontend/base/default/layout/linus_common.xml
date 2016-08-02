@@ -74,8 +74,8 @@
     </linus_common_csp_block>
 
     <linus_common_tpl_inline>
-        <reference name="content">
-            <block type="linus_common/tpl_inline" name="linus_common_tpl_inline" template="linuscommon/tpl.phtml" after="-"/>
+        <reference name="before_body_end">
+            <block type="linus_common/tpl_inline" name="linus_common_tpl_inline" template="linuscommon/tpl.phtml"/>
         </reference>
     </linus_common_tpl_inline>
 
