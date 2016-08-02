@@ -34,7 +34,7 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
      */
     public function each($collectionVariable='items', $itemName='item')
     {
-        return $this->wrap("_.forEach($collectionVariable, function($itemName){");
+        return $this->wrap("_.forEach($collectionVariable, function($itemName, index){");
     }
 
     /**
