@@ -51,5 +51,6 @@ difference,\
 xor,\
 ceil,\
 curry,\
-curryRight\
+curryRight,\
+every\
 "
