@@ -75,7 +75,7 @@
 
     <linus_common_tpl_inline>
         <reference name="content">
-            <block type="linus_common/tpl_inline" name="linus_common_tpl_inline" template="linuscommon/tpl.phtml"/>
+            <block type="linus_common/tpl_inline" name="linus_common_tpl_inline" template="linuscommon/tpl.phtml" after="-"/>
         </reference>
     </linus_common_tpl_inline>
 

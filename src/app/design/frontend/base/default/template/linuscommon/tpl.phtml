@@ -1,12 +1,13 @@
 <?php
 /**
- *
+ * Inline tpl markup container. Templates should be added using the "addInlineBlock"
+ * action on `linus_common_tpl_inline`.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-08-01
  */
 ?>
-<div id="common-inline-templates">
+<div id="common-inline-templates" class="js-hidden">
 <?php foreach ($this as $block): ?>
     <?php
     $html = $block->toHtml();
