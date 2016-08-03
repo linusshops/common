@@ -676,6 +676,38 @@ represents the object provided to the template
 * `{{% }}` - evaluate, will execute javascript contained within. The `data` object
 is available, as well as Common and Lodash (as `_`).
 
+##### Inline templates
+Common can inline templates in the page. This removes the need to fetch the template
+asynchronously, but increases the initial page payload size.  Use only for critical
+content that cannot afford delays.
+
+To inline a template, add the tpl block to `<default>` as normal.
+```
+<block type="linus_common/tpl" name="example_template" template="path/to/template.phtml"/>
+```
+
+Next, using the `linus_common_tpl_inline` reference under `<default>`, add the block by name.
+```
+<reference name="linus_common_tpl_inline">
+    <action method="addInlineBlock">
+        <blockName>example_template</blockName>
+    </action>
+</reference>
+```
+
+Common will now seamlessly use the inlined template instead of fetching. If you
+remove it from the inlined set, it will fetch it from the backend. No additional
+configuration is necessary.
+
+Inlined templates will not be added to LocalStorage.
+
+Template lookup priority:
+
+1. Compiled templates currently in memory
+2. Inlined templates
+3. Templates in LocalStorage
+4. Async request for template
+
 #### Messaging
 Common provides a way to display status messages in the page, similar to the Magento admin message block. In Magento, the message
 block id will vary depending on the page.  By binding to the `LinusCommonMessages:init`
