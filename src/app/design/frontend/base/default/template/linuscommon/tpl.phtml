@@ -3,6 +3,9 @@
  * Inline tpl markup container. Templates should be added using the "addInlineBlock"
  * action on `linus_common_tpl_inline`.
  *
+ * The template is wrapped in a script tag internally to prevent the contents
+ * from being parsed once it is extracted from the dom.
+ *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-08-01
  */
@@ -13,6 +16,8 @@
     $hash = md5($html);
     ?>
     <template id="tpl-id-<?= $block->getNameInLayout() ?>" data-tpl-hash="<?= $hash ?>">
-    <?= $html ?>
+        <script type="application/x-common-tpl">
+            <?= $html ?>
+        </script>
     </template>
 <?php endforeach ?>

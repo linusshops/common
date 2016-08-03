@@ -1961,7 +1961,10 @@ linus.common = linus.common || (function($, _, Dependencies)
             tempDiv.appendChild(node);
 
             var inlineChecksum = inlineTemplate.attr('data-tpl-hash');
-            var compiledInlineTemplate = tplCompile(templateKey, tempDiv.innerHTML, inlineChecksum);
+            //The template is still wrapped in a script tag to prevent parsing
+            //when the template tag is imported. Use firstElementChild to get
+            //the actual template body.
+            var compiledInlineTemplate = tplCompile(templateKey, tempDiv.firstElementChild.innerHTML, inlineChecksum);
             if (!_.isError(compiledInlineTemplate)) {
                 storeMemoryTpl(templateKey, inlineChecksum, compiledInlineTemplate);
             }
