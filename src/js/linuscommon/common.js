@@ -1963,7 +1963,8 @@ linus.common = linus.common || (function($, _, Dependencies)
             var inlineChecksum = inlineTemplate.attr('data-tpl-hash');
             //The template is still wrapped in a script tag to prevent parsing
             //when the template tag is imported. Use firstElementChild to get
-            //the actual template body.
+            //the actual template body.  Without this, nested expressions in
+            //templates will not work when the template is inlined.
             var compiledInlineTemplate = tplCompile(templateKey, tempDiv.firstElementChild.innerHTML, inlineChecksum);
             if (!_.isError(compiledInlineTemplate)) {
                 storeMemoryTpl(templateKey, inlineChecksum, compiledInlineTemplate);
