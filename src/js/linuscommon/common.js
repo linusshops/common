@@ -632,6 +632,37 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
     }
 
+    function toggle(selector)
+    {
+        if (_.isArray(selector)) {
+            _.map(selector, toggle);
+        } else {
+            selector = $(selector);
+            if (selector.hasClass('js-hidden') || selector.hasClass('js-invisible')) {
+                show(selector);
+            } else {
+                hide(selector);
+            }
+        }
+    }
+
+    /**
+     * Add a class if it does not exist on the target, or remove it if it does.
+     *
+     * @param target selector to target for class modification
+     * @param className name of the class to look for
+     */
+    function toggleClass(target, className)
+    {
+        var $target = $(target);
+
+        if ($target.hasClass(className)) {
+            $target.removeClass(className);
+        } else {
+            $target.addClass(className);
+        }
+    }
+
     /**
      * Display an element for X seconds, then hide is
      * @param selector
@@ -1708,6 +1739,8 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Object} options - Additional options to control tpl actions
      *      options.allowPrefetchRender: Controls whether a tpl will have prefetch data
      *              injected when no data is passed. Default is true.
+     *      options.target: if set, the template will be rendered to the given
+     *              target, rather than the match of the provided templateKey.
      */
     function tpl(templateKeys, data, options)
     {
@@ -1813,10 +1846,14 @@ linus.common = linus.common || (function($, _, Dependencies)
         //If we're prefetching, check local storage for cached data for prefetch.
         if (data !== false) {
             _.forEach(templates, function (template) {
+                var targetSelector = _.isUndefined(options.target)
+                    ? _.get(template, 'selector')
+                    : options.target;
+
                 tplRender(
                     data,
                     _.get(template, 'template'),
-                    _.get(template, 'selector')
+                    targetSelector
                 );
             });
 
@@ -1914,6 +1951,27 @@ linus.common = linus.common || (function($, _, Dependencies)
                 return local;
             }
         }
+
+        //Check inline templates. If it exists, pull it out and compile.
+        var inlineTemplate = $('#tpl-id-'+templateKey.replace('#', ''));
+
+        if (inlineTemplate.length > 0) {
+            var tempDiv = document.createElement('div');
+            var node = document.importNode(inlineTemplate[0].content, true);
+            tempDiv.appendChild(node);
+
+            var inlineChecksum = inlineTemplate.attr('data-tpl-hash');
+            //The template is still wrapped in a script tag to prevent parsing
+            //when the template tag is imported. Use firstElementChild to get
+            //the actual template body.  Without this, nested expressions in
+            //templates will not work when the template is inlined.
+            var compiledInlineTemplate = tplCompile(templateKey, tempDiv.firstElementChild.innerHTML, inlineChecksum);
+            if (!_.isError(compiledInlineTemplate)) {
+                storeMemoryTpl(templateKey, inlineChecksum, compiledInlineTemplate);
+            }
+            return compiledInlineTemplate;
+        }
+
 
         //Check local storage (if available), then check hashes
         //Invalidate and delete as necessary
@@ -2623,6 +2681,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         makeCspArray: makeCspArray,
         show: show,
         showUntil: showUntil,
+        toggle: toggle,
+        toggleClass: toggleClass,
         translateAllTextIn: translateAllTextIn,
         use: use,
         addWebFont: addWebFont,
