@@ -53,5 +53,7 @@ ceil,\
 curry,\
 curryRight,\
 every,\
-debounce\
+debounce,\
+chain,\
+lowerCase\
 "
