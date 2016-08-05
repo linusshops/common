@@ -52,5 +52,6 @@ xor,\
 ceil,\
 curry,\
 curryRight,\
-every\
+every,\
+debounce\
 "
