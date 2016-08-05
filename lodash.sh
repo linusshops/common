@@ -55,5 +55,6 @@ curryRight,\
 every,\
 debounce,\
 chain,\
-lowerCase\
+lowerCase,\
+compact\
 "
