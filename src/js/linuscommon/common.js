@@ -2584,6 +2584,27 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Remove all classes matching a given regular expression.
+     * @param element
+     * @param regex
+     */
+    function removeMatchingClasses(element, regex)
+    {
+        $(element).removeClass(function(index, css) {
+            var classes = css.split(' ');
+            var classesToRemove = [];
+
+            _.forEach(classes, function(cssClass){
+                if (cssClass.match(regex)) {
+                    classesToRemove.push(cssClass);
+                }
+            });
+
+            return classesToRemove.join(' ');
+        });
+    }
+
+    /**
      * Create messages similar to the top admin message block in Magento. By default,
      * it will use the #admin_messages block. Different locations can be used by
      * listening for the `LinusMessages:beforeInit` event and modifying the eventData
@@ -2735,6 +2756,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         getIsDeveloperMode: getIsDeveloperMode,
         deadLastReady: deadLastReady,
         sendNewRelicError: sendNewRelicError,
+        removeMatchingClasses: removeMatchingClasses,
         messages: {
             display: displayMessage,
             success: success,
