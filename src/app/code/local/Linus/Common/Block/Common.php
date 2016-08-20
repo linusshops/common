@@ -90,4 +90,30 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
         $userAgentVersionBodyClassName = $this->Common()->getUserAgentVersionBodyClassName();
         $this->addClassNameToBodyClass($userAgentVersionBodyClassName);
     }
+
+    /**
+     * Add top most, primary category ID to body class.
+     *
+     * This is the cheapest way possible to retrieve the primary category
+     * ID from the path provided by current_category. Levels 0 and 1 are
+     * base Magento designations and never actually seen on the frontend as
+     * categories. All primary categories start at level 2.
+     *
+     * Note that getting the parent ID of a category does not guarantee it is
+     * a primary, or top most, category.
+     */
+    public function addCategoryIdToBodyClass()
+    {
+        $primaryCategoryLevel = 2;
+        $currentCategory = Mage::registry('current_category');
+        if ($currentCategory) {
+            $categoryPath = $currentCategory->getPathIds();
+            if (is_array($categoryPath)
+                && array_key_exists($primaryCategoryLevel, $categoryPath)
+            ) {
+                $categoryIdBodyClassName = 'primary-category-id-' . $categoryPath[$primaryCategoryLevel];
+                $this->addClassNameToBodyClass($categoryIdBodyClassName);
+            }
+        }
+    }
 }
