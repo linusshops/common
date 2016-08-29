@@ -13,7 +13,10 @@ implements Iterator
 
     public function addInlineBlock($name)
     {
-        $this->blocks[] = Mage::app()->getLayout()->getBlock($name);
+        $block = Mage::app()->getLayout()->getBlock($name);
+        if ($block !== false) {
+            $this->blocks[] = $block;
+        }
     }
 
     /**
