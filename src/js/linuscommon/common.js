@@ -1777,7 +1777,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         //injected. Immediately call tplRender and exit.
         if (_.isString(data)) {
             _.forEach(templateKeys, function(key){
-                tplRender(data, undefined, key);
+                tplRender(data, undefined, key, options);
             });
 
             return;
@@ -1853,7 +1853,8 @@ linus.common = linus.common || (function($, _, Dependencies)
                 tplRender(
                     data,
                     _.get(template, 'template'),
-                    targetSelector
+                    targetSelector,
+                    options
                 );
             });
 
@@ -1877,7 +1878,8 @@ linus.common = linus.common || (function($, _, Dependencies)
                         tplRender(
                             data,
                             _.get(template, 'template'),
-                            key
+                            key,
+                            options
                         );
                     }
                 }
@@ -2132,7 +2134,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * @param {Function} compiledTemplate - a compiled template function
      * @param {string|jQuery} selector - the target selector location for the rendered template
      */
-    function tplRender(data, compiledTemplate, selector)
+    function tplRender(data, compiledTemplate, selector, options)
     {
         var $target = $(selector);
         var renderedHtml;
@@ -2173,10 +2175,15 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         if (injectToTarget) {
-            $target
-                .addClass('payload-tpl-container')
-                .html(renderedHtml)
-                .trigger('Common:afterTplRender', [data]);
+            var chain = $target.addClass('payload-tpl-container');
+
+            if (_.get(options, 'append', false)) {
+                chain.html(renderedHtml);
+            } else {
+                chain.append(renderedHtml);
+            }
+
+            chain.trigger('Common:afterTplRender', [data, $target]);
         }
     }
 
