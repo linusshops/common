@@ -2178,9 +2178,9 @@ linus.common = linus.common || (function($, _, Dependencies)
             var chain = $target.addClass('payload-tpl-container');
 
             if (_.get(options, 'append', false)) {
-                chain.html(renderedHtml);
-            } else {
                 chain.append(renderedHtml);
+            } else {
+                chain.html(renderedHtml);
             }
 
             chain.trigger('Common:afterTplRender', [data, $target]);
