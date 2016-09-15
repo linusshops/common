@@ -2240,7 +2240,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         setTimeout(function() {
             var $currentFocus = $(document.activeElement);
-            var focusSelectors = 'input, textarea, button';
+            var focusSelectors = 'input, select, textarea, button';
 
             var selector = (options.node)
                 ? options.node
