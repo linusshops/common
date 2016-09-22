@@ -967,9 +967,9 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         if (getCurrencyCode() == 'SAR' || getLocale() == 'ar_SA') {
             Accounting.settings.currency.format = {
-                pos : '%s%v',
-                neg : '%s (%v)',
-                zero: '%s0.00'
+                pos : '%v %s',
+                neg : '(%v) %s',
+                zero: '0.00 %s'
             };
 
             Accounting.settings.currency.decimal = '.';
