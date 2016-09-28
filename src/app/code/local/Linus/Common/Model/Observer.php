@@ -274,4 +274,17 @@ class Linus_Common_Model_Observer
                 ->addHandle($handle);
         }
     }
+
+    public function onCoreLayoutBlockCreateAfter(Varien_Event_Observer $observer)
+    {
+        $event = $observer->getEvent();
+        $block = $event->getBlock();
+
+        $pathMapper = Mage::getModel('linus_common/pathMapper');
+        $remap = $pathMapper->getRemap($block->getTemplate());
+
+        if ($remap) {
+            $block->setTemplate($remap);
+        }
+    }
 }

@@ -66,6 +66,15 @@
                     </linus_common>
                 </observers>
             </cms_page_render>
+
+            <core_layout_block_create_after>
+                <observers>
+                    <linus_common>
+                        <class>Linus_Common_Model_Observer</class>
+                        <method>onCoreLayoutBlockCreateAfter</method>
+                    </linus_common>
+                </observers>
+            </core_layout_block_create_after>
         </events>
     </global>
 
