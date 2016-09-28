@@ -709,10 +709,10 @@ Template lookup priority:
 4. Async request for template
 
 #### Messaging
-Common provides a way to display status messages in the page, similar to the Magento admin message block. In Magento, the message
-block id will vary depending on the page.  By binding to the `LinusCommonMessages:init`
-event and updating the `eventContainer`, the location of the messages can be
-modified on a per-page basis.
+Common provides a way to display status messages in the page, similar to the 
+Magento admin message block. In Magento, the messageblock id will vary depending
+on the page.  By binding to the `LinusCommonMessages:init` event and updating
+the `eventContainer`, the location of the messages can be modified on a per-page basis.
 
 Templating is done through tpl(), but is hidden from the consumer.
 
@@ -728,6 +728,29 @@ linus.common.messages.display(messageText, [
             'alert',
             'alert-warning'
         ], 'fa-exclamation-triangle');
+```
+
+#### Override Hardcoded Blocks
+Magento templates should always be set via layout xml. This prevents issues when
+a developer wants to use a different template in the same block. However, many
+modules and blocks hardcode the template in the block class, making it impossible
+to modify without extending the block itself. This then opens the door to more
+rewrite conflicts, more code to maintain, and more yaks to shave.
+
+Common provides a way to painlessly remap these blocks to the desired template path.
+Simply listen for the `common_block_template_update` event, and provide it your
+path mappings.
+
+```php
+public function onCommonBlockTemplateUpdate(Varien_Event_Observer $observer)
+    {
+        /** @var Linus_Common_Model_PathMapper $mapper */
+        $mapper = $observer->getPathMapper();
+
+        $mapper->addPaths([
+            'catalog/layer/filter.phtml' => 'linusadapter/catalog/layer/my-new-filter-template.phtml'
+        ]);
+    }
 ```
 
 ## Authors
