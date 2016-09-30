@@ -34,13 +34,24 @@ class Linus_Common_Helper_Cms extends Mage_Core_Helper_Abstract
     {
         $source = $cmsBlock->toHtml();
 
-        $sourceArray = explode(PHP_EOL, $source);
+        $sourceLines = explode(PHP_EOL, $source);
         $data = array();
-        foreach ($sourceArray as $sourceItem) {
-            $itemSplit = str_getcsv($sourceItem, ",", '"', "\\");
-            $data[$this->normalizeKey((string)$itemSplit[0])] = array_key_exists(1, $itemSplit)
-                ? $itemSplit[1]
-                : null;
+        foreach ($sourceLines as $line) {
+            $splitLine = str_getcsv($line, ",", '"', "\\");
+            $key = $this->normalizeKey((string)$splitLine[0]);
+            if (isset($data[$key])) {
+                if (!is_array($data[$key])) {
+                    $data[$key] = [$data[$key]];
+                }
+
+                $data[$key][] = array_key_exists(1, $splitLine)
+                    ? $splitLine[1]
+                    : null;
+            } else {
+                $data[$key] = array_key_exists(1, $splitLine)
+                    ? $splitLine[1]
+                    : null;
+            }
         }
 
         return $data;
