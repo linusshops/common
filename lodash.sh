@@ -56,5 +56,6 @@ every,\
 debounce,\
 chain,\
 lowerCase,\
-compact\
+compact,\
+forOwn\
 "
