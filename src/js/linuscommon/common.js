@@ -1574,6 +1574,9 @@ linus.common = linus.common || (function($, _, Dependencies)
                 },
                 timeout: function() {
                     return null
+                },
+                async: function() {
+                    return true;
                 }
             })
         };
@@ -1594,7 +1597,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
         var onResponseFail = _.curry(onAjaxError)(mem, generateHash(endpoint, method, requestData), callbacks);
 
-        mem.ajax(endpoint, method, requestData, callbacks.timeout())
+        mem.ajax(endpoint, method, requestData, callbacks.timeout(), callbacks.async())
             .done(function(responseData, textStatus, jqXHR) {
                 var error = _.get(responseData, 'error');
                 var feedback = _.get(responseData, 'feedback');
@@ -1692,11 +1695,12 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @return {promise}
      */
-    mem.ajax = _.memoize(function(endpoint, method, requestData, timeout) {
+    mem.ajax = _.memoize(function(endpoint, method, requestData, timeout, async) {
         return $.ajax(endpoint, {
             method: method,
             data: requestData,
-            timeout: timeout
+            timeout: timeout,
+            async: async
         });
     }, function(endpoint, method, requestData) {
         return generateHash(endpoint, method, requestData);
