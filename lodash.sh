@@ -57,5 +57,6 @@ debounce,\
 chain,\
 lowerCase,\
 compact,\
-forOwn\
+forOwn,\
+merge
 "
