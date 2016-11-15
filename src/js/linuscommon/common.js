@@ -2311,11 +2311,13 @@ linus.common = linus.common || (function($, _, Dependencies)
                     var $node = $(el);
                     var $submit = $node.is('input[type=submit], button');
                     var $radio = $node.is('input[type=radio]');
+                    var $select = $node.is('select');
+                    var $checkbox = $node.is('input[type=checkbox]');
 
                     if (($submit || $radio || !$node.val())
                         && !$node.is(':focus')
                     ) {
-                        if (!$submit && !$radio) {
+                        if (!$submit && !$radio && !$select) {
                             $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         }
 
@@ -2327,7 +2329,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                         $node.focus();
 
-                        if (options.select && !$submit && !$radio) {
+                        if (options.select && $select && !$submit && !$radio) {
                             $node.select();
                         }
 
@@ -2338,10 +2340,12 @@ linus.common = linus.common || (function($, _, Dependencies)
                     if (workingMatches == i+1
                         && !$submit
                         && !$radio
+                        && !$select
+                        && !$checkbox
                     ) {
                         $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         $node.focus();
-                        if (options.select) {
+                        if (options.select && $select) {
                             $node.select();
                         }
 
