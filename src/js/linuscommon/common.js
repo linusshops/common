@@ -2317,7 +2317,7 @@ linus.common = linus.common || (function($, _, Dependencies)
                     if (($submit || $radio || !$node.val())
                         && !$node.is(':focus')
                     ) {
-                        if (!$submit && !$radio && !$select) {
+                        if (!$submit && !$radio && !$select && !$checkbox) {
                             $node[0].selectionStart = $node[0].selectionEnd = $node.val().length;
                         }
 
@@ -2329,7 +2329,7 @@ linus.common = linus.common || (function($, _, Dependencies)
 
                         $node.focus();
 
-                        if (options.select && $select && !$submit && !$radio) {
+                        if (options.select && $select && !$submit && !$radio && !$checkbox) {
                             $node.select();
                         }
 
