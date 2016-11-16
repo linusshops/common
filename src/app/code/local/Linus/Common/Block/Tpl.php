@@ -86,4 +86,26 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
     {
         return $this->getRenderMode() == 'tpl';
     }
+
+    /**
+     * Start a standard JS for loop
+     * @param $counterName string name of the counter variable
+     * @param $counterStartValue string the starting value of the counter (any valid rvalue)
+     * @param $terminationCondition string condition that must be false to end loop
+     * @param $iterationAction string action to take on completion of an iteration
+     * @return string
+     */
+    public function iterate($counterName, $counterStartValue, $terminationCondition, $iterationAction)
+    {
+        return "{{% for (var $counterName=$counterStartValue; $terminationCondition; $iterationAction) { }}";
+    }
+
+    /**
+     * Close a for loop block
+     * @return string
+     */
+    public function endIterate()
+    {
+        return "{{% } }}";
+    }
 }
