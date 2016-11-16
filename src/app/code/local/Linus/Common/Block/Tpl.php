@@ -108,4 +108,14 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
     {
         return "{{% } }}";
     }
+
+    /**
+     * Generate the TPL markup to echo a variable.
+     * @param $variable
+     * @return string
+     */
+    public function e($variable)
+    {
+        return "{{".$variable."}}";
+    }
 }
