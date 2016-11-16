@@ -2,6 +2,9 @@
 
 /**
  * Contains frontend templates for use by the JS automatic templating system.
+ * Provides methods for generating common JS code prepared for use in TPL. Using
+ * these methods will make your life easier, since it avoids directly showing
+ * the TPL language that has no hinting or help.
  *
  * @author Sam Schmidt <samuel@dersam.net>
  * @since 2016-01-25
@@ -13,6 +16,7 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
      * the first parameter, otherwise echo the second.
      * @param string $tplEchoValue
      * @param string $defaultEchoValue
+     * @return string
      */
     public function ifTpl($tplEchoValue, $defaultEchoValue)
     {
@@ -31,6 +35,7 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
      * from the data passed to the template.
      * @param string $itemName name of the instance from the collection on a
      * given iteration
+     * @return string
      */
     public function each($collectionVariable='items', $itemName='item')
     {
@@ -45,26 +50,50 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
         return $this->wrap("});");
     }
 
+    /**
+     * Begin a conditional block
+     * @param $condition
+     * @return string
+     */
     public function displayBlockCondition($condition)
     {
         return $this->wrap("if ($condition) {");
     }
 
+    /**
+     * Add an elseif statement to a conditional block
+     * @param $condition
+     * @return string
+     */
     public function displayBlockElseIf($condition)
     {
         return $this->wrap("} else if($condition) {");
     }
 
+    /**
+     * Add an else statement to a conditional block.
+     * @return string
+     */
     public function displayBlockElse()
     {
         return $this->wrap("} else {");
     }
 
+    /**
+     * Close a conditional block
+     * @return string
+     */
     public function endDisplayBlockCondition()
     {
         return $this->wrap("}");
     }
 
+    /**
+     * Display some markup if a given condition is met.
+     * @param $condition
+     * @param $markup
+     * @return string
+     */
     public function showIf($condition, $markup)
     {
         return $this->displayBlockCondition($condition)
@@ -73,6 +102,11 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
         ;
     }
 
+    /**
+     * Wrap some js code in the execution tags
+     * @param $code
+     * @return string
+     */
     protected function wrap($code)
     {
         return "{{% $code }}";
