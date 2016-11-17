@@ -152,4 +152,15 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
     {
         return "{{".$variable."}}";
     }
+
+    /**
+     * Print a value from the page's CSP dataset.
+     * @param $path string the path to print.
+     * @return string
+     */
+    public function csp($path)
+    {
+        return
+            "{{% print(linus.common.getCspData('".$path."')) }}";
+    }
 }
