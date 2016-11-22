@@ -49,7 +49,9 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
             'customerId' => Mage::getSingleton('customer/session')->getCustomerId(),
             'commonTplChecksums' => $commonTplChecksums,
             'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
-            'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol()
+            'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(),
+            'checkoutUrl' => $this->getUrl('checkout/onepage'),
+            'cartUrl' => $this->getUrl('checkout/cart'),
         ]);
     }
 }
