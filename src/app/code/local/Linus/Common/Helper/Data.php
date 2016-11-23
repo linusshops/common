@@ -205,4 +205,17 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $allOtherStoreIds;
     }
+
+    /**
+     * Check if the specified layout handle exists in the current context.
+     * @param string $handleName
+     * @return boolean
+     */
+    public function hasHandle($handleName)
+    {
+        return in_array(
+            $handleName,
+            Mage::app()->getLayout()->getUpdate()->getHandles()
+        );
+    }
 }
