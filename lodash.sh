@@ -58,5 +58,6 @@ chain,\
 lowerCase,\
 compact,\
 forOwn,\
-merge
+merge,\
+reject
 "
