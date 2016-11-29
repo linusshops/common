@@ -59,5 +59,6 @@ lowerCase,\
 compact,\
 forOwn,\
 merge,\
-reject
+reject,\
+concat
 "
