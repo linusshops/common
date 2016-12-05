@@ -154,6 +154,16 @@ class Linus_Common_Block_Tpl extends Linus_Common_Block_CommonAbstract
     }
 
     /**
+     * Echo the resulting value of a JS expression
+     * @param $expression
+     * @return string
+     */
+    public function p($expression)
+    {
+        return $this->wrap("print({$expression})");
+    }
+
+    /**
      * Print a value from the page's CSP dataset.
      * @param $path string the path to print.
      * @return string
