@@ -582,15 +582,14 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function hide(selector)
     {
-        if (_.isArray(selector)) {
-            _.map(selector, hide);
-        } else {
-            selector = $(selector);
+        var $selector = $(selector);
 
-            if (!selector.hasClass('js-hidden')) {
-                selector.addClass('js-hidden');
+        $selector.each(function() {
+            var $s = $(this);
+            if (!$s.hasClass('js-hidden')) {
+                $s.addClass('js-hidden');
             }
-        }
+        });
     }
 
     /**
@@ -623,13 +622,13 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function show(selector)
     {
-        if (_.isArray(selector)) {
-            _.map(selector, show);
-        } else {
-            selector = $(selector);
-            selector.removeClass('js-hidden');
-            selector.removeClass('js-invisible');
-        }
+        var $selector = $(selector);
+
+        $selector.each(function() {
+            $(this)
+                .removeClass('js-hidden')
+                .removeClass('js-invisible');
+        });
     }
 
     function toggle(selector)
