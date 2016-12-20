@@ -218,4 +218,15 @@ class Linus_Common_Helper_Data extends Mage_Core_Helper_Abstract
             Mage::app()->getLayout()->getUpdate()->getHandles()
         );
     }
+
+    public function getTextDirection()
+    {
+        $rtlLocales = array(
+            'ar_SA',
+        );
+
+        $localeCode = Mage::app()->getLocale()->getLocaleCode();
+
+        return in_array($localeCode, $rtlLocales) ? 'rtl' : 'ltr';
+    }
 }

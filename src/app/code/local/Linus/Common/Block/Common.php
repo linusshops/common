@@ -53,19 +53,7 @@ class Linus_Common_Block_Common extends Linus_Common_Block_CommonAbstract
      */
     public function addTextDirectionClassNameToBodyClass()
     {
-        $textDirection = array(
-            'ar_SA' => 'rtl',
-            'en_US' => 'ltr',
-            'fr_FR' => 'ltr'
-        );
-
-        $localeCode = Mage::app()->getLocale()->getLocaleCode();
-
-        if ($localeCode
-            && array_key_exists($localeCode, $textDirection)
-        ) {
-            $this->addClassNameToBodyClass($textDirection[$localeCode]);
-        }
+        $this->addClassNameToBodyClass(Mage::helper('linus_common')->getTextDirection());
     }
 
     /**
