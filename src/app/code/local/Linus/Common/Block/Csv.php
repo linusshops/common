@@ -10,4 +10,5 @@
 class Linus_Common_Block_Csv extends Linus_Common_Block_CommonAbstract
 {
     use Linus_Common_Trait_Csv_Parser;
+    use Linus_Adapter_Trait_Cms_Segment;
 }
