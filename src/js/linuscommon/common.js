@@ -138,6 +138,22 @@ linus.common = linus.common || (function($, _, Dependencies)
     };
 
     /**
+     * Once the document ready event has fired, this will be true. Used by
+     * getCspData to determine if the dataset can be considered complete.
+     * @type {boolean}
+     */
+    var documentIsReady = false;
+
+    /**
+     * Once getCspData has been run once after document ready, the data can
+     * be considered complete, and no longer has to be checked. This defends
+     * against calls to getCspData before document ready resulting in incomplete
+     * datasets.
+     * @type {boolean}
+     */
+    var cspDatasetComplete = false;
+
+    /**
      * Constructor
      *
      * @private
@@ -379,6 +395,15 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Check if the document ready event has already fired.
+     * @returns {boolean}
+     */
+    function getIsDocumentReady()
+    {
+        return documentIsReady;
+    }
+
+    /**
      * Wrapper to get CSP data.
      *
      * Pass the key name to retrieve exact value, or pass nothing to get the
@@ -396,19 +421,26 @@ linus.common = linus.common || (function($, _, Dependencies)
             : '.csp-data';
 
         // Populate on first execution, then remove.
-        if ($.isEmptyObject(cspData)) {
+        // However, if getCspData is called before document ready, it is not
+        // guaranteed that all included data is available in the DOM. Continue
+        // to check if there are any new elements when this is called, unless
+        // it was called after document ready. Once document ready has happened,
+        // check one last time, then consider the dataset complete and don't
+        // check anymore.
+        var $elements = $(cspSelectorName);
 
+        if ($.isEmptyObject(cspData) || ($elements.length > 0 && !cspDatasetComplete)) {
             var mergedCspData = {};
 
-            $(cspSelectorName).each(function() {
+            $elements.each(function() {
                 var $element = $(this);
                 var newCspData = _.attempt(function () {
                     return JSON.parse(decodeURIComponent($element.val()));
                 });
 
-                //If some data is invalid, skip it, and alert New Relic.
+                // If some data is invalid, skip it.
                 if (_.isError(newCspData)) {
-                    //Continue to the next element.
+                    // Continue to the next element.
                     return;
                 }
 
@@ -419,7 +451,13 @@ linus.common = linus.common || (function($, _, Dependencies)
                 $element.remove();
             });
 
-            cspData = mergedCspData;
+            cspData = $.extend(true, cspData, mergedCspData);
+
+            // If this block has executed after document ready, it can be considered
+            // complete, and new csp blocks no longer need to be checked.
+            if (getIsDocumentReady()) {
+                cspDatasetComplete = true;
+            }
         }
 
         var cspDataValue = _.get(cspData, cspDataKey, '');
@@ -2687,6 +2725,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     (function __init() {
         $(document).ready(function(e) {
+            documentIsReady = true;
             __construct();
         });
     }());
