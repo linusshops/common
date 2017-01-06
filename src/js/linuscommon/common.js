@@ -142,7 +142,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      * getCspData to determine if the dataset can be considered complete.
      * @type {boolean}
      */
-    var documentIsReady = false;
+    var isDocumentReady = false;
 
     /**
      * Once getCspData has been run once after document ready, the data can
@@ -400,7 +400,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     function getIsDocumentReady()
     {
-        return documentIsReady;
+        return isDocumentReady;
     }
 
     /**
@@ -2725,7 +2725,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      */
     (function __init() {
         $(document).ready(function(e) {
-            documentIsReady = true;
+            isDocumentReady = true;
             __construct();
         });
     }());
