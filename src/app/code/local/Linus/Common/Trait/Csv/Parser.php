@@ -96,8 +96,7 @@ trait Linus_Common_Trait_Csv_Parser
     {
         //If this trait is composed into a Varien_Object, we must defer
         //to the special starting method strings if present
-        $ignored = ['getCsvData'];
-        if (is_subclass_of($this, 'Varien_Object') && !in_array($method, $ignored)) {
+        if (is_subclass_of($this, 'Varien_Object')) {
             if (in_array(substr($method, 0, 3),
                 array('get', 'set', 'uns', 'has'))) {
                 return parent::__call($method, $args);
