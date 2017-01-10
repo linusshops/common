@@ -38,6 +38,7 @@
 trait Linus_Common_Trait_Csv_Parser
 {
     protected $parsedCsvData = array();
+    protected $categoriesData;
 
     /**
      * Take any actions necessary for parsing and building the nested data.
@@ -121,5 +122,94 @@ trait Linus_Common_Trait_Csv_Parser
     public function getParsedDataArray()
     {
         return $this->parsedCsvData;
+    }
+
+    /**
+     * Returns the csv label or category name.
+     *
+     * This will return the label specified in the csv data or will look for
+     * the category name. To do so it will only query the db once and get all
+     * info for all categories for future reference.
+     *
+     * @param $item
+     * CSV parsed data item that has a 'categoryid' and an optional 'label'
+     *
+     * @return string
+     */
+    public function getItemTitle($item)
+    {
+        $label = '';
+        if (!empty($item['title'])) {
+            $label = $item['title'];
+        } else if (!empty($item['categoryid'])) {
+            $label = $this->getCategoryTitle($item['categoryid']);
+        }
+        return $this->__($label);
+    }
+
+    /**
+     * Get title from either protected array or database.
+     *
+     * @param $categoryId
+     * @return mixed
+     */
+    public function getCategoryTitle($categoryId)
+    {
+        if (!isset($this->categoriesData)) {
+            $this->fetchCategories($this->getParsedDataArray());
+        }
+
+        if ($this->categoriesData[$categoryId]) {
+            $title = $this->categoriesData[$categoryId]->getName();
+        } else {
+            $title = Mage::getModel('catalog/category')->load($categoryId)->getName();
+        }
+        return $title;
+    }
+
+    /**
+     * Get needed categories and stores them to protected array.
+     *
+     * This will query the database once and store the results in memory to
+     * be used when needed in the rendering of the page.
+     *
+     * @param $parsedDataArray
+     */
+    protected function fetchCategories($parsedDataArray)
+    {
+        $allCategoriesIds = $this->fetchCategoriesIds($parsedDataArray);
+        $collection = Mage::getModel('catalog/category')->getCollection();
+        $collection
+            ->addIdFilter($allCategoriesIds)
+            ->addNameToResult();
+
+        foreach ($collection as $category) {
+            $this->categoriesData[$category->getId()] = $category;
+        }
+    }
+
+    /**
+     * Iterates multidimensional array and returns all 'categoryid'
+     *
+     * To not query the db for each category title in part, this gets the array from
+     * all the csv data. This is a deep multidimensional array and we need to go
+     * deep in there and see if any 'categoryid' keys are defined.
+     * If so, we get them out in a one dimensional array to use as a filter for
+     * the categories.
+     *
+     * @param array $array
+     * @return array
+     */
+    protected function fetchCategoriesIds(array $array) {
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($array),
+            RecursiveIteratorIterator::CHILD_FIRST);
+        $ids = array();
+        foreach ($iterator as $key => $value) {
+            if ($key === 'categoryid' && !empty($value)) {
+                array_push($ids, $value);
+            }
+        }
+        return $ids;
     }
 }
