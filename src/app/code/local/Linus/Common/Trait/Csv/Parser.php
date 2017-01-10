@@ -159,7 +159,7 @@ trait Linus_Common_Trait_Csv_Parser
             $this->fetchCategories($this->getParsedDataArray());
         }
 
-        if ($this->categoriesData[$categoryId]) {
+        if (isset($this->categoriesData[$categoryId])) {
             $title = $this->categoriesData[$categoryId]->getName();
         } else {
             $title = Mage::getModel('catalog/category')->load($categoryId)->getName();
