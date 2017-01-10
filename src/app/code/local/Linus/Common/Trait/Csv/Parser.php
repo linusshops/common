@@ -73,6 +73,10 @@ trait Linus_Common_Trait_Csv_Parser
 
         foreach ($pathspec as $p) {
             if (!isset($register[$p])) {
+                if (!is_array($register)) {
+                    $register = [$register];
+                }
+
                 $register[$p] = array();
             }
 
