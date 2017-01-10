@@ -107,25 +107,15 @@ trait Linus_Common_Trait_Csv_Parser
         return $this->getCsvData($method.$path);
     }
 
-    protected function getCsvData($path)
+    protected function getCsvData($path, $segment=null)
     {
-        $pathspec = explode('.',$path);
-        $register = $this->parsedCsvData;
+        $data = $segment == null ? $this->parsedCsvData : $segment;
 
-        //Descend into the data array
-        foreach ($pathspec as $p) {
-            if (is_array($register) && isset($register[$p])) {
-                //Standard array descent
-                $register = $register[$p];
-            } else {
-                //Once a path element is invalid, the rest of the path is worthless.
-                //Use an empty array, as results are generally iterable.
-                $register = array();
-                break;
-            }
-        }
-
-        return $register;
+        return Mage::helper('linus_common/array')->get(
+            $data,
+            $path,
+            []
+        );
     }
 
     public function getParsedDataArray()
