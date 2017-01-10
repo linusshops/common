@@ -168,6 +168,27 @@ trait Linus_Common_Trait_Csv_Parser
     }
 
     /**
+     * Get category, referencing the category cache if available.
+     * @param $categoryId
+     * @return Mage_Catalog_Model_Category
+     */
+    public function getCategory($categoryId)
+    {
+        if (!isset($this->categoriesData)) {
+            $this->fetchCategories($this->getParsedDataArray());
+        }
+
+        if (isset($this->categoriesData[$categoryId])) {
+            $category = $this->categoriesData[$categoryId];
+        } else {
+            $category = Mage::getModel('catalog/category')->load($categoryId);
+            $this->categoriesData[$categoryId] = $category;
+        }
+
+        return $category;
+    }
+
+    /**
      * Get needed categories and stores them to protected array.
      *
      * This will query the database once and store the results in memory to
