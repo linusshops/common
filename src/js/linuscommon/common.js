@@ -1043,12 +1043,20 @@ linus.common = linus.common || (function($, _, Dependencies)
      * Provide '4444.98' or 4444.97777 and get '$4,444.98'.
      *
      * @param price String|Int
+     * @param symbol String optional symbol to override default
      *
      * @return string
      */
-    function getFormattedPrice(price)
+    function getFormattedPrice(price, symbol)
     {
-        return Accounting.formatMoney(price);
+        var formattedNum;
+        if (_.isEmpty(symbol)) {
+            formattedNum = Accounting.formatMoney(price);
+        } else {
+            formattedNum = Accounting.formatMoney(price, symbol);
+        }
+
+        return formattedNum;
     }
 
     /**
@@ -1058,7 +1066,7 @@ linus.common = linus.common || (function($, _, Dependencies)
      *
      * @param price String|Int
      *
-     * return string
+     * @return string
      */
     function getFormattedNumber(price)
     {
