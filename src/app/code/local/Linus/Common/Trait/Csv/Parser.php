@@ -112,14 +112,14 @@ trait Linus_Common_Trait_Csv_Parser
         return $this->getCsvData($method.$path);
     }
 
-    protected function getCsvData($path, $segment=null)
+    protected function getCsvData($path, $segment=null, $default=[])
     {
         $data = $segment == null ? $this->parsedCsvData : $segment;
 
         return Mage::helper('linus_common/array')->get(
             $data,
             $path,
-            []
+            $default
         );
     }
 
