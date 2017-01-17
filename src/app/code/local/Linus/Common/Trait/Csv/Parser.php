@@ -112,9 +112,18 @@ trait Linus_Common_Trait_Csv_Parser
         return $this->getCsvData($method.$path);
     }
 
-    protected function getCsvData($path, $segment=null, $default=[])
+
+    /**
+     * Returns paths specific data from the CSV source
+     *
+     * @param string $path path to data in segment @example 'section.icon'
+     * @param array|null $segment
+     * @param mixed $default default value to return if not found.
+     * @return mixed
+     */
+    protected function getCsvData($path, $segment=null, $default = [])
     {
-        $data = $segment == null ? $this->parsedCsvData : $segment;
+        $data = is_array($segment) ? $segment : $this->parsedCsvData;
 
         return Mage::helper('linus_common/array')->get(
             $data,
