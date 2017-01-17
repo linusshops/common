@@ -117,7 +117,7 @@ trait Linus_Common_Trait_Csv_Parser
      * Returns paths specific data from the CSV source
      *
      * @param string $path path to data in segment @example 'section.icon'
-     * @param array|null $segment
+     * @param array|null $segment where to search (null = root).
      * @param mixed $default default value to return if not found.
      * @return mixed
      */
