@@ -75,7 +75,7 @@ abstract class Linus_Common_Block_CspAbstract extends Linus_Common_Block_CommonA
      */
     public function setCspData(array $cspData)
     {
-        if (count(array_filter($cspData))) {
+        if (count($cspData)) {
             $this->cspData = array_merge(
                 $this->cspData,
                 $cspData
