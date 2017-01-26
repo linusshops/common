@@ -395,6 +395,16 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Get the Magento cookie domain.
+     *
+     * @returns {string|Object|boolean}
+     */
+    function getCookieDomain()
+    {
+        return getCspData('cookieDomain');
+    }
+
+    /**
      * Check if the document ready event has already fired.
      * @returns {boolean}
      */
@@ -2576,8 +2586,8 @@ linus.common = linus.common || (function($, _, Dependencies)
         var expiry = new Date();
         //SetTime expects milliseconds
         expiry.setTime(expiry.getTime()+ (seconds*1000));
-
-        document.cookie = name+'='+value+'; expires='+expiry.toGMTString()+'; path=/';
+        var cookieDomain = getCookieDomain();
+        document.cookie = name+'='+value+';expires='+expiry.toGMTString()+';domain='+cookieDomain+';path=/';
     }
 
     function deleteCookie(name)
@@ -2662,6 +2672,21 @@ linus.common = linus.common || (function($, _, Dependencies)
 
             return classesToRemove.join(' ');
         });
+    }
+
+    /**
+     * Disable asynchronous requests.
+     *
+     * Note that this is only used for debugging purposes. Do not actually
+     * run this in production.
+     */
+    function disableAsyncRequests()
+    {
+        if (getIsDeveloperMode()) {
+            $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+                jqXHR.abort();
+            });
+        }
     }
 
     /**

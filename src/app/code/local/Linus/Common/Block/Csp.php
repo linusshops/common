@@ -32,7 +32,10 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
                 $commonTplChecksums[$identifier] = md5($block->toHtml());
                 $block->setRenderMode('magento');
             }
-        };
+        }
+
+        /** @var Mage_Core_Model_Cookie $cookieModel */
+        $cookieModel = Mage::getSingleton('core/cookie');
 
         $this->setCspData([
             'baseUrl' => $this->getBaseUrl(),
@@ -52,6 +55,7 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
             'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(),
             'checkoutUrl' => $this->getUrl('checkout/onepage'),
             'cartUrl' => $this->getUrl('checkout/cart'),
+            'cookieDomain' => '.' . $cookieModel->getDomain()
         ]);
     }
 }
