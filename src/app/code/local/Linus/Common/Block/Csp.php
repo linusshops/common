@@ -55,7 +55,7 @@ class Linus_Common_Block_Csp extends Linus_Common_Block_CspAbstract
             'currencySymbol' => Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(),
             'checkoutUrl' => $this->getUrl('checkout/onepage'),
             'cartUrl' => $this->getUrl('checkout/cart'),
-            'cookieDomain' => '.' . $cookieModel->getDomain()
+            'cookieDomain' => '.' . ltrim($cookieModel->getDomain(), '.')
         ]);
     }
 }
