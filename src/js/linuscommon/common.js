@@ -1241,7 +1241,17 @@ linus.common = linus.common || (function($, _, Dependencies)
         return mem.validateEmail(email, strictness);
     }
 
-    mem.validateEmail = _.memoize(function(email, strictness)
+    // TODO Do not allow memoization to cache 502 errors.
+    // STR:
+    // - open checkout/onepage
+    // - turn off php-fpm
+    // - type in valid email
+    // - note that 502 response because nginx timed out waiting for php
+    // - turn php back on
+    // - type valid email
+    // - note that 502 response is displayed again because of cache.
+    // mem.validateEmail = _.memoize(function(email, strictness)
+    mem.validateEmail = function(email, strictness)
     {
         var emailRegex = '';
         switch (strictness) {
@@ -1258,7 +1268,7 @@ linus.common = linus.common || (function($, _, Dependencies)
         }
 
         return emailRegex.test(email);
-    });
+    };
 
     /**
      * Validate Canadian Postal Codes.
