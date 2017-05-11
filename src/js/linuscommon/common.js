@@ -2764,6 +2764,53 @@ linus.common = linus.common || (function($, _, Dependencies)
     }
 
     /**
+     * Fetch an item from the local cache.
+     * @param {string} key
+     * @param {boolean} asObject If true, will parse into an object
+     * @returns {string|Error}
+     */
+    function localCacheGet(key, asObject)
+    {
+        if (_.isUndefined(asObject)) {
+            asObject = false;
+        }
+        var value = getLocalStorageItem('lcache-' + key);
+        if (_.isError(value)) {
+            value = null;
+        }
+
+        return asObject && !_.isNull(value) ? JSON.parse(value) : value;
+    }
+
+    /**
+     * Add or update a value in the local cache.
+     *
+     * Objects will be automatically stringified.
+     *
+     * @param {string} key
+     * @param {*} value
+     * @returns {Error}
+     */
+    function localCacheSet(key, value)
+    {
+        if (_.isObject(value)) {
+            value = JSON.stringify(value);
+        }
+
+        return setLocalStorageItem('lcache-' + key, value);
+    }
+
+    /**
+     * Remove a value from the local cache.
+     * @param {string} key
+     * @returns {Error}
+     */
+    function localCacheRemove(key)
+    {
+        return removeLocalStorageItem('lcache-' + key);
+    }
+
+    /**
      * Initialize class. Register for DOM ready.
      */
     (function __init() {
@@ -2860,6 +2907,11 @@ linus.common = linus.common || (function($, _, Dependencies)
             notice: notice,
             error: error,
             clear: clear
+        },
+        cache: {
+            get: localCacheGet,
+            set: localCacheSet,
+            remove: localCacheRemove
         }
     };
 }(jQuery.noConflict() || {}, _.noConflict() || {}, {
