@@ -1989,6 +1989,10 @@ linus.common = linus.common || (function($, _, Dependencies)
     /**
      * Retrieve frontend templates from the server.
      *
+     * This includes the theme name to prevent Varnish from serving the same
+     * template to every possible frontend theme. Without this, overridden
+     * templates are subject to a race condition.
+     *
      * @param {array} templateKeys
      * @param {object} data
      * @param options
@@ -1997,7 +2001,8 @@ linus.common = linus.common || (function($, _, Dependencies)
     {
         if (!_.isEmpty(templateKeys)) {
             var keyList = encodeURIComponent(_.join(templateKeys));
-            get(getBaseUrl() + 'common/template?keys=' + keyList, {
+            var currentTheme = encodeURIComponent(getCspData('currentTheme'));
+            get(getBaseUrl() + 'common/template?keys=' + keyList + '&theme=' + currentTheme, {
                 valid: _.partial(onValidTplFetch, data, options),
                 cache: function() { return true; }
             });
