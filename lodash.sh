@@ -60,5 +60,6 @@ compact,\
 forOwn,\
 merge,\
 reject,\
-concat
+concat,\
+join
 "
