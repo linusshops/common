@@ -1996,8 +1996,10 @@ linus.common = linus.common || (function($, _, Dependencies)
     function tplFetch(templateKeys, data, options)
     {
         if (!_.isEmpty(templateKeys)) {
-            post(getBaseUrl() + 'common/template', {keys: templateKeys}, {
-                valid: _.partial(onValidTplFetch, data, options)
+            var keyList = encodeURIComponent(_.join(templateKeys));
+            get(getBaseUrl() + 'common/template?keys=' + keyList, {
+                valid: _.partial(onValidTplFetch, data, options),
+                cache: function() { return true; }
             });
         }
     }
