@@ -61,5 +61,8 @@ forOwn,\
 merge,\
 reject,\
 concat,\
+omitBy,\
+mapKeys,\
+snakeCase,\
 join
 "
